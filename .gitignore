@@ -1,0 +1,5 @@
+node_modules
+.env
+text.text
+adminHeader.html
+iterateSizeArray.js

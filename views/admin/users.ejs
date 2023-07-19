@@ -1,0 +1,102 @@
+
+<%- include('../partials/adminAside.ejs') %>
+
+<main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg ">
+
+   <%- include('../partials/adminNavbar.ejs') %>
+
+ <div class="container-fluid py-4">
+    <div class="row">
+      <div class="col-12">
+        <div class="card my-4">
+          <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+            <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3">
+              <h6 class="text-white text-capitalize ps-3">Users List</h6>
+            </div>
+          </div>
+          <div class="card-body px-0 pb-2">
+            <div class="table-responsive p-0">
+
+              <table class="table align-items-center mb-0">
+
+                <thead>
+                  <tr>
+                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">User</th>
+                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Mobile</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">DOJ</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Block User</th>
+                  </tr>
+                </thead>
+
+                <tbody>
+
+                  <% 
+                    if(userData.length > 0){
+                      for(let i=0; i<userData.length; i++){
+                         %>
+                            <tr>
+
+                              <td>
+                                <div class="d-flex px-2 py-1">
+                                  <!-- <div>
+                                    <img src="../assets/img/team-2.jpg" class="avatar avatar-sm me-3 border-radius-lg" alt="user1">
+                                  </div> -->
+                                  <div class="d-flex flex-column justify-content-center">
+                                    <% 
+                                      const fullName = userData[i].fname+' '+userData[i].lname
+                                    %>
+                                    <h6 class="mb-0 text-sm"><%= fullName %>l</h6>
+                                    <p class="text-xs text-secondary mb-0"><%= userData[i].email %></p>
+                                  </div>
+                                </div>
+                              </td>
+
+                              <td>
+                                <p class="text-xs font-weight-bold mb-0"><%= userData[i].mobile %></p>
+                              </td>
+
+                              <td class="align-middle text-center text-sm">
+                                <% 
+                                  const dd = userData[i].doj.getDate();
+                                  const mm = userData[i].doj.getMonth() + 1;
+                                  const yyyy = userData[i].doj.getFullYear();
+                                  
+                                  const formattedDate = `${dd}-${mm}-${yyyy}`; 
+                                %>
+                                <span class="text-secondary text-xs font-weight-bold"><%= formattedDate %></span>
+                              </td>
+
+                              <td class="align-middle text-center">
+                                <% 
+                                  if(!userData[i].isBlocked){
+                                     %>
+                                       <a href="/admin/users/block/<%= userData[i]._id %>" class="btn btn-danger" onclick="alert('Are you sure?')">Block</a>
+                                     <%
+                                  }else{
+                                    %>
+                                      <a href="/admin/users/block/<%= userData[i]._id %>" class="btn btn-success">Unblock</a>
+                                    <%
+                                  }
+                                %>
+                              </td>
+                              
+                            </tr>
+                         <% 
+                      }
+                    }
+                  %>
+
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <%- include('../partials/adminFooter.ejs') %>      
+
+</main>
+
+<%- include('../partials/adminScript.ejs') %>

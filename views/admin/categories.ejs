@@ -1,0 +1,130 @@
+
+<%- include('../partials/adminAside.ejs') %>
+
+<main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg ">
+
+   <%- include('../partials/adminNavbar.ejs') %>
+
+ <div class="container-fluid py-4">
+    <div class="row">
+      <div class="col-12">
+        <div class="card my-4">
+          <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+            <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3 d-flex justify-content-between">
+              <h6 class="text-white text-capitalize ps-3">Categories</h6>
+              
+              <form class="fixed-end d-flex align-content-center" action="/admin/categories" method="POST">
+                <input class="" type="text" name="categoryName" placeholder="Category Name">
+                <button type="submit" class="btn bg-gradient-dark me-3">Add</button>
+              </form>
+
+            </div>
+          </div>
+          <div class="card-body px-0 pb-2">
+            <div class="table-responsive p-0">
+
+              <table class="table align-items-center mb-0">
+
+                <thead>
+                  <tr>
+                    <th class="text-uppercase text-secondary text-xxs text-center font-weight-bolder opacity-7">Name</th>
+                    <th class="text-uppercase text-secondary text-xxs text-center font-weight-bolder opacity-7 ps-2">Edit</th>
+                    <th class="text-uppercase text-secondary text-xxs text-center font-weight-bolder opacity-7 ps-2">Unlist</th>
+                    <!-- <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Delete</th> -->
+                    <!-- <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Size Chart</th> -->
+                  </tr>
+                </thead>
+
+                <tbody>
+
+                  <% 
+                    if(categories.length > 0){
+                      for(let i=0; i<categories.length; i++){
+                         %>
+                            <tr>
+
+                                <td class="align-middle text-center text-sm">
+                                    <p class="text-xs font-weight-bold mb-0"><%= categories[i].name %></p>
+                                </td>
+
+                                <td class="align-middle text-center">
+
+                                    <a type="button" class="btn btn-primary popupBTN" data-id="<%= categories[i]._id %>" data-bs-toggle="modal" href="#exampleModal"> Edit</a>
+                                    
+                                    <!-- Modal Start  -->
+                                    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                            <h1 class="modal-title fs-5" id="exampleModalLabel">Edit Category Name</h1>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <form action="/admin/categories/edit" method="post">
+                                                    <input id="catID" value="" type="hidden" name="categoryId">
+                                                    <input class="input-group" value="" type="text" name="categoryName" placeholder="Enter new name">
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                        <button type="submit" class="btn btn-primary">Update</button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                            
+                                        </div>
+                                        </div>
+                                    </div> 
+                                    <!-- Modal End  -->
+    
+                                </td>
+
+                                <td class="align-middle text-center">
+                                    <% 
+                                        if(categories[i].isListed === true){
+                                        %>
+                                            <a href="/admin/categories/list/<%= categories[i]._id %>" class="btn btn-danger" onclick="alert('Do you want unlist This category?')">Unlist</a>
+                                        <%
+                                        }else{
+                                            %>
+                                            <a href="/admin/categories/list/<%= categories[i]._id %>" class="btn btn-success">List</a>
+                                            <%
+                                        }
+                                    %>
+                                </td>
+                                
+                                <!-- <td class="align-middle text-center">
+                                    <a class="btn btn-danger" href="/admin/categories/delete/<%=// categories[i]._id %>">Delete</a>
+                                </td> -->
+
+                                <!-- <td class="align-middle text-center">
+                                    <a class="btn btn-info" href="/admin/categories/size-chart/<%=// categories[i]._id %>">Size Chart</a>
+                                </td> -->
+                           
+                            </tr>
+                         <% 
+                      }
+                    }
+                  %>
+
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <%- include('../partials/adminFooter.ejs') %>      
+
+</main>
+
+  
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>
+<script>
+    $(document).on("click", ".popupBTN", function () {
+        var cId = $(this).data('id');
+        $(".modal-body #catID").val(cId);
+    });
+</script>
+
+<%- include('../partials/adminScript.ejs') %>

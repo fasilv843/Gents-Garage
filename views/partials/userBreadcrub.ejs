@@ -1,0 +1,33 @@
+
+        <!-- Breadcrumb Section Begin -->
+        <section class="breadcrumb-option">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="breadcrumb__text">
+                            <h4><%= page %></h4>
+                            <% 
+                            if(locals.parentPage){
+                                %>
+                                <div class="breadcrumb__links">
+                                    <a href="/">Home</a>
+                                    <a href="#"><%= parentPage  %></a>
+                                    <span><%= page %></span>
+                                </div>
+                                <% 
+                            }else{
+                                %>
+                                <div class="breadcrumb__links">
+                                    <a href="/">Home</a>
+                                    <span><%= page %></span>
+                                </div>
+                                <% 
+                            }
+                            %>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- Breadcrumb Section End -->

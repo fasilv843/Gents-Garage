@@ -1,0 +1,195 @@
+
+<%- include('../partials/adminAside.ejs') %>
+
+<main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg ">
+
+   <%- include('../partials/adminNavbar.ejs') %>
+
+ <div class="container-fluid py-4">
+    <div class="row">
+      <div class="col-12">
+        <div class="card my-4">
+          <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+            <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3 d-flex justify-content-between">
+              <h6 class="text-white text-capitalize ps-3">Add Product</h6>
+
+            </div>
+          </div>
+          <div class="card-body px-0 pb-2">
+            <div class="table-responsive p-0">
+
+                <!-- Copeid Code Start -->
+                
+
+
+                <form class="p-4 border border-2 border-black" action="/admin/products/addProduct" method="post" enctype="multipart/form-data">
+                    <div class="row input-group input-group-outline mb-3">
+                        <div class="form-group col-md-4">
+                            <label for="brand">Brand</label>
+                            <input type="brand" class="form-control " name="brand" id="brand" placeholder="Brand">
+                        </div>
+                        <div class="form-group col-md-8">
+                            <label for="name">Product Name</label>
+                            <input type="name" class="form-control" name="productName" id="name" placeholder="Product name">
+                        </div>
+                    </div>
+                    <div class="row input-group input-group-outline mb-3">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="category">Category</label>
+                                <select id="category" name="category" class="form-control">
+                                    <% if(categories.length>0){ 
+                                            for(let i=0;i<categories.length;i++){%>
+                                                <option>
+                                                    <%= categories[i].name %>
+                                                </option>
+                                         <% } %>
+                                    <% }else{ %>
+                                            <option value="">No categories</option>
+                                    <% } %>
+                                </select>
+                            </div>
+            
+                            <!-- Sizes as check box code  -->
+                            <div class="row input-group form-check">
+                                <label class="form-check-label">Size :&nbsp;</label>
+                                <div class=" d-flex justify-content-center" id="size-character">
+                                    <input class="form-check-input" type="checkbox" value="XS" id="check1" name="check1"
+                                        onclick="handleCheckboxChange1()">
+                                    <label class="form-check-label" for="check1">XS</label>
+                                    <input class="form-check-input" type="checkbox" value="S" id="check2" name="check2"
+                                        onclick="handleCheckboxChange1()">
+                                    <label class="form-check-label" for="check2">S</label>
+                                    <input class="form-check-input" type="checkbox" value="M" id="check3" name="check3"
+                                        onclick="handleCheckboxChange1()">
+                                    <label class="form-check-label" for="check3">M</label>
+                                    <input class="form-check-input" type="checkbox" value="L" id="check4" name="check4"
+                                        onclick="handleCheckboxChange1()">
+                                    <label class="form-check-label" for="check4">L</label>
+                                    <input class="form-check-input" type="checkbox" value="XL" id="check5" name="check5"
+                                        onclick="handleCheckboxChange1()">
+                                    <label class="form-check-label" for="check5">XL</label>
+                                    <input class="form-check-input" type="checkbox" value="XXL" id="check6" name="check6"
+                                        onclick="handleCheckboxChange1()">
+                                    <label class="form-check-label" for="check6">XXL</label>
+                                </div>
+            
+                                <div class="d-flex justify-content-center" id="size-number">
+                                    <input class="form-check-input" type="checkbox" value="5" id="check1" name="check1"
+                                        onclick="handleCheckboxChange()">
+                                    <label class="form-check-label" for="check1">5</label>
+                                    <input class="form-check-input" type="checkbox" value="6" id="check2" name="check2"
+                                        onclick="handleCheckboxChange()">
+                                    <label class="form-check-label" for="check2">6</label>
+                                    <input class="form-check-input" type="checkbox" value="7" id="check3" name="check3"
+                                        onclick="handleCheckboxChange()">
+                                    <label class="form-check-label" for="check3">7</label>
+                                    <input class="form-check-input" type="checkbox" value="8" id="check4" name="check4"
+                                        onclick="handleCheckboxChange()">
+                                    <label class="form-check-label" for="check4">8</label>
+                                    <input class="form-check-input" type="checkbox" value="9" id="check5" name="check5"
+                                        onclick="handleCheckboxChange()">
+                                    <label class="form-check-label" for="check5">9</label>
+                                    <input class="form-check-input" type="checkbox" value="10" id="check6" name="check6"
+                                        onclick="handleCheckboxChange()">
+                                    <label class="form-check-label" for="check6">10</label>
+                                </div>
+                            </div>
+                            <!-- Sizes as check box code end  -->
+            
+                        </div>
+                        <div class="form-group col-md-8">
+                            <label for="inputAddress">Description</label>
+                            <textarea type="text" rows="4" class="form-control" name="description" id="inputAddress"
+                                placeholder="Enter Product Description"></textarea>
+                        </div>
+                    </div>
+                    <div class="row input-group input-group-outline mb-3">
+                        <div class="form-group col-md-4">
+                            <label for="quantity">Quantity</label>
+                            <input type="Number" name="quantity" class="form-control" id="quantity" placeholder="Quantity">
+                        </div>
+                        <div class="col-md-4">
+                            <label for="price">Price</label>
+                            <input type="number" name="price" id="price" class="form-control" placeholder="price">
+                        </div>
+                        <div class="col-md-4">
+                            <label for="dprice">Discount Price</label>
+                            <input type="number" name="dprice" id="dprice" class="form-control" placeholder="Discount price">
+                        </div>
+                    </div>
+            
+                    <div class="form-group">
+                        <label>Choose product images</label>
+                    </div>
+                    <div class="d-flex justify-content-around">
+                        <input type="file" class="form-control-file" name="image" id="image" single accept="image/*" required>
+                        <input type="file" class="form-control-file" name="image" id="image" single accept="image/*" required>
+                        <input type="file" class="form-control-file" name="image" id="image" single accept="image/*" required>
+                    </div>
+                    <br>
+                    <div class="d-flex justify-content-end">
+                        <button type="submit" class="btn btn-primary">Add Product</button>
+                    </div>
+                </form>
+
+
+
+                <!-- Copeid Code End -->
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <%- include('../partials/adminFooter.ejs') %>      
+
+</main>
+
+  
+
+    <!--Code to Block one block of sizes, if selected from one  -->
+    <script>
+        function handleCheckboxChange() {
+            var frCheckboxes = document.querySelectorAll('#size-number input[type="checkbox"]');
+            var anDiv = document.getElementById('size-character');
+
+            // Check if any checkbox in the "fr" div is selected
+            var isChecked = Array.from(frCheckboxes).some(function (checkbox) {
+                return checkbox.checked;
+            });
+
+            // Enable or disable the "an" div based on the checkbox state
+            if (isChecked) {
+                anDiv.style.pointerEvents = 'none'; // Disable the div
+                anDiv.style.opacity = '0.5'; // Optional: Reduce the opacity to indicate it's disabled
+            } else {
+                anDiv.style.pointerEvents = 'auto'; // Enable the div
+                anDiv.style.opacity = '1'; // Optional: Restore the original opacity
+            }
+        }
+
+
+        function handleCheckboxChange1() {
+            var frCheckboxes = document.querySelectorAll('#size-character input[type="checkbox"]');
+            var anDiv = document.getElementById('size-number');
+
+            // Check if any checkbox in the "fr" div is selected
+            var isChecked = Array.from(frCheckboxes).some(function (checkbox) {
+                return checkbox.checked;
+            });
+
+            // Enable or disable the "an" div based on the checkbox state
+            if (isChecked) {
+                anDiv.style.pointerEvents = 'none'; // Disable the div
+                anDiv.style.opacity = '0.5'; // Optional: Reduce the opacity to indicate it's disabled
+            } else {
+                anDiv.style.pointerEvents = 'auto'; // Enable the div
+                anDiv.style.opacity = '1'; // Optional: Restore the original opacity
+            }
+        }
+    </script>
+
+<%- include('../partials/adminScript.ejs') %>

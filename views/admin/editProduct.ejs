@@ -1,0 +1,355 @@
+
+
+<%- include('../partials/adminAside.ejs') %>
+
+<main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg ">
+
+   <%- include('../partials/adminNavbar.ejs') %>
+
+ <div class="container-fluid py-4">
+    <div class="row">
+      <div class="col-12">
+        <div class="card my-4">
+          <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+            <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3 d-flex justify-content-between">
+              <h6 class="text-white text-capitalize ps-3">Edit Product</h6>
+
+            </div>
+          </div>
+          <div class="card-body px-0 pb-2">
+            <div class="table-responsive p-0">
+
+                <!-- Copeid Code Start -->
+                
+
+
+                <form class="p-4 border border-2 border-black" action="/admin/products/editProduct" method="post" enctype="multipart/form-data">
+                    <div class="row input-group input-group-outline mb-3">
+
+                        <input type="hidden" name="id" id="" value="<%= pdtData._id %>">
+                        <div class="form-group col-md-4">
+                            <label for="brand">Brand</label>
+                            <input type="brand" class="form-control" name="brand" id="brand"  value="<%= pdtData.brand %>"  placeholder="Brand">
+                        </div>
+                        <div class="form-group col-md-8">
+                            <label for="name">Product Name</label>
+                            <input type="name" class="form-control" name="productName" id="name"  value="<%= pdtData.name %>" placeholder="Product name">
+                        </div>
+
+                    </div>
+
+                    <div class="row input-group input-group-outline mb-3">
+                        <div class="col-md-4">
+
+                            <div class="form-group">
+
+
+                                <label for="category">Category</label>
+                    
+                                <select id="category" class="form-control" name="category">
+                                    <option value="<%=pdtData.category.name %>">
+                                        <%=pdtData.category.name %>
+                                    </option>
+                                    <% if(catData.length>0){for(let i=0;i<catData.length;i++) {
+                                            if(catData[i].name != pdtData.category.name){%>
+                                                <option value="<%=catData[i].name %>">
+                                                    <%=catData[i].name %>
+                                                </option>
+                                           <% }} }%>
+                                </select>
+
+                            </div>
+            
+                            <!-- Sizes as check box code  -->
+                            <div class="row input-group form-check">
+                                <label class="form-check-label">Size :&nbsp;</label>
+                                <div class=" d-flex justify-content-center" id="size-character">
+                                    
+                                    <input class="form-check-input" type="checkbox" value="XS" id="check1" name="check1"
+                                        onclick="handleCheckboxChange1()"
+                                        <% 
+                                            if(pdtData.size.length>0){
+                                                for(let i=0; i<pdtData.size.length; i++){
+                                                    if(pdtData.size[i] === "XS"){
+                                                        %> checked <%
+                                                    }
+                                                }
+                                            }
+                                        %>
+                                        >
+                                    <label class="form-check-label" for="check1">XS</label>
+
+                                    <input class="form-check-input" type="checkbox" value="S" id="check2" name="check2"
+                                        onclick="handleCheckboxChange1()"
+                                        <% 
+                                            if(pdtData.size.length>0){
+                                                for(let i=0; i<pdtData.size.length; i++){
+                                                    if(pdtData.size[i] === "S"){
+                                                        %> checked <%
+                                                    }
+                                                }
+                                            }
+                                        %>
+                                        >
+                                    <label class="form-check-label" for="check2">S</label>
+
+                                    <input class="form-check-input" type="checkbox" value="M" id="check3" name="check3"
+                                        onclick="handleCheckboxChange1()"
+                                        <% 
+                                            if(pdtData.size.length>0){
+                                                for(let i=0; i<pdtData.size.length; i++){
+                                                    if(pdtData.size[i] === "M"){
+                                                        %> checked <%
+                                                    }
+                                                }
+                                            }
+                                        %>
+                                        >
+                                    <label class="form-check-label" for="check3">M</label>
+
+                                    <input class="form-check-input" type="checkbox" value="L" id="check4" name="check4"
+                                        onclick="handleCheckboxChange1()"
+                                        <% 
+                                            if(pdtData.size.length>0){
+                                                for(let i=0; i<pdtData.size.length; i++){
+                                                    if(pdtData.size[i] === "L"){
+                                                        %> checked <%
+                                                    }
+                                                }
+                                            }
+                                        %>
+                                        >
+                                    <label class="form-check-label" for="check4">L</label>
+
+                                    <input class="form-check-input" type="checkbox" value="XL" id="check5" name="check5"
+                                        onclick="handleCheckboxChange1()"
+                                        <% 
+                                            if(pdtData.size.length>0){
+                                                for(let i=0; i<pdtData.size.length; i++){
+                                                    if(pdtData.size[i] === "XL"){
+                                                        %> checked <%
+                                                    }
+                                                }
+                                            }
+                                        %>
+                                        >
+                                    <label class="form-check-label" for="check5">XL</label>
+
+                                    <input class="form-check-input" type="checkbox" value="XXL" id="check6" name="check6"
+                                        onclick="handleCheckboxChange1()"
+                                        <% 
+                                            if(pdtData.size.length>0){
+                                                for(let i=0; i<pdtData.size.length; i++){
+                                                    if(pdtData.size[i] === "XXL"){
+                                                        %> checked <%
+                                                    }
+                                                }
+                                            }
+                                        %>
+                                        >
+                                    <label class="form-check-label" for="check6">XXL</label>
+                                </div>
+            
+                                <div class="d-flex justify-content-center" id="size-number">
+                                    <input class="form-check-input" type="checkbox" value="5" id="check1" name="check1"
+                                    onclick="handleCheckboxChange()"
+                                    <% 
+                                        if(pdtData.size.length>0){
+                                            for(let i=0; i<pdtData.size.length; i++){
+                                                if(pdtData.size[i] === 5 ){
+                                                    %> checked <%
+                                                }
+                                            }
+                                        }
+                                    %>
+                                    >
+                                <label class="form-check-label" for="check1">5</label>
+        
+                                <input class="form-check-input" type="checkbox" value="6" id="check2" name="check2"
+                                    onclick="handleCheckboxChange()"
+                                    <% 
+                                        if(pdtData.size.length>0){
+                                            for(let i=0; i<pdtData.size.length; i++){
+                                                if(pdtData.size[i] === 6 ){
+                                                    %> checked <%
+                                                }
+                                            }
+                                        }
+                                    %>
+                                    >
+                                <label class="form-check-label" for="check2">6</label>
+        
+                                <input class="form-check-input" type="checkbox" value="7" id="check3" name="check3"
+                                    onclick="handleCheckboxChange()"
+                                    <% 
+                                        if(pdtData.size.length>0){
+                                            for(let i=0; i<pdtData.size.length; i++){
+                                                if(pdtData.size[i] === 7 ){
+                                                    %> checked <%
+                                                }
+                                            }
+                                        }
+                                    %>
+                                    >
+                                <label class="form-check-label" for="check3">7</label>
+        
+                                <input class="form-check-input" type="checkbox" value="8" id="check4" name="check4"
+                                    onclick="handleCheckboxChange()"
+                                    <% 
+                                        if(pdtData.size.length>0){
+                                            for(let i=0; i<pdtData.size.length; i++){
+                                                if(pdtData.size[i] === 8 ){
+                                                    %> checked <%
+                                                }
+                                            }
+                                        }
+                                    %>
+                                    >
+                                <label class="form-check-label" for="check4">8</label>
+        
+                                <input class="form-check-input" type="checkbox" value="9" id="check5" name="check5"
+                                    onclick="handleCheckboxChange()"
+                                    <% 
+                                        if(pdtData.size.length>0){
+                                            for(let i=0; i<pdtData.size.length; i++){
+                                                if(pdtData.size[i] === 9 ){
+                                                    %> checked <%
+                                                }
+                                            }
+                                        }
+                                    %>
+                                    >
+                                <label class="form-check-label" for="check5">9</label>
+        
+                                <input class="form-check-input" type="checkbox" value="10" id="check6" name="check6"
+                                    onclick="handleCheckboxChange()"
+                                    <% 
+                                        if(pdtData.size.length>0){
+                                            for(let i=0; i<pdtData.size.length; i++){
+                                                if(pdtData.size[i] === 10 ){
+                                                    %> checked <%
+                                                }
+                                            }
+                                        }
+                                    %>
+                                    >
+                                <label class="form-check-label" for="check6">10</label>
+                                </div>
+                            </div>
+                            <!-- Sizes as check box code end  -->
+            
+                        </div>
+                        <div class="form-group col-md-8">
+                            <label for="inputAddress">Description</label>
+                            <textarea type="text" rows="4" class="form-control" name="description" id="inputAddress"
+                            placeholder="Enter Product Description"> <%= pdtData.description %>" </textarea>
+                        </div>
+                    </div>
+                    <div class="row input-group input-group-outline mb-3">
+                        <div class="form-group col-md-4">
+                            <label for="quantity">Quantity</label>
+                            <input type="Number" name="quantity" class="form-control" id="quantity" value="<%= pdtData.quantity %>" placeholder="Quantity">
+                        </div>
+
+                        <div class="col-md-4">
+                            <label for="price">Price</label>
+                            <input type="number" name="price" id="price" class="form-control" value="<%= pdtData.price %>" placeholder="price">
+                        </div>
+
+                        <div class="col-md-4">
+                            <label for="dprice">Discount Price</label>
+                            <input type="number" name="dprice" id="dprice" class="form-control"  value="<%= pdtData.discountPrice %>"  placeholder="Discount price">
+                        </div>
+                    </div>
+            
+                    <div class="form-group">
+                        <label>Edit product images</label>
+                    </div>
+
+                    <div class="d-flex r column-gap-3">
+                        <% 
+                            for(let i=0; i<pdtData.images.length; i++){
+                                %>
+                                    <div>
+                                        <img style="width: 5rem;" src="/productImages/<%= pdtData.images[i] %>" alt="Image 1">
+                                        <a href="/admin/products/imageDelete/<%= pdtData._id %>?imageURL=<%= pdtData.images[i] %>" class="btn btn-danger">Delete</a>
+                                    </div>
+
+                                <%
+                            }
+                
+                            for(let i=pdtData.images.length; i<3; i++){
+                                %>
+                                    <div>
+                                        <input type="file" class="form-control-file" id="image" name="image" single accept="image/*" required>
+                                    </div>
+                                <%
+                            }
+                        %>
+                    </div>
+
+                    <br>
+                    <div class="d-flex justify-content-end">
+                        <button type="submit" class="btn btn-primary">Update Details</button>
+                    </div>
+                </form>
+
+
+
+                <!-- Copeid Code End -->
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <%- include('../partials/adminFooter.ejs') %>      
+
+</main>
+
+    <!-- Block one block of sizes if selected from one  -->
+    <script>
+        function handleCheckboxChange() {
+            var frCheckboxes = document.querySelectorAll('#size-number input[type="checkbox"]');
+            var anDiv = document.getElementById('size-character');
+
+            // Check if any checkbox in the "fr" div is selected
+            var isChecked = Array.from(frCheckboxes).some(function (checkbox) {
+                return checkbox.checked;
+            });
+
+            // Enable or disable the "an" div based on the checkbox state
+            if (isChecked) {
+                anDiv.style.pointerEvents = 'none'; // Disable the div
+                anDiv.style.opacity = '0.5'; // Optional: Reduce the opacity to indicate it's disabled
+            } else {
+                anDiv.style.pointerEvents = 'auto'; // Enable the div
+                anDiv.style.opacity = '1'; // Optional: Restore the original opacity
+            }
+        }
+
+
+        function handleCheckboxChange1() {
+            var frCheckboxes = document.querySelectorAll('#size-character input[type="checkbox"]');
+            var anDiv = document.getElementById('size-number');
+
+            // Check if any checkbox in the "fr" div is selected
+            var isChecked = Array.from(frCheckboxes).some(function (checkbox) {
+                return checkbox.checked;
+            });
+
+            // Enable or disable the "an" div based on the checkbox state
+            if (isChecked) {
+                anDiv.style.pointerEvents = 'none'; // Disable the div
+                anDiv.style.opacity = '0.5'; // Optional: Reduce the opacity to indicate it's disabled
+            } else {
+                anDiv.style.pointerEvents = 'auto'; // Enable the div
+                anDiv.style.opacity = '1'; // Optional: Restore the original opacity
+            }
+        }
+    </script>
+    
+
+<%- include('../partials/adminScript.ejs') %>
