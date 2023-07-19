@@ -70,7 +70,7 @@
                                 <% 
                                   if(!userData[i].isBlocked){
                                      %>
-                                       <a href="/admin/users/block/<%= userData[i]._id %>" class="btn btn-danger" onclick="alert('Are you sure?')">Block</a>
+                                        <a href="/admin/users/block/<%= userData[i]._id %>" class="btn btn-danger" onclick="confirm('GSCCModal')">Block</a>
                                      <%
                                   }else{
                                     %>

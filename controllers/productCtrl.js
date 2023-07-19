@@ -176,9 +176,12 @@ const deleteImage = async(req,res) => {
 
 const loadShop = async(req,res) => {
     try {
+
+        const isLoggedIn = req.session.userId
+
         const pdtsData = await Products.find({isListed:true})
         console.log(pdtsData);
-        res.render('user/shop',{pdtsData, page:'Shop'})
+        res.render('user/shop',{pdtsData, page:'Shop',isLoggedIn})
     } catch (error) {
         console.log(error);
     }
@@ -188,9 +191,9 @@ const loadProductOverview = async(req,res) => {
     try {
         const id = req.params.id;
         console.log(id);
-
+        const isLoggedIn = Boolean(req.session.userId)
         const pdtData = await Products.findById({_id:id})
-        res.render('user/productOverview',{pdtData, parentPage : 'Shop', page: 'Product Overview'})
+        res.render('user/productOverview',{pdtData, parentPage : 'Shop', page: 'Product Overview',isLoggedIn})
     } catch (error) {
         console.log(error);
     }

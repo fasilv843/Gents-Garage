@@ -1,8 +1,7 @@
 const bcrypt = require('bcrypt')
 const Admin = require('../models/adminModel')
 const User = require('../models/userModel')
-// const mongoose = require('mongoose')
-// const Admin = mongoose.model('Admin',{});
+
 
 const loadDashboard = async(req,res) => {
     try {
@@ -28,6 +27,7 @@ const verifyAdminLogin = async(req,res) => {
         if(adminData){
             const passwordMatch = await bcrypt.compare(password, adminData.password)
             if(passwordMatch){
+                req.session.adminId = adminData._id;
                 res.redirect('/admin')
             }else{
                 console.log('Invalid Password');
@@ -38,6 +38,17 @@ const verifyAdminLogin = async(req,res) => {
 
     } catch (error) {
         console.log(error);
+    }
+}
+
+const logoutAdmin = async(req,res) => {
+    try {
+        req.session.destroy()
+        // req.logout()
+        res.clearCookie('adminId')
+        res.redirect('/admin')
+    } catch (error) {
+        console.log();
     }
 }
 
@@ -72,5 +83,6 @@ module.exports = {
     loadDashboard,
     verifyAdminLogin,
     loadUsers,
-    blockUser
+    blockUser,
+    logoutAdmin
 }

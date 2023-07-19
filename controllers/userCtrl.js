@@ -1,6 +1,7 @@
 const User = require('../models/userModel');
 const bcrypt = require('bcrypt')
 const nodemailer = require('nodemailer')
+const auth = require('../middleware/auth')
 const dotenv = require('dotenv').config()
 
 
@@ -15,7 +16,10 @@ const securePassword = async(password) => {
 
 const loadHome = async(req,res) => {
     try {
-        res.render('user/home',{page : 'Home'});
+        const isLoggedIn = Boolean(req.session.userId)
+        console.log(Boolean(req.session.userId));
+        console.log(isLoggedIn);
+        res.render('user/home',{page : 'Home', isLoggedIn});
     } catch (error) {
         console.log(error);
     }
@@ -29,6 +33,15 @@ const loadLogin = async(req,res) => {
     }
 }
 
+const logoutUser = async(req, res) => {
+    try {
+        req.session.destroy()
+        res.redirect('/')
+    } catch (error) {
+        console.log();
+    }
+}
+
 const verifyLogin = async(req,res) => {
     try {
         const {email, password} = req.body;
@@ -38,7 +51,7 @@ const verifyLogin = async(req,res) => {
             const passwordMatch = await bcrypt.compare(password,userData.password)
             if(passwordMatch){
                 if(!userData.isBlocked){
-                    req.session.userId = userData._id;
+                    req.session.userId = userData._id
                     res.redirect('/')
                 }else{
                     console.log('Sorry:( You are blocked by admins');
@@ -101,7 +114,7 @@ const sendVerifyMail = async(fname, lname, userEmail, OTP) => {
 }
 
 
-let adminOTP;
+// let adminOTP;
 
 const saveAndLogin = async(req,res) => {
     try {
@@ -114,8 +127,10 @@ const saveAndLogin = async(req,res) => {
                 return res.render('user/signup',{message : 'User Already Exists'})
             }
 
-            adminOTP = Math.floor( 1000000*Math.random() )
-            sendVerifyMail(fname, lname, email, adminOTP); 
+            
+            const OTP = Math.floor( 1000000*Math.random() )
+            req.session.OTP = OTP;
+            sendVerifyMail(fname, lname, email, OTP); 
             res.render('user/otpValidation',{ fname, lname, email, mobile, password, message : 'Check Spam mails' })
 
         }else{
@@ -133,11 +148,15 @@ const saveAndLogin = async(req,res) => {
 const validateOTP = async(req,res) => { 
     try {
         const { fname, lname, email, mobile, password } = req.body
+
         console.log('req.body.OTP : '+req.body.OTP);
+
         const userOTP = req.body.OTP
-        console.log('adminOTP : '+adminOTP+" "+ typeof adminOTP);
+
+        console.log('req.session.OTP : '+req.session.OTP+" "+ typeof req.session.OTP);
         console.log('userOTP : '+userOTP+" "+ typeof userOTP);
-        if(userOTP == adminOTP){
+        
+        if(userOTP == req.session.OTP){
             console.log('OTP Validated Successfully!');
             const sPassword = await securePassword(password)
             const user = new User({
@@ -159,7 +178,10 @@ const validateOTP = async(req,res) => {
 
 const loadAboutUs = async(req,res) => {
     try {
-        res.render('user/aboutUs',{page : 'About Us'})
+        
+        const isLoggedIn = Boolean(req.session.userId)
+
+        res.render('user/aboutUs',{page : 'About Us',isLoggedIn})
     } catch (error) {
         console.log(error);
     }
@@ -172,6 +194,7 @@ module.exports = {
     loadSignUp,
     saveAndLogin,
     validateOTP,
-    loadAboutUs
+    loadAboutUs,
+    logoutUser
 
 }
