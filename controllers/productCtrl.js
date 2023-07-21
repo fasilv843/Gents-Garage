@@ -6,7 +6,7 @@ const path = require('path')
 const loadProduct = async(req,res) => {
     try {
         const pdtsData = await Products.find().populate("category")
-        console.log(pdtsData);
+        // console.log(pdtsData);
         res.render('admin/products',{pdtsData, page:'Products'})
     } catch (error) {
         console.log(error);
@@ -180,7 +180,7 @@ const loadShop = async(req,res) => {
         const isLoggedIn = req.session.userId
 
         const pdtsData = await Products.find({isListed:true})
-        console.log(pdtsData);
+        // console.log(pdtsData);
         res.render('user/shop',{pdtsData, page:'Shop',isLoggedIn})
     } catch (error) {
         console.log(error);
@@ -198,6 +198,8 @@ const loadProductOverview = async(req,res) => {
         console.log(error);
     }
 }
+
+
 
 module.exports = {
     loadProduct,

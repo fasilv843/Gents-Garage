@@ -1,0 +1,84 @@
+<%- include('../partials/head.ejs') %>
+<%- include('../partials/userHeader.ejs') %>
+<%- include('../partials/userBreadcrub.ejs') %>
+
+    <!-- Add Address Section Begin -->
+    <section class="checkout spad">
+        <div class="container">
+            <div class="checkout__form">
+                <form action="/profile/addAddress" method="post" class="form-outline">
+                    <div class="row d-flex justify-content-center">
+                        <div class="d-flex flex-column col-lg-8 col-md-6">
+                            <h6 class="checkout__title">Enter Details</h6>
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <div class="checkout__input">
+                                        <p>Fist Name<span>*</span></p>
+                                        <input type="text" id="fname" class="form-control" placeholder="Enter First name" name="fname" required/>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="checkout__input">
+                                        <p>Last Name<span>*</span></p>
+                                        <input type="text" id="lname" class="form-control" placeholder="Enter Last name" name="lname" required/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <div class="checkout__input">
+                                        <p>Email<span>*</span></p>
+                                        <input type="email" id="email" class="form-control" placeholder="Email" name="email" required/>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="checkout__input">
+                                        <p>Mobile<span>*</span></p>
+                                        <input type="tel" id="mobile" class="form-control" placeholder="Mobile No." name="mobile" required/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <div class="checkout__input">
+                                        <p>Town/City<span>*</span></p>
+                                        <input type="text" id="town" class="form-control" placeholder="Town" name="town" required/>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="checkout__input">
+                                        <p>State<span>*</span></p>
+                                        <input type="text" id="state" class="form-control" placeholder="State" name="state" required/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <div class="checkout__input">
+                                        <p>Country<span>*</span></p>
+                                        <input type="text" id="country" class="form-control" placeholder="Country" name="country" required/>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="checkout__input">
+                                        <p>ZIP/Post Code<span>*</span></p>
+                                        <input type="number" id="zip" class="form-control" placeholder="Enter ZIP Code" name="zip" required/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="checkout__input">
+                                <p>Address<span>*</span></p>
+                                <input type="text" id="address" name="address" placeholder="Street Address" class="checkout__input__add form-control" required>
+                            </div>
+                            <button type="submit" class="btn btn-dark rounded-pill text-center">ADD</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+    <!-- Add Address Section End -->
+
+
+<%- include('../partials/script.ejs') %>
+<%- include('../partials/footer.ejs') %>

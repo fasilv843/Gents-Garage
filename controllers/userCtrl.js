@@ -1,9 +1,11 @@
 const User = require('../models/userModel');
+const Products = require('../models/productModel')
+const Addresses = require('../models/addressModel')
 const bcrypt = require('bcrypt')
 const nodemailer = require('nodemailer')
 const auth = require('../middleware/auth')
 const dotenv = require('dotenv').config()
-
+const mongoose = require('mongoose')
 
 const securePassword = async(password) => {
     try {
@@ -13,6 +15,8 @@ const securePassword = async(password) => {
         console.log(error);
     }
 }
+
+const getOTP = () =>  Math.floor( 1000000*Math.random() )
 
 const loadHome = async(req,res) => {
     try {
@@ -80,9 +84,9 @@ const loadSignUp = async(req,res) => {
     }
 }
 
-const sendVerifyMail = async(fname, lname, userEmail, OTP) => {
+const sendVerifyMail = async(userEmail, OTP) => {
     try {
-        const userName = fname+' '+lname;
+        
         const transporter = nodemailer.createTransport({
             host:'smtp.gmail.com',
             port:587,
@@ -98,7 +102,7 @@ const sendVerifyMail = async(fname, lname, userEmail, OTP) => {
             from:'gentsgarageofficial@gmail.com',
             to: userEmail,
             subject:'Email Verification',
-            html:'<p>Hello '+userName+' please  Enter this otp to verify '+OTP+ '</a> your mail.</p>'
+            html:'<p>Hello please  Enter this otp to verify '+OTP+' your mail.</p>'
         }
 
         transporter.sendMail(mailOptions, function(error,info){
@@ -114,8 +118,6 @@ const sendVerifyMail = async(fname, lname, userEmail, OTP) => {
 }
 
 
-// let adminOTP;
-
 const saveAndLogin = async(req,res) => {
     try {
         const { fname, lname, email, mobile, password, confirmPassword } = req.body;
@@ -127,10 +129,8 @@ const saveAndLogin = async(req,res) => {
                 return res.render('user/signup',{message : 'User Already Exists'})
             }
 
-            
-            const OTP = Math.floor( 1000000*Math.random() )
-            req.session.OTP = OTP;
-            sendVerifyMail(fname, lname, email, OTP); 
+            const OTP = req.session.OTP = getOTP()
+            sendVerifyMail(email, OTP); 
             res.render('user/otpValidation',{ fname, lname, email, mobile, password, message : 'Check Spam mails' })
 
         }else{
@@ -187,6 +187,370 @@ const loadAboutUs = async(req,res) => {
     }
 }
 
+
+const loadShoppingCart = async(req, res ) => {
+    try {
+        const id = req.session.userId;
+        const userData = await User.findById({_id:id}) //.populate('cart.productId')
+        // console.log(userData);
+
+        const cartItems = []
+        for(let i=0; i<userData.cart.length; i++){
+            let pdtId = userData.cart[i].productId
+            let pdtData = await Products.findById({_id:pdtId})
+            pdtData.quantity = userData.cart[i].quantity
+            cartItems.push(pdtData)
+        }
+        
+        // console.log('After Populating...............');
+        // console.log(cartItems);
+
+        res.render('user/shoppingCart',{page: 'Shopping Cart', parentPage: 'Shop', isLoggedIn: true, userData, cartItems})
+    } catch (error) {
+        console.log(error); 
+    }
+}
+
+const addToCart = async(req, res) => {
+    try {
+        const pdtId = req.params.id;
+        const userId = req.session.userId;
+        console.log('pdtId : '+pdtId);
+        console.log('userId : '+userId);
+
+        const userData = await User.findById({_id:userId})
+
+        const isproductExist = await userData.cart.findIndex((pdt) => pdt.productId == pdtId)
+        console.log('isproductExist : '+isproductExist);
+
+        if(isproductExist === -1){
+
+            console.log('Product not on cart');
+            const pdtData = await Products.findById({_id: pdtId})
+
+            const cartItem = {
+                productId : pdtId,
+                quantity : 1,
+                productPrice : pdtData.price
+            }
+    
+            console.log(cartItem);
+    
+            await User.findByIdAndUpdate(
+                {_id: userId},
+                {
+                    $push:{
+                        cart: cartItem
+                    }
+                }
+            )
+
+            res.redirect('/shoppingCart')
+
+        }else{
+                
+            await User.updateOne(
+                {_id: userId, 'cart.productId' : pdtId},
+                {
+                    $inc:{
+                        "cart.$.quantity":1
+                    }
+                }
+            );
+
+            console.log('Product already exist on cart, quantity incremeted by 1');
+            res.redirect('/shoppingCart')
+
+        }
+
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+const removeCartItem = async(req, res) => {
+    try {
+        
+        const pdtId = req.params.id;
+        const userId = req.session.userId;
+
+        console.log('Removing cart item '+pdtId+' from '+userId);
+
+        const userData = await User.findOneAndUpdate(
+            {_id: userId, 'cart.productId': pdtId },
+            {
+                $pull: {
+                    cart:{
+                        productId : pdtId
+                    } 
+                }
+            }
+        );
+
+        
+        console.log(userData);
+        res.redirect('/shoppingCart');
+
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+const loadProfile = async(req, res) => {
+    try {
+        console.log('loaded profile');
+        const userId = req.session.userId;
+        // console.log('userid : '+userId);
+        const userData = await User.findById({_id: userId})
+        const userAddress = await Addresses.findOne({userId:userId})
+        // console.log('User Address \n\n'+ userAddress);
+
+        res.render('user/userProfile',{ userData, userAddress})
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+
+const loadEditProfile = async(req, res) => {
+    try {
+        id = req.session.userId;
+        console.log('userId : '+id);
+        const userData = await User.findById({_id:id})
+
+        res.render('user/editProfile',{userData})
+    } catch (error) {
+        console.log(error); 
+    }
+}
+
+const postEditProfile = async(req, res) => {
+    try {
+        const userId = req.session.userId;
+        const { fname, lname, mobile} = req.body
+        const newUserData = await User.findByIdAndUpdate(
+            { _id: userId },
+            {
+                $set:{
+                    fname, lname, mobile
+                }
+            }
+        );
+
+        // console.log("updated userData : \n\n "+newUserData);
+        res.redirect('/profile');
+
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+const loadPassConfirmToChangeMail = async(req,res) => {
+    try {
+        res.render('user/passConfirmToChangeMail')
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+const postPassConfirmToChangeMail = async(req,res) => {
+    try {
+        const id = req.session.userId;
+        const password = req.body.password
+        const userData = await User.findById({ _id: id })
+        const passwordMatch = await bcrypt.compare(password,userData.password)
+        if(passwordMatch){
+            res.redirect('/profile/changeMail')
+        }else{
+            console.log("Password didn't Match");
+            res.redirect('/profile/')
+        }
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+
+
+const loadChangeMail = async(req,res) => {
+    try {
+        res.render('user/changeMail')
+        
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+const postChangeMail = async(req,res) => {
+    try {
+
+        const newMail = req.body.email
+
+        const isMailExist = await User.findOne({email:newMail})
+
+        if(isMailExist){
+            console.log('Mail Already Exist');
+            return
+        }else{
+            
+            const OTP = req.session.OTP = getOTP()
+            console.log('OTP generated when posted new email '+OTP);
+            sendVerifyMail(newMail, OTP); 
+            req.session.newMail = newMail
+            res.render('user/otpToChangeMail')
+        }
+
+
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+const otpValidationToChangeMail = async(req,res) => {
+    try {
+        const userId = req.session.userId;
+        const newMail = req.session.newMail;
+        const OTP = req.body.OTP;
+        const adminOTP = req.session.OTP
+
+        console.log(newMail);
+        console.log(OTP);
+        console.log(adminOTP);
+
+        if(OTP == adminOTP){
+
+            console.log('OTP Matched');
+
+            const userData = await User.findByIdAndUpdate(
+                {_id:userId},
+                {
+                    $set:{
+                        email: newMail
+                    }
+                }
+            )
+
+            console.log('User Data after Mail updation \n\n'+userData);
+            res.redirect('/profile')
+
+        }else{
+            console.log('OTP not correct');
+        }
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+const loadChangePassword = async(req, res ) => {
+    try {
+        console.log('loaded change password page');
+        res.render('user/changePass')
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+const postChangePassword = async(req, res ) => {
+    try {
+        console.log('posted change password');
+
+        const userId = req.session.userId;
+        const { oldPassword, newPassword, confirmPassword } = req.body;
+
+        console.log('oldPassword'+oldPassword+'\n newPassord'+newPassword);
+
+        if(newPassword !== confirmPassword){
+            console.log('newPassword and confirmPassword not matching :(' );
+            return res.redirect('/profile/changePassword')
+        }
+
+        const userData = await User.findById({ _id: userId });
+
+        const passwordMatch = await bcrypt.compare(oldPassword, userData.password);
+        console.log('passwordMatch : '+passwordMatch);
+        if(passwordMatch){
+            console.log('old password matched');
+            const sPassword = await securePassword(newPassword)
+            await User.findByIdAndUpdate(
+                { _id: userId },
+                {
+                    $set:{
+                        password:sPassword
+                    }
+                }
+            );
+            console.log('password updated');
+            return res.redirect('/profile');
+        }else{
+            console.log('incorrect password');
+            return res.redirect('/profile/changePassword');
+        }
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+const forgotPassword = async(req, res ) => {
+    try {
+        console.log('loaded forgot password');
+        const userMail = await User.findById({_id: req.session.userId},{email:1,_id:0})
+        const OTP = req.session.OTP = getOTP() 
+        sendVerifyMail(userMail.email, OTP);
+        res.render('user/forgotPasswordVerification')
+
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+const verifyOTPforgotPass = async(req, res) => {
+    try {
+        const userOTP = req.body.OTP
+        const adminOTP = req.session.OTP
+        if(userOTP == adminOTP){
+            console.log('OTP matched :) ');
+            res.render('user/resetPassword')
+        }else{
+            console.log('OTP not matching .... :(');
+            res.redirect('/profile/forgotPassword')
+        }
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+const loadResetPassword = async(req, res ) => {
+    try {
+        res.render('user/resetPassword')
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+const postResetPassword = async(req, res ) => {
+    try {
+        const { newPassword, confirmPassword} = req.body
+        if(newPassword !== confirmPassword){
+            console.log('Entered Passwords are not matching');
+            return res.redirect('/profile/resetPassword');
+        }else{
+            const userId = req.session.userId;
+            const sPassword = await securePassword(newPassword)
+            await User.findByIdAndUpdate(
+                { _id: userId },
+                {
+                    $set:{
+                        password:sPassword
+                    }
+                }
+            );
+            console.log('password updated');
+            return res.redirect('/profile');
+        }
+    } catch (error) {
+        console.log(error);
+    }
+}
 module.exports = {
     loadHome,
     loadLogin,
@@ -195,6 +559,23 @@ module.exports = {
     saveAndLogin,
     validateOTP,
     loadAboutUs,
-    logoutUser
+    logoutUser,
+    loadShoppingCart,
+    addToCart,
+    removeCartItem,
+    loadProfile,
+    loadEditProfile,
+    postEditProfile,
+    loadChangeMail,
+    postChangeMail,
+    loadChangePassword,
+    postChangePassword,
+    forgotPassword,
+    loadPassConfirmToChangeMail,
+    postPassConfirmToChangeMail,
+    otpValidationToChangeMail,
+    verifyOTPforgotPass,
+    loadResetPassword,
+    postResetPassword
 
 }
