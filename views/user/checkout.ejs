@@ -1,0 +1,167 @@
+
+<%- include('../partials/head.ejs') %>
+<%- include('../partials/userHeader.ejs') %>
+<%-// include('../partials/userBreadcrub.ejs') %>
+
+
+    <!-- Checkout Section Begin -->
+    <section>
+        <div class="container">
+            <div class="my-5">
+                <form action="/shoppingCart/placeOrder" method="post" id="checkout-form">
+                    <div class="row">
+                        <div class="col-lg-8 col-md-6">
+                            <h2 class="">Billing Details</h2>
+                            <hr>
+
+                            <% 
+                            
+                            userAddress.addresses.forEach((address) => {
+                                %>
+                                <div class="card mb-3">
+                                    <div class="card-body d-flex">
+                                        <div class="mx-3">
+                                            <input type="radio" name="address" id="<%= address._id %>" value="<%= address._id %>" checked>
+                                        </div>
+                                        <div>
+                                            <h5 class="card-title"><%= address.userName %> <%= address.mobile %></h5>
+                                            <p><%= address.email %></p>
+                                            <p class="card-text"> 
+                                                <%= 
+                                                address.town+' '+address.state+" "+address.country+" "+address.zip+' \n '+address.address
+                                                %>
+                                            </p>
+                                            <!-- <a href="#" class="btn btn-primary">Edit</a> -->
+                                        </div>
+                                    </div>
+                                </div>
+                                <%  
+                            })
+                            %>
+
+                        </div>
+
+                        <!-- right side -->
+                        <div class="col-lg-4 col-md-6 mt-5 ps-2">
+
+                            <div class="px-3 pt-3 pb-5 " style="background-color: #EBEFF1;">
+                                <div class="">
+                                    <div>
+                                        <h3>Your Order</h3>
+                                    </div>
+                                    <hr>
+                                    <div class="">
+
+
+                                        <% 
+
+                                        cart.forEach((pdt) => {
+                                            %>
+                                            <div class="row">
+                                                <div class="col-8">
+                                                    <div class="mt-3 pb-2">
+                                                        <span><%= pdt.productId.name %> x <%= pdt.quantity %></span>
+                                                    </div>
+                                                </div>
+                                                <div class="col-4">
+                                                    <div class="mt-3 pb-2">
+                                                        <span>₹ <%= pdt.productId.price*pdt.quantity %></span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <% 
+                                        })
+                                        
+                                        %>
+
+
+
+                                        
+                                    </div>
+                                    <div class="mt-4 mb-4">
+                                        <hr>
+                                    </div>
+
+                                    <!-- price -->
+
+                                    <% 
+                                    let totalPrice = 0;
+                                    let totalDiscount = 0
+                                    for(let i=0; i<cart.length; i++){
+                                        totalPrice += cart[i].productId.price*cart[i].quantity
+                                        totalDiscount += cart[i].productId.discountPrice*cart[i].quantity
+                                    }
+                                    %>
+
+                                    <div class="row">
+                                        <div class="col-8">
+                                            <div class="mb-3">
+                                                <span><strong>SubTotal</strong></span>
+                                            </div>
+                                            <div class="mb-3">
+                                                <span><strong>Discount</strong></span>
+                                            </div>
+                                            <div class="mb-3">
+                                                <span><strong>Total</strong></span>
+                                            </div>
+                                        </div>
+                                        <div class="col-4">
+                                            <div class="mb-3">
+                                                <span>₹ <%= totalPrice %></span>
+                                            </div>
+                                            <div class="mb-3">
+                                                <span style="color: rgb(0, 164, 19);">-₹ <%= totalDiscount %></span>
+                                            </div>
+                                            <div class="mb-3">
+                                                <span>₹ <%= totalPrice-totalDiscount %> </span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div style="color: rgb(0, 164, 19);font-size: 17px;" class="text-center">
+                                        YOU SAVED ₹ <%= totalDiscount %></div>
+                                    <!-- payment -->
+                                    <hr>
+                                    <div class="mb-2">
+                                        <h5 class="mb-2">Choose Payment</h5>
+                                        <input type="radio" name="payment" id="payment"  value="COD" class="mx-2" checked><label for="payment">COD</label>
+                                    </div>
+                                </div>
+                                <div class="text-center"><button type="submit"
+                                        class="btn rounded-pill w-100 btn-dark">Place Order</button></div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+    <!-- Checkout Section End -->
+
+<%- include('../partials/footer.ejs') %>  
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js"
+        integrity="sha512-3gJwYpMe3QewGELv8k/BX9vcqhryRdzRMxVfq6ngyWXwo03GFEzjsUm8Q7RZcHPHksttq7/GFoxjCVUjkjvPdw=="
+        crossorigin="anonymous" referrerpolicy="no-referrer">
+</script>
+
+<script>
+    $('#checkout-form').submit((e) => {
+        e.preventDefault()
+        $.ajax({
+            url:'/shoppingCart/placeOrder',
+            method: 'post',
+            data: $('#checkout-form').serialize(),
+            success: (res) => {
+                // alert(res)
+                if(res.status == true){
+                    location.href = '/orderSuccess'
+                }else if(res.status == false){
+                    location.href = '/orderFailed'
+                }
+            }
+        })
+    })
+
+</script>
+<%- include('../partials/script.ejs') %>

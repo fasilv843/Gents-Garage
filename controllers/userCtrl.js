@@ -593,6 +593,10 @@ const postResetPassword = async(req, res ) => {
         console.log(error);
     }
 }
+
+
+
+
 module.exports = {
     loadHome,
     loadLogin,

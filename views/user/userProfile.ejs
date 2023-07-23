@@ -130,7 +130,8 @@
                                         <div class="container mt-5">
                                             <div class="d-flex justify-content-between mb-3 ">
                                                 <h4>MANAGE ADDRESS</h4>
-                                                <a href="/profile/addAddress" class="btn btn-dark" >
+                                                
+                                                <a href="/profile/addAddress" class="btn btn-dark <% if(userAddress.addresses.length === 5){ %> opacity-50 <% } %>" <% if(userAddress.addresses.length === 5){ %> disabled <% } %> >
                                                     Add Address
                                                 </a>
                                             </div>

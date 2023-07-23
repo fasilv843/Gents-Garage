@@ -22,59 +22,73 @@
                             <tbody>
                                 <% 
                                 let totalPrice = 0
-                                for(let i=0; i<cartItems.length; i++){
+                                if(cartItems.length){
+                                    console.log("Cart items : \n\n\n"+cartItems)
+                                    for(let i=0; i<cartItems.length; i++){
+                                        %>
+                                        <tr>
+                                            <td class="product__cart__item">
+                                                <div class="product__cart__item__pic">
+                                                    <img width="100px" src="/productImages/<%= cartItems[i].productId.images[0] %>" alt="Product image">
+                                                    <%// console.log(cartItems[i].images[1]) %>
+                                                </div>
+                                                <div class="product__cart__item__text">
+                                                    <h6><%= cartItems[i].productId.name %></h6>
+                                                    <h6><%= cartItems[i].productId.brand %></h6>
+                                                    <h5>&#8377;<%= cartItems[i].productId.price - cartItems[i].productId.discountPrice %></h5>
+                                                </div>
+                                                <span style="color: red;" id="<%= cartItems[i]._id %>msg"></span>
+    
+                                            </td>
+                                            <td class="quantity__item">
+                                                <div class="row d-flex justify-content-center align-items-center">
+    
+                                                    <button id="<%= cartItems[i]._id %>minus"
+                                                            onclick="updateCart(-1,'<%= cartItems[i].productId._id%>','<%= cartItems[i]._id %>')">
+                                                            -
+                                                    </button>
+    
+                                                    <span class="mx-2 quantity"  id="<%= cartItems[i]._id %>" data-max-quantity="<%= cartItems[i].productId.quantity %>">
+                                                        <%= cartItems[i].quantity %>
+                                                    </span>
+    
+                                                    <button id="<%= cartItems[i]._id %>plus"
+                                                        onclick="updateCart(1,'<%= cartItems[i].productId._id%>','<%= cartItems[i]._id %>')">
+                                                        +
+                                                    </button>
+    
+                                                </div>
+                                                <!-- <div class="quantity">
+                                                    <div class="pro-qty-2">
+                                                        <input type="text" value="<%=// cartItems[i].quantity %>">
+                                                    </div>
+                                                </div> -->
+                                            </td>
+                                            <% 
+                                            let price = cartItems[i].productId.price - cartItems[i].productId.price
+                                            %>
+                                            <td id="totalSingle" class="cart__price">&#8377;<%= price*cartItems[i].quantity  %></td>
+                                            <% 
+                                            totalPrice = totalPrice + (cartItems[i].productId.price*cartItems[i].quantity);
+                                            %>
+                                            <td class="cart__close">
+                                                <form action="/shoppingCart/removeItem/<%= cartItems[i].productId._id %>" method="post">
+                                                    <button class="border-0 bg-transparent" type="submit">
+                                                        <i class="fa fa-close"></i>
+                                                    </button>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                        <% 
+                                    }
+                                }else{
                                     %>
                                     <tr>
-                                        <td class="product__cart__item">
-                                            <div class="product__cart__item__pic">
-                                                <img width="100px" src="/productImages/<%= cartItems[i].productId.images[0] %>" alt="Product image">
-                                                <%// console.log(cartItems[i].images[1]) %>
-                                            </div>
-                                            <div class="product__cart__item__text">
-                                                <h6><%= cartItems[i].productId.name %></h6>
-                                                <h6><%= cartItems[i].productId.brand %></h6>
-                                                <h5>&#8377;<%= cartItems[i].productId.price %></h5>
-                                            </div>
-                                            <span style="color: red;" id="<%= cartItems[i]._id %>msg"></span>
-
-                                        </td>
-                                        <td class="quantity__item">
-                                            <div class="row d-flex justify-content-center align-items-center">
-
-                                                <button id="<%= cartItems[i]._id %>minus"
-                                                        onclick="updateCart(-1,'<%= cartItems[i].productId._id%>','<%= cartItems[i]._id %>')">
-                                                        -
-                                                </button>
-
-                                                <span class="mx-2 quantity"  id="<%= cartItems[i]._id %>" data-max-quantity="<%= cartItems[i].productId.quantity %>">
-                                                    <%= cartItems[i].quantity %>
-                                                </span>
-
-                                                <button id="<%= cartItems[i]._id %>plus"
-                                                    onclick="updateCart(1,'<%= cartItems[i].productId._id%>','<%= cartItems[i]._id %>')">
-                                                    +
-                                                </button>
-
-                                            </div>
-                                            <!-- <div class="quantity">
-                                                <div class="pro-qty-2">
-                                                    <input type="text" value="<%=// cartItems[i].quantity %>">
-                                                </div>
-                                            </div> -->
-                                        </td>
-                                        <td id="totalSingle" class="cart__price">&#8377;<%= cartItems[i].productId.price*cartItems[i].productId.quantity %></td>
-                                        <% 
-                                        totalPrice = totalPrice + (cartItems[i].productId.price*cartItems[i].productId.quantity);
-                                        %>
-                                        <td class="cart__close">
-                                            <form action="/shoppingCart/removeItem/<%= cartItems[i].productId._id %>" method="post">
-                                                <button class="border-0 bg-transparent" type="submit">
-                                                    <i class="fa fa-close"></i>
-                                                </button>
-                                            </form>
+                                        <td>
+                                            <h5> <strong> Add items to the cart</strong> </h5>
                                         </td>
                                     </tr>
-                                    <% 
+                                    <%  
                                 }
                                 %>
                             </tbody>
@@ -83,14 +97,10 @@
                     <div class="row">
                         <div class="col-lg-6 col-md-6 col-sm-6">
                             <div class="continue__btn">
-                                <a href="#">Continue Shopping</a>
+                                <a href="/shop">Continue Shopping</a>
                             </div>
                         </div>
-                        <div class="col-lg-6 col-md-6 col-sm-6">
-                            <div class="continue__btn update__btn">
-                                <a href="#"><i class="fa fa-spinner"></i> Update cart</a>
-                            </div>
-                        </div>
+
                     </div>
                 </div>
                 <div class="col-lg-4">
@@ -107,7 +117,13 @@
                             <!-- <li>Subtotal <span>$ 169.50</span></li> -->
                             <li id="totalPrice">Total <span> &#8377; <%= totalPrice %></span></li>
                         </ul>
-                        <a href="#" class="primary-btn">Proceed to checkout</a>
+                        <% 
+                        if(cartItems.length){
+                            %>
+                            <a href="/shoppingCart/proceedToCheckout" class="primary-btn"  >Proceed to checkout</a>
+                            <%  
+                        }
+                        %>
                     </div>
                 </div>
             </div>

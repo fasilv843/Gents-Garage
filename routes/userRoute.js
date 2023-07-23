@@ -2,6 +2,7 @@ const express = require('express');
 const userCtrl = require('../controllers/userCtrl');
 const productCtrl = require('../controllers/productCtrl')
 const addressCtrl = require('../controllers/addressCtrl')
+const orderCtrl = require('../controllers/orderCtrl')
 const auth = require('../middleware/auth')
 
 const user_route = express.Router()
@@ -22,14 +23,20 @@ user_route.post('/validateOTP',userCtrl.validateOTP)
 user_route.get('/shop',productCtrl.loadShop)
 user_route.get('/shop/productOverview/:id',productCtrl.loadProductOverview)
 
-user_route.get('/aboutUs',userCtrl.loadAboutUs)
+user_route.get('/aboutUs',userCtrl.loadAboutUs);
 
 //Planned on next week
 user_route.get('/shoppingCart',auth.isUserLoggedIn,userCtrl.loadShoppingCart)
 user_route.get('/shop/addToCart/:id',auth.isUserLoggedIn,userCtrl.addToCart)
 user_route.post('/shoppingCart/removeItem/:id',auth.isUserLoggedIn,userCtrl.removeCartItem)
 user_route.put('/updateCart',userCtrl.updateCart);
+user_route.get('/shoppingCart/proceedToCheckout',orderCtrl.loadCheckout)
+user_route.post('/shoppingCart/placeOrder',orderCtrl.placeOrder)
 // user_route.get('/wishlist',productCtrl.loadWishlist)
+
+
+user_route.get('/orderSuccess',orderCtrl.loadOrderSuccess)
+user_route.get('/orderFailed',orderCtrl.loadOrderFailed)
 
 
 user_route.get('/profile',userCtrl.loadProfile)
