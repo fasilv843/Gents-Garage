@@ -10,34 +10,50 @@
             <div class="my-5">
                 <form action="/shoppingCart/placeOrder" method="post" id="checkout-form">
                     <div class="row">
-                        <div class="col-lg-8 col-md-6">
+                        <div class="col-lg-8 col-md-6" >
                             <h2 class="">Billing Details</h2>
                             <hr>
 
                             <% 
-                            
-                            userAddress.addresses.forEach((address) => {
-                                %>
-                                <div class="card mb-3">
-                                    <div class="card-body d-flex">
-                                        <div class="mx-3">
-                                            <input type="radio" name="address" id="<%= address._id %>" value="<%= address._id %>" checked>
-                                        </div>
-                                        <div>
-                                            <h5 class="card-title"><%= address.userName %> <%= address.mobile %></h5>
-                                            <p><%= address.email %></p>
-                                            <p class="card-text"> 
-                                                <%= 
-                                                address.town+' '+address.state+" "+address.country+" "+address.zip+' \n '+address.address
-                                                %>
-                                            </p>
-                                            <!-- <a href="#" class="btn btn-primary">Edit</a> -->
+                            if(userAddress){
+                                userAddress.addresses.forEach((address) => {
+                                    %>
+                                    <div class="card mb-3">
+                                        <div class="card-body d-flex">
+                                            <div class="mx-3">
+                                                <input type="radio" name="address" id="<%= address._id %>" value="<%= address._id %>" checked>
+                                            </div>
+                                            <div>
+                                                <h5 class="card-title"><%= address.userName %> <%= address.mobile %></h5>
+                                                <p><%= address.email %></p>
+                                                <p class="card-text"> 
+                                                    <%= 
+                                                    address.town+' '+address.state+" "+address.country+" "+address.zip+' \n '+address.address
+                                                    %>
+                                                </p>
+                                                <!-- <a href="#" class="btn btn-primary">Edit</a> -->
+                                            </div>
                                         </div>
                                     </div>
+                                    <%  
+                                })
+                            }
+
+                            if(userAddress.addresses.length >= 5){
+                                %>
+                                <div class="row d-flex justify-content-end mx-3">
+                                    <p>You can add max of 5 Addresses</p>
                                 </div>
-                                <%  
-                            })
+                                <%
+                            }else{
+                                %>
+                                <div class="row d-flex justify-content-end mx-3">
+                                    <a href="/profile/addAddress?returnPage=checkout" class="btn btn-dark"  >Add Address</a>
+                                </div>
+                                <%
+                            }
                             %>
+
 
                         </div>
 
@@ -127,8 +143,11 @@
                                         <input type="radio" name="payment" id="payment"  value="COD" class="mx-2" checked><label for="payment">COD</label>
                                     </div>
                                 </div>
-                                <div class="text-center"><button type="submit"
-                                        class="btn rounded-pill w-100 btn-dark">Place Order</button></div>
+
+                                <div class="text-center">
+                                    <button type="submit"class="btn rounded-pill w-100 btn-dark" <% if(!userAddress){  %> disabled <%  } %>>Place Order</button>
+                                    <% if(!userAddress){  %> <p>Add address to place order</p> <%  } %>
+                                </div>
                             </div>
                         </div>
                     </div>

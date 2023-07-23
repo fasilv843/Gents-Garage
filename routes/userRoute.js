@@ -44,7 +44,7 @@ user_route.get('/profile/edit',userCtrl.loadEditProfile)
 user_route.post('/profile/edit',userCtrl.postEditProfile)
 
 user_route.get('/profile/addAddress',addressCtrl.loadAddAddress)
-user_route.post('/profile/addAddress',addressCtrl.postAddAddress)
+user_route.post('/profile/addAddress/:returnPage',addressCtrl.postAddAddress)
 user_route.get('/profile/editAddress/:id',addressCtrl.loadEditAddress)
 user_route.post('/profile/editAddress/:id',addressCtrl.postEditAddress)
 user_route.get('/profile/deleteAddress/:id',addressCtrl.deleteAddress)

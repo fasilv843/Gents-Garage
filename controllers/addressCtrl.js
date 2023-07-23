@@ -3,7 +3,9 @@ const Users = require('../models/userModel')
 
 const loadAddAddress = async(req, res) => {
     try {
-        res.render('user/addAddress',{isLoggedIn : true, page:'Add Address', parentPage:'Profile'});
+        const returnPage = req.query.returnPage
+        console.log('returnPage : '+returnPage);
+        res.render('user/addAddress',{isLoggedIn : true, page:'Add Address', parentPage:'Profile', returnPage});
     } catch (error) {
         console.log(error);
     }
@@ -13,6 +15,7 @@ const postAddAddress = async(req, res) => {
     try {
         const userId = req.session.userId;
         const { name, email, mobile, town, state, country, zip, address } = req.body
+        const returnPage = req.params.returnPage
 
         const newAddress = { userName: name, email, mobile, town, state, country, zip, address }
 
@@ -27,7 +30,17 @@ const postAddAddress = async(req, res) => {
                 }
             );
             console.log('Address Added to database');
-            res.redirect('/profile')
+            // res.redirect('/profile')
+
+            switch(returnPage){
+                case 'profile': 
+                    res.redirect('/profile')
+                    break;
+                case 'checkout':
+                    res.redirect('/shoppingCart/proceedToCheckout')
+                    break;
+            }
+
         }else{
             await new Addresses({
                 userId,
@@ -35,10 +48,17 @@ const postAddAddress = async(req, res) => {
             }).save()
 
             console.log('Address Saved on database');
+            console.log('page : '+page);
 
-            res.redirect('/profile')
+            switch(returnPage){
+                case 'profile': 
+                    res.redirect('/profile')
+                    break;
+                case 'checkout':
+                    res.redirect('/shoppingCart/proceedToCheckout')
+                    break;
+            }
         }
-
 
     } catch (error) {
         console.log(error);

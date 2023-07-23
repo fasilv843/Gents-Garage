@@ -22,6 +22,7 @@
                             <tbody>
                                 <% 
                                 let totalPrice = 0
+                                let totalDiscount = 0
                                 if(cartItems.length){
                                     console.log("Cart items : \n\n\n"+cartItems)
                                     for(let i=0; i<cartItems.length; i++){
@@ -65,11 +66,12 @@
                                                 </div> -->
                                             </td>
                                             <% 
-                                            let price = cartItems[i].productId.price - cartItems[i].productId.price
+                                            let price = cartItems[i].productId.price - cartItems[i].productId.discountPrice
                                             %>
-                                            <td id="totalSingle" class="cart__price">&#8377;<%= price*cartItems[i].quantity  %></td>
+                                            <td id="total<%= cartItems[i]._id %>" class="cart__price">&#8377;<%= price*cartItems[i].quantity  %></td>
                                             <% 
-                                            totalPrice = totalPrice + (cartItems[i].productId.price*cartItems[i].quantity);
+                                            totalPrice += cartItems[i].productId.price*cartItems[i].quantity
+                                            totalDiscount += cartItems[i].productId.discountPrice*cartItems[i].quantity
                                             %>
                                             <td class="cart__close">
                                                 <form action="/shoppingCart/removeItem/<%= cartItems[i].productId._id %>" method="post">
@@ -115,7 +117,9 @@
                         <h6>Cart total</h6>
                         <ul>
                             <!-- <li>Subtotal <span>$ 169.50</span></li> -->
-                            <li id="totalPrice">Total <span> &#8377; <%= totalPrice %></span></li>
+                            <li>Total <span  id="totalPrice"> &#8377; <%= totalPrice %></span></li>
+                            <li>Discount <span  id="totalDiscount"> &#8377; <%= totalDiscount %></span></li>
+                            <li>Amount <span  id="amount"> &#8377; <%= totalPrice - totalDiscount %></span></li>
                         </ul>
                         <% 
                         if(cartItems.length){
@@ -194,12 +198,13 @@
             data: { amt, prodId },
             success: (res) => {
                 if (res.status == true) {
+
                     // $(`#${spanID}msg`).html(res.data.st)
-                    // $('#subTotal').html(`₹ ${res.data.totalPrice}`)
-                    // $('#totalPrice').html(`₹ ${res.data.discountPrice}`)
-                    // $(`#${spanID}y`).html(`₹ ${res.data.dPrice}`)
-                    $(`#totalSingle`).html(`₹${res.data.totalSingle}`)
-                    // $(`#totalPrice`).html(`₹${res.data. }`)
+                    $(`#total${spanID}`).html(`₹${res.data.totalSingle}`)
+                    $(`#totalPrice`).html(`₹${res.data.totalPrice}`)
+                    $(`#totalDiscount`).html(`₹${res.data.totalDiscount}`)
+                    $(`#amount`).html(`₹${res.data.totalPrice - res.data.totalDiscount}`)
+
                     document.getElementById(`${spanID}plus`).disabled = false
                     document.getElementById(`${spanID}minus`).disabled = false
 

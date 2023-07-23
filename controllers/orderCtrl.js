@@ -67,6 +67,16 @@ const placeOrder = async(req, res) => {
                 status: 'Order Confirmed',
                 date: new Date()
             }).save()
+
+            for (const { productId, quantity } of cart) {
+                await Products.updateOne(
+                    { _id: productId._id },
+                    { $inc: { quantity: -quantity } }
+                );
+            }
+
+            //Reducing quantity
+            // await Products.updateMany
     
             //Deleting Cart from user collection
             await User.findByIdAndUpdate(
@@ -96,7 +106,7 @@ const placeOrder = async(req, res) => {
 const loadOrderSuccess = async(req, res) => {
     try {
 
-        
+
         console.log('loaded Order Success');
     } catch (error) {
         console.log(error);

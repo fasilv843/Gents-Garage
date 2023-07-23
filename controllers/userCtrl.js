@@ -190,8 +190,8 @@ const loadAboutUs = async(req,res) => {
 
 const loadShoppingCart = async(req, res ) => {
     try {
-        const id = req.session.userId;
-        const userData = await User.findById({_id:id}).populate('cart.productId')
+        const userId = req.session.userId;
+        const userData = await User.findById({_id:userId}).populate('cart.productId')
         console.log(userData);
 
          const cartItems = userData.cart
@@ -204,6 +204,23 @@ const loadShoppingCart = async(req, res ) => {
         
         // console.log('After Populating...............');
         console.log(cartItems);
+
+        //Code to update cart values if product price changed by admin after we added pdt into cart
+        // cartItems.forEach( async(item) => {
+
+        //     const pdtId = item.productId._id;
+
+        //     await User.findByIdAndUpdate(
+        //         {_id:userId, 'cart.productId':pdtId},
+        //         {
+        //             $set:{
+        //                 'cart.$.productPrice' : item.productId.price,
+        //                 'cart.$.discountPrice' : item.productId.discountPrice
+        //             }
+        //         }
+        //     );
+
+        // })
 
         res.render('user/shoppingCart',{page: 'Shopping Cart', parentPage: 'Shop', isLoggedIn: true, userData, cartItems})
     } catch (error) {
@@ -231,7 +248,8 @@ const addToCart = async(req, res) => {
             const cartItem = {
                 productId : pdtId,
                 quantity : 1,
-                productPrice : pdtData.price
+                productPrice : pdtData.price,
+                discountPrice : pdtData.discountPrice
             }
     
             console.log(cartItem);
@@ -277,7 +295,7 @@ const updateCart = async(req,res) => {
         const pdtData = await Products.findById({ _id: prodId })
 
         const stock = pdtData.quantity;
-        const totalSingle = quantity*pdtData.quantity
+        const totalSingle = quantity*(pdtData.price - pdtData.discountPrice)
 
         if(stock >= quantity){
             await User.updateOne(
@@ -290,14 +308,16 @@ const updateCart = async(req,res) => {
             );
 
             const userData =  await User.findById({_id: userId})
-            let totalPrice =0;
+            let totalPrice = 0;
+            let totalDiscount = 0;
             userData.cart.forEach(pdt => {
                 totalPrice += pdt.productPrice*pdt.quantity
+                totalDiscount += pdt.discountPrice*pdt.quantity
             })
 
             res.json({
                 status: true,
-                data: { totalSingle }
+                data: { totalSingle, totalPrice, totalDiscount }
             })
         }else{
             res.json({
