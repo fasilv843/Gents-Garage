@@ -191,19 +191,19 @@ const loadAboutUs = async(req,res) => {
 const loadShoppingCart = async(req, res ) => {
     try {
         const id = req.session.userId;
-        const userData = await User.findById({_id:id}) //.populate('cart.productId')
-        // console.log(userData);
+        const userData = await User.findById({_id:id}).populate('cart.productId')
+        console.log(userData);
 
-        const cartItems = []
-        for(let i=0; i<userData.cart.length; i++){
-            let pdtId = userData.cart[i].productId
-            let pdtData = await Products.findById({_id:pdtId})
-            pdtData.quantity = userData.cart[i].quantity
-            cartItems.push(pdtData)
-        }
+         const cartItems = userData.cart
+        // for(let i=0; i<userData.cart.length; i++){
+        //     let pdtId = userData.cart[i].productId
+        //     let pdtData = await Products.findById({_id:pdtId})
+        //     pdtData.quantity = userData.cart[i].quantity
+        //     cartItems.push(pdtData)
+        // }
         
         // console.log('After Populating...............');
-        // console.log(cartItems);
+        console.log(cartItems);
 
         res.render('user/shoppingCart',{page: 'Shopping Cart', parentPage: 'Shop', isLoggedIn: true, userData, cartItems})
     } catch (error) {
@@ -263,6 +263,48 @@ const addToCart = async(req, res) => {
 
         }
 
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+const updateCart = async(req,res) => {
+    try {
+        const userId = req.session.userId;
+        const quantity = parseInt(req.body.amt)
+        const prodId = req.body.prodId
+
+        const pdtData = await Products.findById({ _id: prodId })
+
+        const stock = pdtData.quantity;
+        const totalSingle = quantity*pdtData.quantity
+
+        if(stock >= quantity){
+            await User.updateOne(
+                { _id: userId, 'cart.productId' : prodId },
+                {
+                    $set: {
+                        'cart.$.quantity' : quantity
+                    }
+                }
+            );
+
+            const userData =  await User.findById({_id: userId})
+            let totalPrice =0;
+            userData.cart.forEach(pdt => {
+                totalPrice += pdt.productPrice*pdt.quantity
+            })
+
+            res.json({
+                status: true,
+                data: { totalSingle }
+            })
+        }else{
+            res.json({
+                status: false,
+                data: 'Sorry the product stock has been exceeded'
+            })
+        }
     } catch (error) {
         console.log(error);
     }
@@ -576,6 +618,7 @@ module.exports = {
     otpValidationToChangeMail,
     verifyOTPforgotPass,
     loadResetPassword,
-    postResetPassword
+    postResetPassword,
+    updateCart
 
 }

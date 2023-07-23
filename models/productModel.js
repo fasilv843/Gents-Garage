@@ -70,4 +70,4 @@ const productsSchema = mongoose.Schema({
 // });
 
 
-module.exports = mongoose.model('Product',productsSchema)
+module.exports = mongoose.model('Products',productsSchema)

@@ -28,6 +28,7 @@ user_route.get('/aboutUs',userCtrl.loadAboutUs)
 user_route.get('/shoppingCart',auth.isUserLoggedIn,userCtrl.loadShoppingCart)
 user_route.get('/shop/addToCart/:id',auth.isUserLoggedIn,userCtrl.addToCart)
 user_route.post('/shoppingCart/removeItem/:id',auth.isUserLoggedIn,userCtrl.removeCartItem)
+user_route.put('/updateCart',userCtrl.updateCart);
 // user_route.get('/wishlist',productCtrl.loadWishlist)
 
 
@@ -37,6 +38,9 @@ user_route.post('/profile/edit',userCtrl.postEditProfile)
 
 user_route.get('/profile/addAddress',addressCtrl.loadAddAddress)
 user_route.post('/profile/addAddress',addressCtrl.postAddAddress)
+user_route.get('/profile/editAddress/:id',addressCtrl.loadEditAddress)
+user_route.post('/profile/editAddress/:id',addressCtrl.postEditAddress)
+user_route.get('/profile/deleteAddress/:id',addressCtrl.deleteAddress)
 
 user_route.get('/profile/passConfirmToChangeMail',userCtrl.loadPassConfirmToChangeMail)
 user_route.post('/profile/passConfirmToChangeMail',userCtrl.postPassConfirmToChangeMail)

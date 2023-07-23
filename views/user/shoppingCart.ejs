@@ -27,20 +27,34 @@
                                     <tr>
                                         <td class="product__cart__item">
                                             <div class="product__cart__item__pic">
-                                                <img width="100px" src="/productImages/<%= cartItems[i].images[0] %>" alt="Product image">
+                                                <img width="100px" src="/productImages/<%= cartItems[i].productId.images[0] %>" alt="Product image">
                                                 <%// console.log(cartItems[i].images[1]) %>
                                             </div>
                                             <div class="product__cart__item__text">
-                                                <h6><%= cartItems[i].name %></h6>
-                                                <h6><%= cartItems[i].brand %></h6>
-                                                <h5>&#8377;<%= cartItems[i].price %></h5>
+                                                <h6><%= cartItems[i].productId.name %></h6>
+                                                <h6><%= cartItems[i].productId.brand %></h6>
+                                                <h5>&#8377;<%= cartItems[i].productId.price %></h5>
                                             </div>
+                                            <span style="color: red;" id="<%= cartItems[i]._id %>msg"></span>
+
                                         </td>
                                         <td class="quantity__item">
                                             <div class="row d-flex justify-content-center align-items-center">
-                                                <a class="btn" href="/shop/cart/decrement">-</a>
-                                                <div><%= cartItems[i].quantity %></div>
-                                                <a class="btn" href="/shop/cart/increment">+</a>
+
+                                                <button id="<%= cartItems[i]._id %>minus"
+                                                        onclick="updateCart(-1,'<%= cartItems[i].productId._id%>','<%= cartItems[i]._id %>')">
+                                                        -
+                                                </button>
+
+                                                <span class="mx-2 quantity"  id="<%= cartItems[i]._id %>" data-max-quantity="<%= cartItems[i].productId.quantity %>">
+                                                    <%= cartItems[i].quantity %>
+                                                </span>
+
+                                                <button id="<%= cartItems[i]._id %>plus"
+                                                    onclick="updateCart(1,'<%= cartItems[i].productId._id%>','<%= cartItems[i]._id %>')">
+                                                    +
+                                                </button>
+
                                             </div>
                                             <!-- <div class="quantity">
                                                 <div class="pro-qty-2">
@@ -48,12 +62,12 @@
                                                 </div>
                                             </div> -->
                                         </td>
-                                        <td class="cart__price">&#8377;<%= cartItems[i].price*cartItems[i].quantity %></td>
+                                        <td id="totalSingle" class="cart__price">&#8377;<%= cartItems[i].productId.price*cartItems[i].productId.quantity %></td>
                                         <% 
-                                        totalPrice = totalPrice + (cartItems[i].price*cartItems[i].quantity);
+                                        totalPrice = totalPrice + (cartItems[i].productId.price*cartItems[i].productId.quantity);
                                         %>
                                         <td class="cart__close">
-                                            <form action="/shoppingCart/removeItem/<%= cartItems[i]._id %>" method="post">
+                                            <form action="/shoppingCart/removeItem/<%= cartItems[i].productId._id %>" method="post">
                                                 <button class="border-0 bg-transparent" type="submit">
                                                     <i class="fa fa-close"></i>
                                                 </button>
@@ -63,68 +77,6 @@
                                     <% 
                                 }
                                 %>
-
-
-                                <!-- <tr>
-                                    <td class="product__cart__item">
-                                        <div class="product__cart__item__pic">
-                                            <img src="img/shopping-cart/cart-2.jpg" alt="">
-                                        </div>
-                                        <div class="product__cart__item__text">
-                                            <h6>Diagonal Textured Cap</h6>
-                                            <h5>$98.49</h5>
-                                        </div>
-                                    </td>
-                                    <td class="quantity__item">
-                                        <div class="quantity">
-                                            <div class="pro-qty-2">
-                                                <input type="text" value="1">
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="cart__price">$ 32.50</td>
-                                    <td class="cart__close"><i class="fa fa-close"></i></td>
-                                </tr>
-                                <tr>
-                                    <td class="product__cart__item">
-                                        <div class="product__cart__item__pic">
-                                            <img src="img/shopping-cart/cart-3.jpg" alt="">
-                                        </div>
-                                        <div class="product__cart__item__text">
-                                            <h6>Basic Flowing Scarf</h6>
-                                            <h5>$98.49</h5>
-                                        </div>
-                                    </td>
-                                    <td class="quantity__item">
-                                        <div class="quantity">
-                                            <div class="pro-qty-2">
-                                                <input type="text" value="1">
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="cart__price">$ 47.00</td>
-                                    <td class="cart__close"><i class="fa fa-close"></i></td>
-                                </tr>
-                                <tr>
-                                    <td class="product__cart__item">
-                                        <div class="product__cart__item__pic">
-                                            <img src="img/shopping-cart/cart-4.jpg" alt="">
-                                        </div>
-                                        <div class="product__cart__item__text">
-                                            <h6>Basic Flowing Scarf</h6>
-                                            <h5>$98.49</h5>
-                                        </div>
-                                    </td>
-                                    <td class="quantity__item">
-                                        <div class="quantity">
-                                            <div class="pro-qty-2">
-                                                <input type="text" value="1">
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="cart__price">$ 30.00</td>
-                                    <td class="cart__close"><i class="fa fa-close"></i></td>
-                                </tr> -->
                             </tbody>
                         </table>
                     </div>
@@ -153,7 +105,7 @@
                         <h6>Cart total</h6>
                         <ul>
                             <!-- <li>Subtotal <span>$ 169.50</span></li> -->
-                            <li>Total <span> &#8377; <%= totalPrice %></span></li>
+                            <li id="totalPrice">Total <span> &#8377; <%= totalPrice %></span></li>
                         </ul>
                         <a href="#" class="primary-btn">Proceed to checkout</a>
                     </div>
@@ -166,4 +118,81 @@
 
 
 <%- include('../partials/footer.ejs') %>  
+
+<script>
+    function updateCart(operation, prodId, spanID) {
+        let quantity = document.getElementById(spanID)
+        let parsedQuantity = parseInt(quantity.innerText)
+
+        let minQuantity = 1;
+        let maxQuantity = parseInt(quantity.dataset.maxQuantity);
+
+        maxQuantity = Math.min(maxQuantity, 10);
+
+        if (operation == 1 && parsedQuantity < maxQuantity) {
+            parsedQuantity++
+        } else if (operation == -1 && parsedQuantity > 1) {
+            parsedQuantity--
+        }
+        quantity.innerText = parsedQuantity
+
+        ajaxConnection(parsedQuantity, prodId, spanID)
+
+        //btn dis
+        var plusBtn = document.getElementById(`${spanID}plus`)
+        var minusBtn = document.getElementById(`${spanID}minus`)
+        plusBtn.disabled = true
+        minusBtn.disabled = true
+
+        if (!parsedQuantity === 1) {
+            plusBtn.disabled = true;
+        } else {
+            plusBtn.disabled = false;
+        }
+
+        if (!parsedQuantity == 10 || !parsedQuantity == maxQuantity) {
+            minusBtn.disabled = true;
+        } else {
+            minusBtn.disabled = false;
+        }
+        //making error msg
+
+        let messageElement = document.getElementById(`${spanID}msg`);
+
+
+        if (parsedQuantity == 10) {
+            messageElement.innerText = "Max quantity reached";
+        } else if (parsedQuantity == maxQuantity) {
+            messageElement.innerText = "Stock limit reached"; // Clear the message if not at the limit
+        } else {
+            messageElement.innerText = ""
+        }
+    }
+
+
+    //ajax
+    function ajaxConnection(amt, prodId, spanID) {
+        $.ajax({
+            method: 'put',
+            url: '/updateCart',
+            data: { amt, prodId },
+            success: (res) => {
+                if (res.status == true) {
+                    // $(`#${spanID}msg`).html(res.data.st)
+                    // $('#subTotal').html(`₹ ${res.data.totalPrice}`)
+                    // $('#totalPrice').html(`₹ ${res.data.discountPrice}`)
+                    // $(`#${spanID}y`).html(`₹ ${res.data.dPrice}`)
+                    $(`#totalSingle`).html(`₹${res.data.totalSingle}`)
+                    // $(`#totalPrice`).html(`₹${res.data. }`)
+                    document.getElementById(`${spanID}plus`).disabled = false
+                    document.getElementById(`${spanID}minus`).disabled = false
+
+                } else if (res.status == false) {
+                    $(`#${spanID}msg`).html(res.data)
+                }
+            }
+        })
+    }
+</script>
+
 <%- include('../partials/script.ejs') %>
