@@ -35,6 +35,10 @@
   <link href="/css/admin/nucleo-svg.css" rel="stylesheet" />
   <!-- Font Awesome Icons -->
   <script src="https://kit.fontawesome.com/42d5adcbca.js" crossorigin="anonymous"></script>
+
+  <!-- Bootstrap icons  -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+  
   <!-- Material Icons -->
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
   <!-- CSS Files -->
@@ -67,7 +71,7 @@
         <li class="nav-item">
           <a class="nav-link text-white <% if(page == 'Users'){ %> active bg-gradient-primary <% } %> " href="/admin/users">
             <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
-              <i class="material-icons opacity-10">table_view</i>
+              <i class="bi bi-people-fill"></i>
             </div>
             <span class="nav-link-text ms-1">Users</span>
           </a>
@@ -75,7 +79,7 @@
         <li class="nav-item">
           <a class="nav-link text-white <% if(page == 'Products'){ %> active bg-gradient-primary <% } %> " href="/admin/products">
             <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
-              <i class="material-icons opacity-10">receipt_long</i>
+              <i class="bi bi-bag"></i>
             </div>
             <span class="nav-link-text ms-1">Products</span>
           </a>
@@ -83,15 +87,15 @@
         <li class="nav-item">
           <a class="nav-link text-white <% if(page == 'Categories'){ %> active bg-gradient-primary <% } %> " href="/admin/categories">
             <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
-              <i class="material-icons opacity-10">view_in_ar</i>
+              <i class="bi bi-tags"></i>
             </div>
             <span class="nav-link-text ms-1">Categories</span>
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link text-white <% if(page == 'Orders'){ %> active bg-gradient-primary <% } %> " href="/admin/orders">
+          <a class="nav-link text-white <% if(page == 'Orders List'){ %> active bg-gradient-primary <% } %> " href="/admin/ordersList">
             <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
-              <i class="material-icons opacity-10">format_textdirection_r_to_l</i>
+              <i class="bi bi-cart-fill"></i>
             </div>
             <span class="nav-link-text ms-1">Orders</span>
           </a>
@@ -99,7 +103,7 @@
         <li class="nav-item">
           <a class="nav-link text-white <% if(page == 'Ads'){ %> active bg-gradient-primary <% } %> " href="/admin/ads">
             <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
-              <i class="material-icons opacity-10">notifications</i>
+              <i class="bi bi-card-image"></i>
             </div>
             <span class="nav-link-text ms-1">Ads</span>
           </a>

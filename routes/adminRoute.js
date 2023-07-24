@@ -2,6 +2,7 @@ const express = require('express');
 const adminCtrl = require('../controllers/adminCtrl');
 const categoryCtrl = require('../controllers/categoryCtrl');
 const productCtrl = require('../controllers/productCtrl');
+const orderCtrl = require('../controllers/orderCtrl')
 const upload = require('../config/multer');
 const auth = require('../middleware/auth')
 
@@ -40,6 +41,10 @@ admin_route.post('/products/editProduct',auth.isAdminLoggedIn,upload.array('imag
 admin_route.get('/products/deleteProduct/:id',auth.isAdminLoggedIn,productCtrl.deleteProduct)
 
 admin_route.get('/products/imageDelete/:id',auth.isAdminLoggedIn,productCtrl.deleteImage)
+
+admin_route.get('/ordersList',auth.isAdminLoggedIn,orderCtrl.loadOrdersList)
+admin_route.post('/changeOrderStatus',auth.isAdminLoggedIn,orderCtrl.changeOrderStatus)
+admin_route.get('/cancelOrderByAdmin/:orderId',auth.isAdminLoggedIn,orderCtrl.cancelOrderByAdmin)
 
 
 module.exports = admin_route;

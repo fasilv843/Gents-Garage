@@ -1,0 +1,191 @@
+
+<%- include('../partials/adminAside.ejs') %>
+
+<main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg ">
+
+   <%- include('../partials/adminNavbar.ejs') %>
+
+ <div class="container-fluid py-4">
+    <div class="row">
+      <div class="col-12">
+        <div class="card my-4">
+          <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+            <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3 d-flex justify-content-between">
+              <h6 class="text-white text-capitalize ps-3">Orders List</h6> 
+              <!-- <div> -->
+                <!-- <a class="btn bg-gradient-dark me-3" href="/admin/products/addProduct">Add Product</a> -->
+              <!-- </div>   -->
+            </div>
+          </div>
+          <div class="card-body px-0 pb-2">
+            <div class="table-responsive p-0">
+
+              <table class="table align-items-center mb-0">
+
+                <thead>
+                  <tr>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Date</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">User</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Products</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Address</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Price</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Status</th>
+                    <!-- <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Payment Method</th> -->
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Action</th>
+                  </tr>
+                </thead>
+
+                <tbody>
+
+                  <% 
+                    if(ordersData){
+                      for(const order of ordersData){
+                         %>
+                            <tr>
+
+                                <% 
+                                const dd = order.date.getDate();
+                                const mm = order.date.getMonth() + 1;
+                                const yyyy = order.date.getFullYear();
+                                
+                                const formattedDate = `${dd}-${mm}-${yyyy}`; 
+                                %>
+
+                                <td class="align-middle text-center text-sm">
+                                    <p class="text-xs font-weight-bold mb-0"><%= formattedDate %></p>
+                                </td>
+
+                                <td class="align-middle text-center text-sm">
+                                    <h6 class="mb-0 text-sm"><%= order.userId.fname+' '+order.userId.lname %></h6>
+                                    <p class="text-xs font-weight-bold mb-0"><%= order.userId.email %></p>
+                                    <p class="text-xs font-weight-bold mb-0"><%= order.userId.mobile %></p>
+                                </td>
+
+                                <td>
+                                    <% 
+                                    for(const pdt of order.products){
+                                        %>
+                                        <div class="d-flex px-2 py-1">
+                                            <div class="me-1">
+                                                <img style="width: 4rem;" src="/productImages/<%= pdt.productId.images[0]  %>" alt="">
+                                            </div>
+                                            <div class="d-flex flex-column justify-content-center">
+                                                <h6 class="mb-0 text-sm"><%= pdt.productName  %></h6>
+                                                <p class="text-xs text-secondary mb-0">Quantity : <%= pdt.quantity %></p>
+                                                <p class="text-xs text-secondary mb-0">Price : <%= pdt.productPrice - pdt.discountPrice %></p>
+                                            </div>
+                                        </div>
+                                        <%  
+                                    }
+                                    %>
+                                </td>
+
+                                <td>
+                                    <div class="d-flex px-2 py-1">
+                                      <div class="d-flex flex-column justify-content-center">
+                                        <h6 class="mb-0 text-sm"><%= order.deliveryAddress.userName %></h6>
+                                        <p class="text-xs text-secondary mb-0"><%= order.deliveryAddress.address %></p>
+                                        <p class="text-xs text-secondary mb-0">
+                                            <%= 
+                                            order.deliveryAddress.town+' '+order.deliveryAddress.state+' '+order.deliveryAddress.country+' '+order.deliveryAddress.zip
+                                            %>
+                                        </p>
+                                        <p class="text-xs text-secondary mb-0"><%= order.deliveryAddress.email %></p>
+                                        <p class="text-xs text-secondary mb-0"><strong><%= order.deliveryAddress.mobile %></strong></p>
+                                      </div>
+                                    </div>
+                                </td>
+
+                                <td class="align-middle text-center text-sm">
+                                    <span class="text-secondary text-xs font-weight-bold">&#8377;<%= order.totalPrice %></span>
+                                    <p class="text-xs text-secondary mb-0"><%= order.paymentMehod %></p>
+                                    <span class="text-secondary text-xs font-weight-bold"></span>
+                                </td>
+
+                                <td class="align-middle text-center text-sm">
+                                    <span class="text-secondary text-xs font-weight-bold"><%= order.status %>
+                                        <% 
+                                        if(order.status == 'Order Confirm' || order.status == 'Shipped'|| order.status == 'Out For Delivery'){
+                                            %>
+                                            <button style="border: none;" data-bs-toggle="modal" data-bs-target="#exampleModal"
+                                            class="popupBTN" data-id="<%= order._id  %>"><i class="bi bi-pencil-square"
+                                            style="color: blue;"></i>
+                                            </button>
+                                            <%  
+                                        }
+                                        %>
+
+                                    </span>
+                                </td>
+
+                                <% 
+                                if(order.status == 'Order Confirmed' || order.status == 'Shipped'){
+                                    %>
+                                    <td class="align-middle text-center">
+                                        <a href="/admin/cancelOrderByAdmin/<%= order._id %>" class="btn btn-danger">Cancel</a>
+                                    </td>
+                                    <%  
+                                }
+                                %>
+                                
+
+
+                        <!-- Modal Start -->
+                        <div class="modal fade " id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h1 class="modal-title fs-5" id="exampleModalLabel">Change Status</h1>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                            aria-label="Close"></button>
+                                    </div>
+                                    <form action="/admin/changeOrderStatus" method="post">
+                                        <div class="modal-body">
+                                            <input type="hidden" name="orderId" id="orderId" value="">
+                                            <label for="status">Select delivery status</label><br><br>
+                                            <select name="status" class="form-control" id="status">
+                                                <option value="Shipped">Shipped</option>
+                                                <option value="Out For Delivery">Out For Delivery</option>
+                                                <option value="Delivered">Delivered</option>
+                                            </select>
+
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary"
+                                                data-bs-dismiss="modal">Close</button>
+                                            <button type="submit" class="btn btn-primary">Change Status</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Modal End  -->
+                              
+                            </tr>
+                         <% 
+                      }
+                    }
+                  %>
+
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <%- include('../partials/adminFooter.ejs') %>      
+
+</main>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>
+<script>
+    $(document).on("click", ".popupBTN", function () {
+        var cId = $(this).data('id');
+        $(".modal-body #orderId").val(cId);  
+    });
+</script>
+
+<%- include('../partials/adminScript.ejs') %>

@@ -130,6 +130,7 @@ const saveAndLogin = async(req,res) => {
             }
 
             const OTP = req.session.OTP = getOTP()
+            
             sendVerifyMail(email, OTP); 
             res.render('user/otpValidation',{ fname, lname, email, mobile, password, message : 'Check Spam mails' })
 

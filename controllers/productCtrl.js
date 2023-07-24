@@ -163,7 +163,6 @@ const deleteImage = async(req,res) => {
             }
         }
         
-        
         res.redirect(`/admin/products/editProduct/${id}`)
 
     } catch (error) {

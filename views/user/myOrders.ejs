@@ -1,0 +1,74 @@
+<%- include('../partials/head.ejs') %>
+<%- include('../partials/userHeader.ejs') %>
+<%- include('../partials/userBreadcrub.ejs') %>
+    <section>
+        <div class="container">
+            <div class="mt-5">
+
+                <% 
+                if(orderData){
+                    orderData.forEach((order) => {
+                        %>
+                        <div class="card mb-5 p-2">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-5 my-2  ">
+
+                                        <% 
+                                        order.products.forEach((pdt) => {
+                                            %>
+                                            <div class="d-flex my-2">
+                                                <div class="mx-3">
+                                                    <img src="/productImages/<%= pdt.productId.images[0] %>" class="img-fluid"
+                                                        style="width: 3rem;">
+                                                </div>
+                                                <div>
+                                                    <h6 class="card-title"><%= pdt.productName %></h6>
+                                                    <span style="color: rgb(99, 99, 99);">Quantity : <%= pdt.quantity %></span>
+                                                </div>
+                                            </div>
+                                            <%  
+                                        })
+                                        %>
+
+                                    </div>
+                                    <% 
+                                    //let totalPaid = order.productPrice*order.quantity // - (order.discountPrice*order.quantity)
+                                    %>
+                                    <div class="col-md-3 text-center mt-3 justify-content-center d-flex align-items-center">
+                                        <h6 class="card-text">Amount: ₹ <%= order.totalPrice %></h6>
+                                    </div>
+                                    <div class="col-md-2 text-center mt-3 justify-content-center d-flex align-items-center">
+                                        <% 
+                                        const dd = order.date.getDate();
+                                        const mm = order.date.getMonth() + 1;
+                                        const yyyy = order.date.getFullYear();
+                                        
+                                        const formattedDate = `${dd}-${mm}-${yyyy}`; 
+                                        %>
+                                        <h6 class="card-text">Date: <%= formattedDate %></h6>
+                                    </div>
+                                    <div class="col-md-2 text-center mt-3 justify-content-center d-flex align-items-center">
+                                        <a href="/viewOrderDetails/<%= order._id %>" class="btn btn-dark">View Details</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <%  
+
+                    })
+                }else{
+                    %>
+                    <h3>YOu ordered nothing yet :C </h3>
+                    <%  
+                }
+                %>
+
+            </div>
+        </div>
+    </section>
+
+
+    
+<%- include('../partials/script.ejs') %>
+<%- include('../partials/footer.ejs') %>

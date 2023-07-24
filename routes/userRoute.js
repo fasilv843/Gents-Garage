@@ -63,4 +63,10 @@ user_route.post('/profile/forgotPasswordVerification',userCtrl.verifyOTPforgotPa
 user_route.get('/profile/resetPassword',userCtrl.loadResetPassword)
 user_route.post('/profile/resetPassword',userCtrl.postResetPassword)
 
+
+user_route.get('/profile/myOrders',orderCtrl.loadMyOrders)
+user_route.get('/viewOrderDetails/:orderId',orderCtrl.loadViewOrderDetails)
+user_route.get('/cancelOrder/:orderId',orderCtrl.cancelOrderByUser)
+
+
 module.exports = user_route;
