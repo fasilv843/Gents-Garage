@@ -36,19 +36,15 @@ const placeOrder = async(req, res) => {
         const address = userAddress.addresses.find(obj => obj._id.toString() === addressId)
         // console.log('Address \n\n'+address);
 
-        //converting address obj to string
-        // const addressString = address.userName+' '+address.mobile+' '+
-        //                       address.address+' '+address.town+' '+
-        //                       address.state+' '+address.country+' '+address.zip;
-        // console.log(addressString);
-
         //getting cart items
-        const userData = await User.findById({_id:userId}) //.populate('cart.productId')
+        const userData = await User.findById({_id:userId}) 
         const cart = userData.cart
         console.log('Cart : \n\n'+cart)
         console.log('type of cart : '+typeof cart);
 
         if(cart.length){
+
+            //Finding total price
             let totalPrice = 0
             for(let i=0; i<cart.length; i++){
                 totalPrice += cart[i].productPrice*cart[i].quantity
@@ -68,6 +64,7 @@ const placeOrder = async(req, res) => {
                 date: new Date()
             }).save()
 
+            //Reducing quantity/stock of purchased products from Products Collection
             for (const { productId, quantity } of cart) {
                 await Products.updateOne(
                     { _id: productId._id },
@@ -75,9 +72,6 @@ const placeOrder = async(req, res) => {
                 );
             }
 
-            //Reducing quantity
-            // await Products.updateMany
-    
             //Deleting Cart from user collection
             await User.findByIdAndUpdate(
                 {_id:userId},

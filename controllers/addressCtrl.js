@@ -69,7 +69,7 @@ const loadEditAddress = async(req, res) => {
     try {
         const addressId = req.params.id;
         const userId = req.session.userId;
-        // const userData = await User.findById({_id:userId})
+
         const addressData = await Addresses.findOne({userId, 'addresses._id':addressId})
         const address = addressData.addresses.find(obj => obj._id.toString() === addressId)
         // console.log(address);

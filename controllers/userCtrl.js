@@ -195,32 +195,20 @@ const loadShoppingCart = async(req, res ) => {
         console.log(userData);
 
          const cartItems = userData.cart
-        // for(let i=0; i<userData.cart.length; i++){
-        //     let pdtId = userData.cart[i].productId
-        //     let pdtData = await Products.findById({_id:pdtId})
-        //     pdtData.quantity = userData.cart[i].quantity
-        //     cartItems.push(pdtData)
-        // }
-        
-        // console.log('After Populating...............');
         console.log(cartItems);
 
         //Code to update cart values if product price changed by admin after we added pdt into cart
-        // cartItems.forEach( async(item) => {
-
-        //     const pdtId = item.productId._id;
-
-        //     await User.findByIdAndUpdate(
-        //         {_id:userId, 'cart.productId':pdtId},
-        //         {
-        //             $set:{
-        //                 'cart.$.productPrice' : item.productId.price,
-        //                 'cart.$.discountPrice' : item.productId.discountPrice
-        //             }
-        //         }
-        //     );
-
-        // })
+        for(const { productId } of cartItems ){
+            await User.updateOne(
+                { _id: userId, 'cart.productId': productId._id },
+                {
+                    $set: {
+                        'cart.$.productPrice': productId.price,
+                        'cart.$.discountPrice': productId.discountPrice
+                    }
+                }
+            )
+        }
 
         res.render('user/shoppingCart',{page: 'Shopping Cart', parentPage: 'Shop', isLoggedIn: true, userData, cartItems})
     } catch (error) {

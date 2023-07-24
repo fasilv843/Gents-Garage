@@ -82,9 +82,6 @@ const postEditProduct = async(req,res) => {
 
         const brand = req.body.brand.toUpperCase()
 
-        // console.log('selectedCategory : '+req.body.selectedCategory);
-        // const category = req.body.selectedCategory;
-
         let sizes = []
         if(check1) sizes.push(check1)
         if(check2) sizes.push(check2)

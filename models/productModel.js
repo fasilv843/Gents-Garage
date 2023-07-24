@@ -41,33 +41,5 @@ const productsSchema = mongoose.Schema({
     }
 })
 
-// const producstSchema = new mongoose.Schema({
-//     name:{
-//         type: String,
-//         required : true////
-//     },
-//     price:{
-//         type: Number,
-//         required : true///
-//     },
-//     quantity:{
-//         type: Number,
-//         default : 3
-//     },
-//     description:{
-//         type: String,
-//         required : true///
-//     },
-//     sizes:{
-//         type: Array,
-//         required : true
-//     },
-//     colors:{
-//         type: Array,
-//         required : true
-//     }
-    
-// });
-
 
 module.exports = mongoose.model('Products',productsSchema)

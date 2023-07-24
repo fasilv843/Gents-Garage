@@ -67,6 +67,10 @@ const listCategory = async(req,res) => {
     }
 }
 
+//This code i wrote when i included size for a specific category, 
+//but i decided to exclude size field from category. 
+
+
 // const deleteList = async(req,res) => {
 //     try {
 //         const id = req.params.id;
@@ -136,10 +140,15 @@ const listCategory = async(req,res) => {
 // }
 
 module.exports = {
+    
     loadCategories,
     addCategory,
     editCategory,
     listCategory
+
+
+
+
     // deleteList
     // loadSizeChart,
     // addSize,

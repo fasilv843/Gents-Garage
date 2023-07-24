@@ -87,27 +87,7 @@
                 </div>
 
                 <div class="col-lg-9">
-                    <!-- <div class="shop__product__option">
-                        <div class="row">
-                            <div class="col-lg-6 col-md-6 col-sm-6">
-                                <div class="shop__product__option__left">
-                                    <p>Showing 1–12 of 126 results</p>
-                                </div>
-                            </div>
-                            <div class="col-lg-6 col-md-6 col-sm-6">
-                                <div class="shop__product__option__right">
-                                    <p>Sort by Price:</p>
-                                    <select>
-                                        <option value="">Low To High</option>
-                                        <option value="">$0 - $55</option>
-                                        <option value="">$55 - $100</option>
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-                    </div> -->
                     <div class="row">
-                        <!-- <div class="col-lg-4 col-md-6 col-sm-6"> -->
 
                         <% 
                             for(let i=0; i<pdtsData.length; i++){
@@ -115,8 +95,7 @@
                                 <div class="col-lg-4 col-md-6 col-sm-6">
                                     
                                     <div class="product__item">
-                                        <div class="product__item__pic set-bg" data-setbg="productImages/<%= pdtsData[i].images[0] %>">    <!-- data-setbg="productImages/1689525114434-product-4.jpg" Working??? -->
-                                            <%// console.log(pdtsData[i].images[0]) %>
+                                        <div class="product__item__pic set-bg" data-setbg="productImages/<%= pdtsData[i].images[0] %>"> 
                                             <ul class="product__hover">
                                                 <li><a href="/addToWishlist"><img src="img/icon/heart.png" alt=""></a></li>
                                                 <li><a href="/shop/productOverview/<%= pdtsData[i]._id %>"><img src="img/icon/search.png" alt=""></a></li>
@@ -125,8 +104,7 @@
                                         <div class="product__item__text">
                                             <h6><%= pdtsData[i].name %></h6>
                                             <a href="/shop/addToCart/<%= pdtsData[i]._id  %>" class="add-cart">+ Add To Cart</a>
-                                            <h5>&#8377; <%= pdtsData[i].price  %></h5>
-                                            <!-- <h5>&#8377; <%=// pdtsData[i].discountPrice  %></h5> -->
+                                            <h5>&#8377; <%= pdtsData[i].price - pdtsData[i].discountPrice  %></h5>
         
                                         </div>
                                     </div>

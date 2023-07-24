@@ -59,11 +59,7 @@
                                                     </button>
     
                                                 </div>
-                                                <!-- <div class="quantity">
-                                                    <div class="pro-qty-2">
-                                                        <input type="text" value="<%=// cartItems[i].quantity %>">
-                                                    </div>
-                                                </div> -->
+
                                             </td>
                                             <% 
                                             let price = cartItems[i].productId.price - cartItems[i].productId.discountPrice
@@ -183,7 +179,7 @@
         if (parsedQuantity == 10) {
             messageElement.innerText = "Max quantity reached";
         } else if (parsedQuantity == maxQuantity) {
-            messageElement.innerText = "Stock limit reached"; // Clear the message if not at the limit
+            messageElement.innerText = "Stock limit reached"; 
         } else {
             messageElement.innerText = ""
         }
