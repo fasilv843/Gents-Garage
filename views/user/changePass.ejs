@@ -15,7 +15,11 @@
 
 </head>
 
-
+<style>
+    small.error {
+        color: red;
+    }
+</style>
 
 <body>
     <section class="vh-100">
@@ -25,31 +29,34 @@
                     <div class="card shadow-2-strong">
                         <div class=" p-5 ">
                             <div class="text-center">
-                                <h3 class="mb-3">SIGN UP</h3>
+                                <h3 class="mb-3">Change Password</h3>
                                
                             </div>
                             <form action="/profile/changePassword" method="post">
                                 <div class="form-outline mb-3 row ">
                                     <div class=" col-md-6 col-12 mb-3">
                                         <label class="form-label" for="fname">Old Password</label>
-                                        <input type="text" id="oldPassword" class="form-control form-control-md rounded-0" placeholder="Enter Old Password" name="oldPassword" required/>
+                                        <input type="password" id="oldPassword" class="form-control form-control-md rounded-0" placeholder="Enter Old Password" name="oldPassword" required/>
+                                        <small id="oldPasswordErr" class="error"></small>
                                     </div>
                                 </div>
                                 <div class="form-outline mb-3 row">
                                     <div class="col-md-6 col-12">
                                         <label class="form-label" for="newPassword">New Password</label>
                                         <input type="password" id="newPassword" class="form-control form-control-md rounded-0" placeholder="Enter New Password" name="newPassword" required/>
+                                        <small id="newPasswordErr" class="error"></small>
                                     </div>
                                 </div>
                                 <div class="form-outline mb-3 row">
                                     <div class=" col-md-6 col-12 mb-3">
                                         <label class="form-label" for="mobile">Confirm Password</label>
-                                        <input type="number" id="confirmPassword" class="form-control form-control-md rounded-0" placeholder="Enter New Password Again" name="confirmPassword" required/>
+                                        <input type="password" id="confirmPassword" class="form-control form-control-md rounded-0" placeholder="Enter New Password Again" name="confirmPassword" required/>
+                                        <small id="confirmPasswordErr" class="error"></small>
                                     </div>
                                 </div>
 
                                 <div class="text-center">
-                                    <button class="btn btn-dark btn-md rounded-pill px-5 py-2 login-btn" type="submit">Change Password</button>
+                                    <button class="btn btn-dark btn-md rounded-pill px-5 py-2 login-btn" type="submit" onclick="return validatePassword()">Change Password</button>
                                     <p>forgot password? <a href="/profile/forgotPassword">reset</a></p>
                                 </div>
                             </form>
@@ -59,6 +66,68 @@
             </div>
         </div>
     </section>
+
+
+    <script>
+
+const oldPasswordError = document.getElementById("oldPasswordErr")
+const newPasswordError = document.getElementById("newPasswordErr")
+const confirmPasswordError = document.getElementById("confirmPasswordErr")
+
+const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/
+
+
+function validatePassword() {
+
+    let oldPassword = document.getElementById("oldPassword").value.trim()
+    let newPassword = document.getElementById("newPassword").value.trim()
+    let confirmPassword = document.getElementById("confirmPassword").value.trim()
+
+    if (oldPassword.length === 0) {
+        oldPasswordError.innerHTML = "Enter Password!";
+        return false;
+    }else if(oldPassword.length < 8 ){
+        oldPasswordError.innerHTML = "Password must contain 8 characters";
+        return false;
+    }else if(!oldPassword.match(passwordRegex)){
+        oldPasswordError.innerHTML = "Invalid Password";
+        return false;
+    }else{
+        oldPasswordError.innerHTML = '';
+    }
+    
+    if (newPassword.length === 0) {
+        newPasswordError.innerHTML = "Enter Password!";
+        return false;
+    }else if(newPassword.length < 8 ){
+        newPasswordError.innerHTML = "Password must contain 8 characters";
+        return false;
+    }else if(!newPassword.match(passwordRegex)){
+        newPasswordError.innerHTML = "Invalid Password";
+        return false;
+    }else{
+        newPasswordError.innerHTML = "";
+    }
+
+    
+    if (confirmPassword.length === 0) {
+        confirmPasswordError.innerHTML = "Enter Password!";
+        return false;
+    }else if(confirmPassword.length < 8 ){
+        confirmPasswordError.innerHTML = "Password must contain 8 characters";
+        return false;
+    }else if(newPassword !== confirmPassword){
+        confirmPasswordError.innerHTML = "Password not matching";
+        return false;
+    }else{
+        confirmPasswordError.innerHTML = "";
+    }
+    
+
+    return true
+}
+
+    </script>
 </body>
 
 </html>

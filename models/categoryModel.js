@@ -5,6 +5,10 @@ const categoySchema = new mongoose.Schema({
         type : String,
         required : true
     },
+    image:{
+        type : String,
+        required : true
+    },
     isListed:{
         type: Boolean,
         default: true

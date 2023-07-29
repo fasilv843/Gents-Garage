@@ -27,10 +27,12 @@
                         <div class="form-group col-md-4">
                             <label for="brand">Brand</label>
                             <input type="brand" class="form-control " name="brand" id="brand" placeholder="Brand">
+                            <small id="brandErr" class="error"></small>
                         </div>
                         <div class="form-group col-md-8">
                             <label for="name">Product Name</label>
                             <input type="name" class="form-control" name="productName" id="name" placeholder="Product name">
+                            <small id="nameErr" class="error"></small>
                         </div>
                     </div>
                     <div class="row input-group input-group-outline mb-3">
@@ -100,22 +102,26 @@
                         </div>
                         <div class="form-group col-md-8">
                             <label for="inputAddress">Description</label>
-                            <textarea type="text" rows="4" class="form-control" name="description" id="inputAddress"
+                            <textarea type="text" rows="4" class="form-control" name="description" id="description"
                                 placeholder="Enter Product Description"></textarea>
+                                <small id="descriptionErr" class="error"></small>
                         </div>
                     </div>
                     <div class="row input-group input-group-outline mb-3">
                         <div class="form-group col-md-4">
                             <label for="quantity">Quantity</label>
                             <input type="Number" name="quantity" class="form-control" id="quantity" placeholder="Quantity">
+                            <small id="quantityErr" class="error"></small>
                         </div>
                         <div class="col-md-4">
                             <label for="price">Price</label>
                             <input type="number" name="price" id="price" class="form-control" placeholder="price">
+                            <small id="priceErr" class="error"></small>
                         </div>
                         <div class="col-md-4">
                             <label for="dprice">Discount Price</label>
                             <input type="number" name="dprice" id="dprice" class="form-control" placeholder="Discount price">
+                            <small id="dpriceErr" class="error"></small>
                         </div>
                     </div>
             
@@ -126,14 +132,13 @@
                         <input type="file" class="form-control-file" name="image" id="image" single accept="image/*" required>
                         <input type="file" class="form-control-file" name="image" id="image" single accept="image/*" required>
                         <input type="file" class="form-control-file" name="image" id="image" single accept="image/*" required>
+                        <small id="imageErr" class="error"></small>
                     </div>
                     <br>
                     <div class="d-flex justify-content-end">
-                        <button type="submit" class="btn btn-primary">Add Product</button>
+                        <button type="submit" class="btn btn-primary" onclick="return validateProduct()">Add Product</button>
                     </div>
                 </form>
-
-
 
                 <!-- Copeid Code End -->
 
@@ -190,6 +195,9 @@
                 anDiv.style.opacity = '1'; // Optional: Restore the original opacity
             }
         }
+
     </script>
+
+    <script src="/productValidation.js"></script>
 
 <%- include('../partials/adminScript.ejs') %>

@@ -97,6 +97,8 @@ const placeOrder = async(req, res) => {
                     }
                 }
             );
+
+            req.session.cartCount = 0;
     
             console.log(req.body);
             res.json({status: true})
@@ -169,7 +171,7 @@ const loadOrderSuccess = async(req, res) => {
     try {
 
         console.log('loaded Order Success');
-        res.send('Order Failed')
+        res.send('Order Success')
     } catch (error) {
         console.log(error);
     }
@@ -180,7 +182,7 @@ const loadOrderFailed = async(req, res) => {
     try {
 
         console.log('loaded order failed');
-        res.send('Order Success')
+        res.send('Order Failed')
     } catch (error) {
         console.log(error);
     }

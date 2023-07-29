@@ -14,7 +14,11 @@
 
 </head>
 
-
+<style>
+    small.error{
+        color: red;
+    }
+</style>
 
 <body>
     <section class="vh-100">
@@ -33,6 +37,7 @@
                                     <div class=" col-12">
                                         <label class="form-label" for="email">Email</label>
                                         <input type="email" id="email" class="form-control form-control-md rounded-0" placeholder="Enter email" name="email" required/>
+                                        <small id="emailErr" class="error"></small>
                                         
                                     </div>
                                 </div>
@@ -41,10 +46,12 @@
                                         <label class="form-label" for="password">Password</label>
                                         <input type="password" id="password"
                                             class="form-control form-control-md rounded-0" placeholder="Enter your password" name="password" required/>
+                                        <small id="passwordErr" class="error"></small>
+                                        
                                     </div>
                                 </div>
                                 <div class="text-center">
-                                    <button class="btn btn-dark btn-md rounded-pill px-5 py-2 login-btn" type="submit">LOGIN</button>
+                                    <button class="btn btn-dark btn-md rounded-pill px-5 py-2 login-btn" type="submit" onclick="return validateLogin()">LOGIN</button>
                                 </div>
                             </form>
                         </div>
@@ -53,6 +60,9 @@
             </div>
         </div>
     </section>
+
+    <script src="/validations.js"></script>
+
 </body>
 
 </html>

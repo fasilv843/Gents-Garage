@@ -54,8 +54,12 @@ const verifyLogin = async(req,res) => {
         if(userData){
             const passwordMatch = await bcrypt.compare(password,userData.password)
             if(passwordMatch){
+
                 if(!userData.isBlocked){
+                    // console.log(userData);
                     req.session.userId = userData._id
+                    req.session.cartCount = userData.cart.length
+                    // console.log(userData.cart.length);
                     res.redirect('/')
                 }else{
                     console.log('Sorry:( You are blocked by admins');
@@ -241,9 +245,9 @@ const addToCart = async(req, res) => {
                 discountPrice : pdtData.discountPrice
             }
     
-            console.log(cartItem);
+            // console.log(cartItem);
     
-            await User.findByIdAndUpdate(
+            const userData = await User.findByIdAndUpdate(
                 {_id: userId},
                 {
                     $push:{
@@ -251,6 +255,8 @@ const addToCart = async(req, res) => {
                     }
                 }
             )
+
+            req.session.cartCount++;
 
             res.redirect('/shoppingCart')
 
@@ -338,6 +344,8 @@ const removeCartItem = async(req, res) => {
             }
         );
 
+        req.session.cartCount--;
+
         
         console.log(userData);
         res.redirect('/shoppingCart');
@@ -356,7 +364,7 @@ const loadProfile = async(req, res) => {
         const userAddress = await Addresses.findOne({userId:userId})
         // console.log('User Address \n\n'+ userAddress);
 
-        res.render('user/userProfile',{ userData, userAddress})
+        res.render('user/userProfile',{ userData, userAddress,isLoggedIn:true,page:'Profile'})
     } catch (error) {
         console.log(error);
     }

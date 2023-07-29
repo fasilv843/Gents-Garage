@@ -40,8 +40,27 @@ const editCategory = async(req,res) => {
     try {
         const id = req.body.categoryId
         const newName = req.body.categoryName.toUpperCase()
+        console.log(req);
+        console.log('files '+req.files);
+        console.log('file '+req.file);
+
         console.log(newName);
-        await Categories.findByIdAndUpdate({_id:id},{ $set :{ name: newName } })
+        const isCategoryExist = await Categories.findOne({name:newName})
+
+
+        if(req.file.filename){
+            const image = req.files.filename
+            if(!isCategoryExist || isCategoryExist._id == id){
+                console.log('Category name and image changed');
+                await Categories.findByIdAndUpdate({_id:id},{ $set :{ name: newName, image:image } })
+            }
+        }else{
+            if(!isCategoryExist){
+                console.log('Category name changed');
+                await Categories.findByIdAndUpdate({_id:id},{ $set :{ name: newName } })
+            }
+        }
+
         res.redirect('/admin/categories')
     } catch (error) {
         console.log(error);

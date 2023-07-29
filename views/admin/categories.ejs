@@ -10,14 +10,14 @@
       <div class="col-12">
         <div class="card my-4">
           <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+            <small id="catErr" class="error ms-3"></small>
             <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3 d-flex justify-content-between">
               <h6 class="text-white text-capitalize ps-3">Categories</h6>
               
               <form class="fixed-end d-flex align-content-center" action="/admin/categories" method="POST">
-                <input class="" type="text" name="categoryName" placeholder="Category Name">
-                <button type="submit" class="btn bg-gradient-dark me-3">Add</button>
+                <input id="newCategory" class="" type="text" name="categoryName" placeholder="Category Name">
+                <button type="submit" class="btn bg-gradient-dark me-3" onclick="return validateCategory()">Add</button>
               </form>
-
             </div>
           </div>
           <div class="card-body px-0 pb-2">
@@ -30,8 +30,6 @@
                     <th class="text-uppercase text-secondary text-xxs text-center font-weight-bolder opacity-7">Name</th>
                     <th class="text-uppercase text-secondary text-xxs text-center font-weight-bolder opacity-7 ps-2">Edit</th>
                     <th class="text-uppercase text-secondary text-xxs text-center font-weight-bolder opacity-7 ps-2">Unlist</th>
-                    <!-- <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Delete</th> -->
-                    <!-- <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Size Chart</th> -->
                   </tr>
                 </thead>
 
@@ -44,6 +42,7 @@
                             <tr>
 
                                 <td class="align-middle text-center text-sm">
+                                    <img style="width: 5rem;" src="/productImages/<%=  locals.categories[i].image %>" alt="Category Image">
                                     <p class="text-xs font-weight-bold mb-0"><%= categories[i].name %></p>
                                 </td>
 
@@ -62,10 +61,11 @@
                                             <div class="modal-body">
                                                 <form action="/admin/categories/edit" method="post">
                                                     <input id="catID" value="" type="hidden" name="categoryId">
-                                                    <input class="input-group" value="" type="text" name="categoryName" placeholder="Enter new name">
+                                                    <input type="file" class="form-control-file" name="image" id="image" single accept="image/*" required>
+                                                    <input id="categoryName" class="input-group" value="<%= categories[i].name %>" type="text" name="categoryName" placeholder="Enter new name">
                                                     <div class="modal-footer">
                                                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                                        <button type="submit" class="btn btn-primary">Update</button>
+                                                        <button type="submit" class="btn btn-primary" onclick="return ">Update</button>
                                                     </div>
                                                 </form>
                                             </div>
@@ -90,15 +90,7 @@
                                         }
                                     %>
                                 </td>
-                                
-                                <!-- <td class="align-middle text-center">
-                                    <a class="btn btn-danger" href="/admin/categories/delete/<%=// categories[i]._id %>">Delete</a>
-                                </td> -->
 
-                                <!-- <td class="align-middle text-center">
-                                    <a class="btn btn-info" href="/admin/categories/size-chart/<%=// categories[i]._id %>">Size Chart</a>
-                                </td> -->
-                           
                             </tr>
                          <% 
                       }
@@ -118,8 +110,46 @@
 
 </main>
 
-  
+<script src="/categoryValidation.js"></script>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>
+
+<script>
+
+  const catErr = document.getElementById('catErr')
+ 
+ function isCategoryExist(category){
+
+    categories.forEach(catData => {
+      if(category == catData.name){
+        return true
+      }
+    });
+
+    return false;
+ }
+
+ function validateCategory(){
+
+  const newName = document.getElementById('newCategory').value.trim().toUpperCase()
+  console.log(newName);
+  // const updatedName = document.getElementById('categoryName').value.trim().toUpperCase()
+  if(newName.length === 0){
+    catErr.innerHTML = 'Category required'
+    return false;
+  }
+  if(isCategoryExist(newName)){
+    catErr.innerHTML = 'Category already exist, add new category'
+    return false;
+  }
+
+  catErr.innerHTML = ''
+  return true
+
+ }
+
+</script>
+
 <script>
     $(document).on("click", ".popupBTN", function () {
         var cId = $(this).data('id');
