@@ -39,6 +39,7 @@
 
                   <% 
                     if(ordersData){
+                      console.log(ordersData)
                       for(const order of ordersData){
                          %>
                             <tr>
@@ -105,7 +106,7 @@
                                 <td class="align-middle text-center text-sm">
                                     <span class="text-secondary text-xs font-weight-bold"><%= order.status %>
                                         <% 
-                                        if(order.status == 'Order Confirm' || order.status == 'Shipped'|| order.status == 'Out For Delivery'){
+                                        if(order.status == 'Order Confirmed' || order.status == 'Shipped'|| order.status == 'Out For Delivery'){
                                             %>
                                             <button style="border: none;" data-bs-toggle="modal" data-bs-target="#exampleModal"
                                             class="popupBTN" data-id="<%= order._id  %>"><i class="bi bi-pencil-square"

@@ -6,7 +6,8 @@
             <div class="mt-5">
 
                 <% 
-                if(orderData){
+                if(orderData && orderData.length>0){
+                    //console.log(orderData)
                     orderData.forEach((order) => {
                         %>
                         <div class="card mb-5 p-2">
@@ -59,7 +60,7 @@
                     })
                 }else{
                     %>
-                    <h3>YOu ordered nothing yet :C </h3>
+                    <h3>You ordered nothing yet  </h3>
                     <%  
                 }
                 %>

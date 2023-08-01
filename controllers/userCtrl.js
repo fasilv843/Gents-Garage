@@ -97,13 +97,13 @@ const sendVerifyMail = async(userEmail, OTP) => {
             secure:false,
             requireTLS:true,
             auth:{
-                user:"gentsgarageofficial@gmail.com",
+                user: process.env.GMAIL,
                 pass: process.env.GMAIL_PASSWORD
             }
         });
 
         const mailOptions = {
-            from:'gentsgarageofficial@gmail.com',
+            from: process.env.GMAIL,
             to: userEmail,
             subject:'Email Verification',
             html:'<p>Hello please  Enter this otp to verify '+OTP+' your mail.</p>'
@@ -197,10 +197,10 @@ const loadShoppingCart = async(req, res ) => {
     try {
         const userId = req.session.userId;
         const userData = await User.findById({_id:userId}).populate('cart.productId')
-        console.log(userData);
+        // console.log(userData);
 
          const cartItems = userData.cart
-        console.log(cartItems);
+        // console.log(cartItems);
 
         //Code to update cart values if product price changed by admin after we added pdt into cart
         for(const { productId } of cartItems ){
@@ -225,8 +225,8 @@ const addToCart = async(req, res) => {
     try {
         const pdtId = req.params.id;
         const userId = req.session.userId;
-        console.log('pdtId : '+pdtId);
-        console.log('userId : '+userId);
+        // console.log('pdtId : '+pdtId);
+        // console.log('userId : '+userId);
 
         const userData = await User.findById({_id:userId})
 
@@ -235,7 +235,7 @@ const addToCart = async(req, res) => {
 
         if(isproductExist === -1){
 
-            console.log('Product not on cart');
+            // console.log('Product not on cart');
             const pdtData = await Products.findById({_id: pdtId})
 
             const cartItem = {

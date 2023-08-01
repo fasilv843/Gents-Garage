@@ -70,7 +70,7 @@
                                 <p>Address<span>*</span></p>
                                 <input type="text" id="address" name="address" placeholder="Street Address" value="<%= address.address %>" class="checkout__input__add form-control" required>
                             </div>
-                            <button type="submit" class="btn btn-dark rounded-pill text-center">UPDATE</button>
+                            <button type="submit" class="btn btn-dark rounded-pill text-center" onclick="return validateNewAddress()">UPDATE</button>
                         </div>
                     </div>
                 </form>
@@ -79,6 +79,8 @@
     </section>
     <!-- Add Address Section End -->
 
+    <script src="/addressValidation.js"></script>
+    
 
 <%- include('../partials/script.ejs') %>
 <%- include('../partials/footer.ejs') %>

@@ -8,17 +8,17 @@ const passwordError = document.getElementById("passwordErr")
 const cPasswordError = document.getElementById("confirmPasswordErr")
 
 
+
 const nameRegex = /^[a-zA-Z]+(([',. -][a-zA-Z ])?[a-zA-Z])$/;
 const emailRegex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/
 const mobileRegex = /^(\+\d{1,3}[- ]?)?\d{10}$/
 const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/
-const pincodeRegex = /^[1-9][0-9]{5}$/
 
 
 //fname
 function validateFName() {
     let name = document.getElementById("fname").value.trim()
-
+    console.log('validating fname');
     if (name.length === 0) {
         fnameError.innerHTML = "Name required!";
         return false;
@@ -44,6 +44,7 @@ function validateLName() {
     lnameError.innerHTML = "";
     return true;
 }
+
 
 function validateEmail() {
     let email = document.getElementById("email").value.trim()
@@ -120,5 +121,10 @@ function validateSignUp() {
 function validateLogin(){
     return validateEmail() && validatePassword()
 }
+
+function validateProfile(){
+    return validateFName() && validateLName() && validateMobile()
+}
+
 
 

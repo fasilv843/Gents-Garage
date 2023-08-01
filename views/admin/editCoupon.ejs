@@ -1,0 +1,83 @@
+
+<%- include('../partials/adminAside.ejs') %>
+
+<main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg ">
+
+   <%- include('../partials/adminNavbar.ejs') %>
+
+ <div class="container-fluid py-4">
+    <div class="row">
+      <div class="col-12">
+        <div class="card my-4">
+          <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+            <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3 d-flex justify-content-between">
+              <h6 class="text-white text-capitalize ps-3">Add Coupon</h6>
+
+            </div>
+          </div>
+          <div class="card-body px-0 pb-2">
+            <div class="table-responsive p-0">
+
+                <!-- Copeid Code Start -->
+                
+                    <form action="/admin/coupons/editCoupon/<%= couponData._id %>" method="post" class="p-4">
+
+                        <div class="form-outline mb-3 row input-group input-group-outline  ">
+                            <div class=" col-md-6 col-12 mb-3">
+                                <label for="code">Coupon Code</label>
+                                <input type="text" id="code" class="form-control form-control-md rounded-0"
+                                placeholder="Enter Coupon Code" name="code" value="<%= couponData.code %>" required/>
+                                <small id="codeErr" class="error"></small>
+                            </div>
+                            <div class="col-md-6 col-12">
+                                <label for="discount">Discount</label>
+                                <input type="number" id="discount" class="form-control form-control-md rounded-0" placeholder="Enter Discount" name="discount" value="<%= couponData.discount %>" required/>
+                                <small id="discountErr" class="error"></small>
+                            </div>
+                        </div>
+                        <div class="form-outline mb-3 row input-group input-group-outline ">
+                            <div class=" col-md-6 col-12 mb-3">
+                                <label for="minPurchase">Min Purchase</label>
+                                <input type="number" id="minPurchase"
+                                    class="form-control form-control-md rounded-0" placeholder="Enter Min Purchase." name="minPurchase"  value="<%= couponData.minPurchase %>" required/>
+                                    <small id="minPurchaseErr" class="error"></small>
+                            </div>
+                            <div class="col-md-6 col-12">
+                                <label for="expiryDate">Expiry Date</label>
+                                <input type="date" id="expiryDate" class="form-control form-control-md rounded-0" placeholder="Enter Expiry Date" name="expiryDate"  value="<%= couponData.expiryDate %>" required/>
+                                <small id="expiryDateErr" class="error"></small>                                     
+                            </div>
+                        </div>
+                        <div class="form-outline mb-3 row input-group input-group-outline ">
+                            <div class="col-12 mb-3">
+                                <label for="description">Description</label>
+                                <input type="text" id="description"
+                                    class="form-control rounded-0" placeholder="Enter Coupon Description" name="description" value="<%= couponData.description %>" required/>
+                                <small id="descriptionErr" class="error"></small>
+                            </div>
+                        </div>
+                        <div class="text-center my-2">
+                            <button class="btn btn-dark btn-md rounded-pill px-5 py-2 login-btn" type="submit" onclick="return validateCoupon()">Update</button>
+                        </div>
+                        
+                    </form>
+
+
+                <!-- Copeid Code End -->
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <%- include('../partials/adminFooter.ejs') %>      
+
+</main>
+
+
+<script src="/couponValidation.js"></script>
+    
+
+<%- include('../partials/adminScript.ejs') %>

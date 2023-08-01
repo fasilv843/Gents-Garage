@@ -120,11 +120,9 @@
                 <div class="col-lg-6 col-md-6">
                     <nav class="header__menu mobile-menu">
                         <ul>
-                            <li class="<% if(page === 'Home'){ %> active <% } %>"><a href="/">Home</a></li>
-                            <li class="<% if(page === 'Shop'|| locals.parentPage === 'Shop'){ %> active <% } %>"><a href="/shop">Shop</a></li>
-                            <li class="<% if(page === 'About Us'){ %> active <% } %>"><a href="/aboutUs">About Us</a></li>
-                            <% console.log('page is : '+page) %>
-                            <!-- <li><a href="./contact.html">Contacts</a></li> -->
+                            <li class="<% if(locals.page === 'Home'){ %> active <% } %>"><a href="/">Home</a></li>
+                            <li class="<% if(locals.page === 'Shop'|| locals.parentPage === 'Shop'){ %> active <% } %>"><a href="/shop">Shop</a></li>
+                            <li class="<% if(locals.page === 'About Us'){ %> active <% } %>"><a href="/aboutUs">About Us</a></li>
                         </ul>
                     </nav>
                 </div>

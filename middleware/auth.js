@@ -18,15 +18,15 @@ const isUserLoggedIn = (req, res, next) => {
 const isUserBlocked = async(req, res, next) => {
     try {
 
-        console.log('in is UserBlocked middleware');
-        console.log(req.session.userId);
+        // console.log('in is UserBlocked middleware');
+        // console.log(req.session.userId);
 
         if(req.session.userId){
-            console.log(req.session);
+            // console.log(req.session);
             const userData = await User.findById({_id : req.session.userId})
             
             let isUserBlocked = userData.isBlocked
-            console.log('isUserBlocked : '+isUserBlocked);
+            // console.log('isUserBlocked : '+isUserBlocked);
             if(isUserBlocked){
                 req.session.destroy()
                 // console.log('session after destroying');
@@ -37,7 +37,7 @@ const isUserBlocked = async(req, res, next) => {
             }
 
         }
-        console.log('calling next()');
+        // console.log('calling next()');
         next();
 
     } catch (error) {

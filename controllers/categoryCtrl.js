@@ -48,8 +48,8 @@ const editCategory = async(req,res) => {
         const isCategoryExist = await Categories.findOne({name:newName})
 
 
-        if(req.file.filename){
-            const image = req.files.filename
+        if(req.file){
+            const image = req.file.filename
             if(!isCategoryExist || isCategoryExist._id == id){
                 console.log('Category name and image changed');
                 await Categories.findByIdAndUpdate({_id:id},{ $set :{ name: newName, image:image } })

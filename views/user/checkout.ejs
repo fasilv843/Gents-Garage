@@ -39,7 +39,7 @@
                                 })
                             }
 
-                            if(userAddress.addresses.length >= 5){
+                            if(userAddress && userAddress.addresses.length >= 5){
                                 %>
                                 <div class="row d-flex justify-content-end mx-3">
                                     <p>You can add max of 5 Addresses</p>
@@ -59,6 +59,14 @@
 
                         <!-- right side -->
                         <div class="col-lg-4 col-md-6 mt-5 ps-2">
+
+                            <div class="cart__discount">
+                                <h6>Discount codes</h6>
+                                <form action="#" class="form-group">
+                                    <input type="text" class="" placeholder="Coupon code">
+                                    <button type="submit" class="btn btn-dark rounded-0">Apply</button>
+                                </form>
+                            </div>
 
                             <div class="px-3 pt-3 pb-5 " style="background-color: #EBEFF1;">
                                 <div class="">
@@ -140,7 +148,23 @@
                                     <hr>
                                     <div class="mb-2">
                                         <h5 class="mb-2">Choose Payment</h5>
-                                        <input type="radio" name="payment" id="payment"  value="COD" class="mx-2" checked><label for="payment">COD</label>
+                                        <% 
+                                        if(walletBalance){
+                                            %>
+                                            <input type="checkbox" name="walletCheckBox" id="walletCheckBox">
+                                            <label for="walletCheckBox">
+                                                <strong>Use wallet balance  
+                                                    <span id="walletBalance">
+                                                        &#8377; <%= Math.round(walletBalance) %>
+                                                    </span>
+                                                </strong>
+                                            </label><br>
+                                            <%  
+                                        }
+                                        %>
+                                        <input type="radio" name="payment" id="payment"  value="COD" class="mx-2" checked><label for="payment">COD</label><br>
+                                        <input type="radio" name="payment" id="payment"  value="Razorpay" class="mx-2" checked><label for="payment">Razorpay</label><br>
+                                        <input type="radio" name="payment" id="payment"  value="Wallet" class="mx-2" checked><label for="payment">Wallet</label><br>
                                     </div>
                                 </div>
 
@@ -163,7 +187,7 @@
         integrity="sha512-3gJwYpMe3QewGELv8k/BX9vcqhryRdzRMxVfq6ngyWXwo03GFEzjsUm8Q7RZcHPHksttq7/GFoxjCVUjkjvPdw=="
         crossorigin="anonymous" referrerpolicy="no-referrer">
 </script>
-
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <script>
     $('#checkout-form').submit((e) => {
         e.preventDefault()
@@ -173,14 +197,66 @@
             data: $('#checkout-form').serialize(),
             success: (res) => {
                 // alert(res)
-                if(res.status == true){
+                if(res.status == 'COD'){
                     location.href = '/orderSuccess'
-                }else if(res.status == false){
-                    location.href = '/orderFailed'
+                }else if(res.status == 'Razorpay'){
+                    // console.log('in ajax status razorpay');
+                    // location.href = '/orderFailed'
+                    razorpayPayment(res.order)
                 }
             }
         })
     })
+
+    function razorpayPayment(order){
+        // console.log('Order in function razorpayPayment(order) : \n\n'+order);
+        var options = {
+            "key": "rzp_test_cs7jdKVcE5oH7L", // Enter the Key ID generated from the Dashboard
+            "amount": order.amount, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
+            "currency": "INR",
+            "name": "Gent's Garage",
+            "description": "Test Transaction",
+            "image": "https://example.com/your_logo",
+            "order_id": order.id, //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
+            "handler": function (response){
+                verifyPayment(response,order)
+            },
+            "prefill": {
+                "name": "Gaurav Kumar",
+                "email": "gaurav.kumar@example.com",
+                "contact": "9000090000"
+            },
+            "notes": {
+                "address": "Razorpay Corporate Office"
+            },
+            "theme": {
+                "color": "#3399cc"
+            }
+        };
+        var rzpl = new Razorpay(options)
+        // console.log('opening razorpay');
+        rzpl.open()
+    }
+
+    function verifyPayment(response,order){
+
+        $.ajax({    //Not entering into ajax ??
+            url:'/verifyPayment',
+            method:'post',
+            data:{
+                payment,
+                order
+            },
+            success:(res) => {
+                if(res.status==true){
+                    location.href = '/orderSuccess'
+                }else{
+                    // location.href = '/orderFailed'
+                    alert('payment failed')
+                }
+            }
+        })
+    }
 
 </script>
 <%- include('../partials/script.ejs') %>

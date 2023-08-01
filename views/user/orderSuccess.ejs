@@ -1,0 +1,31 @@
+<%- include('../partials/head.ejs') %>
+<style>
+    .mainDiv {
+        height: 70vh;
+        display: grid;
+        place-content: center;
+        align-items: center;
+    }
+</style>
+<%- include('../partials/userHeader.ejs') %>
+
+
+
+
+<div class="mainDiv text-center container">
+    <h1>Order Success &#10003;</h1>
+    <span>Your order will be delivered soon!</span><br>
+    <img src="/extras/delivery.jpg" width="400rem" class="img-fluid" alt="">
+    <div class="mt-4">
+        <a href="/orders" class="btn btn-success me-2 mb-3">Go to Orders</a>
+        <a href="/shop" class="btn btn-warning mb-3">Continue Shopping</a>
+    </div>
+</div>
+
+
+
+
+
+
+<%- include('../partials/footer.ejs') %>
+<%- include('../partials/script.ejs') %>

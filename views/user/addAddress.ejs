@@ -1,4 +1,9 @@
 <%- include('../partials/head.ejs') %>
+<style>
+    small.error{
+        color: red;
+    }
+</style>
 <%- include('../partials/userHeader.ejs') %>
 <%- include('../partials/userBreadcrub.ejs') %>
 
@@ -15,6 +20,7 @@
                                     <div class="checkout__input">
                                         <p>Name<span>*</span></p>
                                         <input type="text" id="name" class="form-control" placeholder="Enter name" name="name" required/>
+                                        <small id="nameErr" class="error"></small>
                                     </div>
                                 </div>
                                 <!-- <div class="col-lg-6">
@@ -29,12 +35,14 @@
                                     <div class="checkout__input">
                                         <p>Email<span>*</span></p>
                                         <input type="email" id="email" class="form-control" placeholder="Email" name="email" required/>
+                                        <small id="emailErr" class="error"></small>
                                     </div>
                                 </div>
                                 <div class="col-lg-6">
                                     <div class="checkout__input">
                                         <p>Mobile<span>*</span></p>
                                         <input type="tel" id="mobile" class="form-control" placeholder="Mobile No." name="mobile" required/>
+                                        <small id="mobileErr" class="error">ff</small>
                                     </div>
                                 </div>
                             </div>
@@ -43,12 +51,14 @@
                                     <div class="checkout__input">
                                         <p>Town/City<span>*</span></p>
                                         <input type="text" id="town" class="form-control" placeholder="Town" name="town" required/>
+                                        <small id="townErr" class="error"></small>
                                     </div>
                                 </div>
                                 <div class="col-lg-6">
                                     <div class="checkout__input">
                                         <p>State<span>*</span></p>
                                         <input type="text" id="state" class="form-control" placeholder="State" name="state" required/>
+                                        <small id="stateErr" class="error"></small>
                                     </div>
                                 </div>
                             </div>
@@ -57,20 +67,23 @@
                                     <div class="checkout__input">
                                         <p>Country<span>*</span></p>
                                         <input type="text" id="country" class="form-control" placeholder="Country" name="country" required/>
+                                        <small id="countryErr" class="error"></small>
                                     </div>
                                 </div>
                                 <div class="col-lg-6">
                                     <div class="checkout__input">
                                         <p>ZIP/Post Code<span>*</span></p>
                                         <input type="number" id="zip" class="form-control" placeholder="Enter ZIP Code" name="zip" required/>
+                                        <small id="zipErr" class="error">hello</small>
                                     </div>
                                 </div>
                             </div>
                             <div class="checkout__input">
                                 <p>Address<span>*</span></p>
                                 <input type="text" id="address" name="address" placeholder="Street Address" class="checkout__input__add form-control" required>
+                                <small id="addressErr" class="error"></small>
                             </div>
-                            <button type="submit" class="btn btn-dark rounded-pill text-center">ADD</button>
+                            <button onclick="return validateNewAddress()" type="submit" class="btn btn-dark rounded-pill text-center">ADD</button>
                         </div>
                     </div>
                 </form>
@@ -79,6 +92,8 @@
     </section>
     <!-- Add Address Section End -->
 
+
+    <script src="/addressValidation.js"></script>
 
 <%- include('../partials/script.ejs') %>
 <%- include('../partials/footer.ejs') %>

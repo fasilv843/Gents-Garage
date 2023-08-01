@@ -48,7 +48,7 @@ const postAddAddress = async(req, res) => {
             }).save()
 
             console.log('Address Saved on database');
-            console.log('page : '+page);
+            // console.log('page : '+page);
 
             switch(returnPage){
                 case 'profile': 

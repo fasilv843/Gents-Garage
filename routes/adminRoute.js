@@ -3,6 +3,7 @@ const adminCtrl = require('../controllers/adminCtrl');
 const categoryCtrl = require('../controllers/categoryCtrl');
 const productCtrl = require('../controllers/productCtrl');
 const orderCtrl = require('../controllers/orderCtrl')
+const couponCtrl = require('../controllers/couponCtrl')
 const upload = require('../config/multer');
 const auth = require('../middleware/auth')
 
@@ -54,5 +55,11 @@ admin_route.get('/ordersList',orderCtrl.loadOrdersList)
 admin_route.post('/changeOrderStatus',orderCtrl.changeOrderStatus)
 admin_route.get('/cancelOrderByAdmin/:orderId',orderCtrl.cancelOrderByAdmin)
 
+admin_route.get('/coupons',couponCtrl.loadCoupons)
+admin_route.get('/coupons/addCoupon',couponCtrl.loadAddCoupon)
+admin_route.post('/coupons/addCoupon',couponCtrl.postAddCoupon)
+admin_route.get('/coupons/editCoupon/:couponId',couponCtrl.loadEditCoupon)
+admin_route.post('/coupons/editCoupon/:couponId',couponCtrl.postEditCoupon)
+admin_route.get('/coupons/cancelCoupon/:couponId',couponCtrl.cancelCoupon)
 
 module.exports = admin_route;

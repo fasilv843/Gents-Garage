@@ -139,12 +139,18 @@
                             <%  
                         }
 
-                        if(status < 5){
+                        if(status < 4){
                             %>
                             <div class="col-md-2 d-flex justify-content-center align-items-center">
                                 <a href="/cancelOrder/<%= orderData._id %>" class="btn btn-danger">Cancel Order</a>
                             </div>
                             <%  
+                        }else if(status == 4){
+                            %>
+                            <div class="col-md-2 d-flex justify-content-center align-items-center">
+                                <a href="/returnOrder/<%= orderData._id %>" class="btn btn-warning">Return</a>
+                            </div>
+                            <% 
                         }else if(status == 5){
                             %>
                             <div class="col-md-2 d-flex justify-content-center align-items-center">

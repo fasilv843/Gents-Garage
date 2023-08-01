@@ -15,7 +15,11 @@
 
 </head>
 
-
+<style>
+    small.error{
+        color: red;
+    }
+</style>
 
 <body>
     <section class="vh-100">
@@ -25,7 +29,7 @@
                     <div class="card shadow-2-strong">
                         <div class=" p-5 ">
                             <div class="text-center">
-                                <h3 class="mb-3">SIGN UP</h3>
+                                <h3 class="mb-3">Edit Profile</h3>
                                
                             </div>
                             <form action="/profile/edit" method="post">
@@ -36,10 +40,12 @@
                                         <label class="form-label" for="fname">First Name</label>
                                         <input type="text" id="fname" class="form-control form-control-md rounded-0" value="<%= userData.fname %>"
                                         placeholder="Enter first name" name="fname" required/>
+                                        <small id="fnameErr" class="error"></small>
                                     </div>
                                     <div class="col-md-6 col-12">
                                         <label class="form-label" for="lname">Last Name</label>
                                         <input type="text" id="lname" class="form-control form-control-md rounded-0" value="<%= userData.lname %>" placeholder="Enter last name" name="lname" required/>
+                                        <small id="lnameErr" class="error"></small>
                                     </div>
                                 </div>
 
@@ -48,12 +54,12 @@
                                         <label class="form-label" for="mobile">Mobile</label>
                                         <input type="number" id="mobile"  value="<%= userData.mobile %>"
                                             class="form-control form-control-md rounded-0" placeholder="Enter Mobile No." name="mobile" required/>
+                                        <small id="mobileErr" class="error"></small>
                                     </div>
                                 </div>
 
                                 <div class="text-center">
-                                    <button class="btn btn-dark btn-md rounded-pill px-5 py-2 login-btn" type="submit">Update Profile</button>
-
+                                    <button class="btn btn-dark btn-md rounded-pill px-5 py-2 login-btn" type="submit" onclick="return validateProfile()">Update Profile</button>
                                 </div>
                                 
                             </form>
@@ -63,6 +69,73 @@
             </div>
         </div>
     </section>
+
+    <!-- <script src="/validations.js"></script> -->
+    <script>
+const fnameError = document.getElementById("fnameErr")
+const lnameError = document.getElementById("lnameErr")
+const mobileError = document.getElementById("mobileErr")
+
+
+
+const nameRegex = /^[a-zA-Z]+(([',. -][a-zA-Z ])?[a-zA-Z])$/;
+const mobileRegex = /^(\+\d{1,3}[- ]?)?\d{10}$/
+
+
+
+
+//fname
+function validateFName() {
+    let name = document.getElementById("fname").value.trim()
+    console.log('validating fname');
+    if (name.length === 0) {
+        fnameError.innerHTML = "Name required!";
+        return false;
+    }
+    if (!name.match(nameRegex)) {
+        fnameError.innerHTML = "No numbers allowed";
+        return false;
+    }
+    fnameError.innerHTML = "";
+    return true;
+}
+
+//lname
+function validateLName() {
+    let name = document.getElementById("lname").value.trim()
+    if (name.length === 0) {
+        lnameError.innerHTML = "Name required!";
+        return false;
+    }
+    if (!name.match(nameRegex)) {
+        lnameError.innerHTML = "No numbers allowed";
+        return false;
+    }
+    lnameError.innerHTML = "";
+    return true;
+}
+
+function validateMobile() {
+    let mobile = document.getElementById('mobile').value.trim()
+
+    if (mobile.length === 0) {
+        mobileError.innerHTML = "Mobile required!";
+        return false;
+    }
+    if (!mobile.match(mobileRegex)) {
+        mobileError.innerHTML = 'Enter a valid mobile no.'
+        return false
+    }
+    mobileError.innerHTML = ""
+    return true
+}
+
+function validateProfile(){
+    return validateFName() && validateLName() && validateMobile()
+}
+
+    </script>
+
 </body>
 
 </html>

@@ -24,8 +24,9 @@
 
                 <thead>
                   <tr>
-                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Image</th>
-                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Product</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Image</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Product</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Stock</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Category</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Price</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Action</th>
@@ -53,6 +54,11 @@
                                 </div>
                               </td>
 
+                              
+                              <td class="align-middle text-center text-sm">
+                                <span class="text-secondary text-xs font-weight-bold"><%= pdtsData[i].quantity %></span>
+                              </td>
+
                               <td class="align-middle text-center text-sm">
                                 <p class="text-xs font-weight-bold mb-0"><%= pdtsData[i].category.name %></p>
                               </td>
@@ -60,6 +66,7 @@
                               <td class="align-middle text-center text-sm">
                                 <span class="text-secondary text-xs font-weight-bold"><%= pdtsData[i].price %></span>
                               </td>
+
 
                               <td class="align-middle text-center">
 

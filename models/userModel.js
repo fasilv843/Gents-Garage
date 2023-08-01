@@ -22,8 +22,8 @@ const userSchema = new mongoose.Schema({
         default: new Date('1990-01-01')
     },
     doj:{
-        type:Date,
-        default: Date.now()
+        type:Date
+        // required: true
     },
     cart:[{
         productId:{
@@ -50,6 +50,10 @@ const userSchema = new mongoose.Schema({
     isBlocked:{
         type:Boolean,
         default : false
+    },
+    wallet:{
+        type : Number,
+        default : 0
     }
 })
 
