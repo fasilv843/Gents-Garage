@@ -28,7 +28,7 @@ const loadCheckout = async(req, res ) => {
         // console.log(cart);
         // console.log(userAddress);
 
-        res.render('user/checkout',{isLoggedIn : true, page:'Checkout', userAddress, cart, coupons, walletBalance})
+        res.render('checkout',{isLoggedIn : true, page:'Checkout', userAddress, cart, coupons, walletBalance})
     } catch (error) {
         console.log(error);
     }
@@ -38,7 +38,7 @@ const loadCheckout = async(req, res ) => {
 const placeOrder = async(req, res) => {
     try {
 
-        console.log('On placeOrder Controller');
+        console.log('On placeOrder Controller Ooo');
 
         //getting details needed
         const addressId = req.body.address
@@ -227,7 +227,7 @@ const loadMyOrders = async(req, res) => {
         //     const product = orderData[0].products
         // }
         // console.log('Products of first order : \n\n\n'+product);
-        res.render('user/myOrders',{isLoggedIn:true, page: 'My Orders', parentPage: 'Profile',orderData})
+        res.render('myOrders',{isLoggedIn:true, page: 'My Orders', parentPage: 'Profile',orderData})
     } catch (error) {
         console.log(error);
     }
@@ -264,7 +264,7 @@ const loadViewOrderDetails = async(req, res) => {
                 break;
         }
 
-        res.render('user/orderDetails',{isLoggedIn:true, page :'Order Details', parentPage: 'My Orders',orderData, status})
+        res.render('orderDetails',{isLoggedIn:true, page :'Order Details', parentPage: 'My Orders',orderData, status})
 
     } catch (error) {
         console.log(error);
@@ -277,7 +277,7 @@ const loadOrderSuccess = async(req, res) => {
         console.log('loaded Order Success');
         const isLoggedIn = Boolean(req.session.userId)
 
-        res.render('user/orderSuccess',{isLoggedIn})
+        res.render('orderSuccess',{isLoggedIn})
     } catch (error) {
         console.log(error);
     }
@@ -300,7 +300,7 @@ const loadOrdersList = async(req, res) => {
 
         // console.log(ordersData);
         
-        res.render('admin/ordersList',{ordersData, page:'Orders List'})
+        res.render('ordersList',{ordersData, page:'Orders List'})
     } catch (error) {
         console.log(error);
     }

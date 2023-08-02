@@ -23,15 +23,15 @@ const loadHome = async(req,res) => {
         const isLoggedIn = Boolean(req.session.userId)
         console.log(Boolean(req.session.userId));
         console.log(isLoggedIn);
-        res.render('user/home',{page : 'Home', isLoggedIn});
+        res.render('home',{page : 'Home', isLoggedIn});
     } catch (error) {
-        console.log(error);
+        console.log(error)
     }
 }
 
 const loadLogin = async(req,res) => {
     try {
-        res.render('user/login');
+        res.render('login');
     } catch (error) {
         console.log(error);
     }
@@ -63,16 +63,16 @@ const verifyLogin = async(req,res) => {
                     res.redirect('/')
                 }else{
                     console.log('Sorry:( You are blocked by admins');
-                    res.render('user/login',{message: 'Sorry:( You are blocked by admins'})
+                    res.render('login',{message: 'Sorry:( You are blocked by admins'})
                     return;
                 }
             }else{
                 console.log('Invalid Password');
-                res.render('user/login',{message: 'Invalid Password'})
+                res.render('login',{message: 'Invalid Password'})
             }
         }else{
             console.log('User does not exist');
-            res.render('user/login',{message: 'User does not exist'})
+            res.render('login',{message: 'User does not exist'})
         }
         
     } catch (error) {
@@ -82,7 +82,7 @@ const verifyLogin = async(req,res) => {
 
 const loadSignUp = async(req,res) => {
     try {
-        res.render('user/signup')
+        res.render('signup')
     } catch (error) {
         console.log(error);
     }
@@ -130,17 +130,17 @@ const saveAndLogin = async(req,res) => {
             const userData = await User.findOne({email})
             if(userData){
                 console.log('User Already Exists');
-                return res.render('user/signup',{message : 'User Already Exists'})
+                return res.render('signup',{message : 'User Already Exists'})
             }
 
             const OTP = req.session.OTP = getOTP()
             
             sendVerifyMail(email, OTP); 
-            res.render('user/otpValidation',{ fname, lname, email, mobile, password, message : 'Check Spam mails' })
+            res.render('otpValidation',{ fname, lname, email, mobile, password, message : 'Check Spam mails' })
 
         }else{
             console.log('password not matching');
-            res.render('user/signup',{message : 'Password not matching'})
+            res.render('signup',{message : 'Password not matching'})
         }
 
 
@@ -173,7 +173,7 @@ const validateOTP = async(req,res) => {
             res.redirect('/');
         }else{
             console.log('Incorrect OTP');
-            res.render('user/otpValidation',{ fname, lname, email, mobile, password, message : 'Incorrect OTP' })
+            res.render('otpValidation',{ fname, lname, email, mobile, password, message : 'Incorrect OTP' })
         }
     } catch (error) {
         console.log(error);
@@ -186,7 +186,7 @@ const loadAboutUs = async(req,res) => {
         
         const isLoggedIn = Boolean(req.session.userId)
 
-        res.render('user/aboutUs',{page : 'About Us',isLoggedIn})
+        res.render('aboutUs',{page : 'About Us',isLoggedIn})
     } catch (error) {
         console.log(error);
     }
@@ -215,7 +215,7 @@ const loadShoppingCart = async(req, res ) => {
             )
         }
 
-        res.render('user/shoppingCart',{page: 'Shopping Cart', parentPage: 'Shop', isLoggedIn: true, userData, cartItems})
+        res.render('shoppingCart',{page: 'Shopping Cart', parentPage: 'Shop', isLoggedIn: true, userData, cartItems})
     } catch (error) {
         console.log(error); 
     }
@@ -364,7 +364,7 @@ const loadProfile = async(req, res) => {
         const userAddress = await Addresses.findOne({userId:userId})
         // console.log('User Address \n\n'+ userAddress);
 
-        res.render('user/userProfile',{ userData, userAddress,isLoggedIn:true,page:'Profile'})
+        res.render('userProfile',{ userData, userAddress,isLoggedIn:true,page:'Profile'})
     } catch (error) {
         console.log(error);
     }
@@ -377,7 +377,7 @@ const loadEditProfile = async(req, res) => {
         console.log('userId : '+id);
         const userData = await User.findById({_id:id})
 
-        res.render('user/editProfile',{userData})
+        res.render('editProfile',{userData})
     } catch (error) {
         console.log(error); 
     }
@@ -406,7 +406,7 @@ const postEditProfile = async(req, res) => {
 
 const loadPassConfirmToChangeMail = async(req,res) => {
     try {
-        res.render('user/passConfirmToChangeMail')
+        res.render('passConfirmToChangeMail')
     } catch (error) {
         console.log(error);
     }
@@ -433,7 +433,7 @@ const postPassConfirmToChangeMail = async(req,res) => {
 
 const loadChangeMail = async(req,res) => {
     try {
-        res.render('user/changeMail')
+        res.render('changeMail')
         
     } catch (error) {
         console.log(error);
@@ -456,7 +456,7 @@ const postChangeMail = async(req,res) => {
             console.log('OTP generated when posted new email '+OTP);
             sendVerifyMail(newMail, OTP); 
             req.session.newMail = newMail
-            res.render('user/otpToChangeMail')
+            res.render('otpToChangeMail')
         }
 
 
@@ -503,7 +503,7 @@ const otpValidationToChangeMail = async(req,res) => {
 const loadChangePassword = async(req, res ) => {
     try {
         console.log('loaded change password page');
-        res.render('user/changePass')
+        res.render('changePass')
     } catch (error) {
         console.log(error);
     }
@@ -555,7 +555,7 @@ const forgotPassword = async(req, res ) => {
         const userMail = await User.findById({_id: req.session.userId},{email:1,_id:0})
         const OTP = req.session.OTP = getOTP() 
         sendVerifyMail(userMail.email, OTP);
-        res.render('user/forgotPasswordVerification')
+        res.render('forgotPasswordVerification')
 
     } catch (error) {
         console.log(error);
@@ -568,7 +568,7 @@ const verifyOTPforgotPass = async(req, res) => {
         const adminOTP = req.session.OTP
         if(userOTP == adminOTP){
             console.log('OTP matched :) ');
-            res.render('user/resetPassword')
+            res.render('resetPassword')
         }else{
             console.log('OTP not matching .... :(');
             res.redirect('/profile/forgotPassword')
@@ -580,7 +580,7 @@ const verifyOTPforgotPass = async(req, res) => {
 
 const loadResetPassword = async(req, res ) => {
     try {
-        res.render('user/resetPassword')
+        res.render('resetPassword')
     } catch (error) {
         console.log(error);
     }

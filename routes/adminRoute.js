@@ -8,8 +8,9 @@ const upload = require('../config/multer');
 const auth = require('../middleware/auth')
 
 
-const admin_route = express.Router()
+const admin_route = express()
 
+admin_route.set('views','./views/admin')
 
 
 //Admin Login Handling

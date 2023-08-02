@@ -5,7 +5,7 @@ const User = require('../models/userModel')
 
 const loadDashboard = async(req,res) => {
     try {
-        res.render('admin/dashboard',{page : 'Dashboard'})
+        res.render('dashboard',{page : 'Dashboard'})
     } catch (error) {
         console.log(error);
     }
@@ -13,7 +13,7 @@ const loadDashboard = async(req,res) => {
 
 const loadAdminLogin = async(req,res) => {
     try {
-        res.render('admin/login')
+        res.render('login')
     } catch (error) {
         console.log(error);
     }
@@ -55,7 +55,7 @@ const logoutAdmin = async(req,res) => {
 const loadUsers = async(req,res) => { 
     try {
         const userData = await User.find({})
-        res.render('admin/users',{userData, page: 'Users'})
+        res.render('users',{userData, page: 'Users'})
     } catch (error) {
         console.log('error');
     }

@@ -7,7 +7,7 @@ const loadProduct = async(req,res) => {
     try {
         const pdtsData = await Products.find().populate("category")
         // console.log(pdtsData);
-        res.render('admin/products',{pdtsData, page:'Products'})
+        res.render('products',{pdtsData, page:'Products'})
     } catch (error) {
         console.log(error);
     }
@@ -16,7 +16,7 @@ const loadProduct = async(req,res) => {
 const loadAddProduct = async(req,res) => {
     try {
         const categories = await Categories.find({})
-        res.render('admin/addProduct',{categories, page:'Products'})
+        res.render('addProduct',{categories, page:'Products'})
     } catch (error) {
         console.log(error);
     }
@@ -65,7 +65,7 @@ const loadEditProduct = async(req,res) => {
         const catData = await Categories.find({})
         // console.log(pdtData);
         // console.log(catData);
-        res.render('admin/editProduct',{pdtData, catData, page: 'Products'})
+        res.render('editProduct',{pdtData, catData, page: 'Products'})
 
     } catch (error) {
         console.log(error);
@@ -163,7 +163,7 @@ const deleteImage = async(req,res) => {
             }
         }
         
-        res.redirect(`/admin/products/editProduct/${id}`)
+        res.redirect(`/admin/products/editProduct/${id}`);
 
     } catch (error) {
         console.log(error);
@@ -177,7 +177,7 @@ const loadShop = async(req,res) => {
 
         const pdtsData = await Products.find({isListed:true})
         // console.log(pdtsData);
-        res.render('user/shop',{pdtsData, page:'Shop',isLoggedIn})
+        res.render('shop',{pdtsData, page:'Shop',isLoggedIn})
     } catch (error) {
         console.log(error);
     }
@@ -189,7 +189,7 @@ const loadProductOverview = async(req,res) => {
         console.log(id);
         const isLoggedIn = Boolean(req.session.userId)
         const pdtData = await Products.findById({_id:id})
-        res.render('user/productOverview',{pdtData, parentPage : 'Shop', page: 'Product Overview',isLoggedIn})
+        res.render('productOverview',{pdtData, parentPage : 'Shop', page: 'Product Overview',isLoggedIn})
     } catch (error) {
         console.log(error);
     }

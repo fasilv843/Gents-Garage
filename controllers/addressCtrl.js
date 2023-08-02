@@ -5,7 +5,7 @@ const loadAddAddress = async(req, res) => {
     try {
         const returnPage = req.query.returnPage
         console.log('returnPage : '+returnPage);
-        res.render('user/addAddress',{isLoggedIn : true, page:'Add Address', parentPage:'Profile', returnPage});
+        res.render('addAddress',{isLoggedIn : true, page:'Add Address', parentPage:'Profile', returnPage})
     } catch (error) {
         console.log(error);
     }
@@ -73,7 +73,7 @@ const loadEditAddress = async(req, res) => {
         const addressData = await Addresses.findOne({userId, 'addresses._id':addressId})
         const address = addressData.addresses.find(obj => obj._id.toString() === addressId)
         // console.log(address);
-        res.render('user/editAddress',{address, isLoggedIn: true, page: 'Profile'})
+        res.render('editAddress',{address, isLoggedIn: true, page: 'Profile'})
     } catch (error) {
         console.log(error);
     }

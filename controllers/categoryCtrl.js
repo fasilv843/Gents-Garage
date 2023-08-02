@@ -3,7 +3,7 @@ const Categories = require('../models/categoryModel');
 const loadCategories = async(req,res) => {
     try {
         const categories = await Categories.find({})
-        res.render('admin/categories',{categories, page:'Categories'})
+        res.render('categories',{categories, page:'Categories'})
     } catch (error) {
         console.log(error);
     }

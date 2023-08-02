@@ -22,8 +22,9 @@ const userSchema = new mongoose.Schema({
         default: new Date('1990-01-01')
     },
     doj:{
-        type:Date
-        // required: true
+        type: Date,
+        default: new Date,
+        required: true
     },
     cart:[{
         productId:{

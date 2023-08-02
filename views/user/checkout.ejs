@@ -8,7 +8,6 @@
     <section>
         <div class="container">
             <div class="my-5">
-                <form action="/shoppingCart/placeOrder" method="post" id="checkout-form">
                     <div class="row">
                         <div class="col-lg-8 col-md-6" >
                             <h2 class="">Billing Details</h2>
@@ -61,11 +60,16 @@
                         <div class="col-lg-4 col-md-6 mt-5 ps-2">
 
                             <div class="cart__discount">
-                                <h6>Discount codes</h6>
-                                <form action="#" class="form-group">
-                                    <input type="text" class="" placeholder="Coupon code">
-                                    <button type="submit" class="btn btn-dark rounded-0">Apply</button>
+                                <h6>Apply Coupons</h6>
+                                <form action="" id="applyCoupon" method="" class="form-group d-flex">
+                                    <input type="text" name="code" class="form-group rounded-0 flex-grow-1 border border-bottom-1" style="height: 40px; border-bottom: 1;" placeholder="Enter Coupon code">
+                                    <button type="submit" class="btn btn-dark rounded-0" style="margin-left: -5px; height: 40px;">Apply</button>
                                 </form>
+                                <div style="position: relative; top: 10px;">
+                                    <a class="text-primary" style="cursor: pointer;" data-bs-toggle="modal"
+                                        href="#exampleModal">Explore Coupons</a>
+                                    <h6 class="text-danger mt-1" id="couponErr"></h6>
+                                </div>
                             </div>
 
                             <div class="px-3 pt-3 pb-5 " style="background-color: #EBEFF1;">
@@ -125,6 +129,12 @@
                                             <div class="mb-3">
                                                 <span><strong>Discount</strong></span>
                                             </div>
+                                            <div class="mb-3" id="couponDiscountLabelDiv" hidden>
+                                                <span>
+                                                    <strong>Coupon Discount</strong>
+                                                    <a href="" onclick="removeCoupon()">remove</a>
+                                                </span>
+                                            </div>
                                             <div class="mb-3">
                                                 <span><strong>Total</strong></span>
                                             </div>
@@ -136,18 +146,28 @@
                                             <div class="mb-3">
                                                 <span style="color: rgb(0, 164, 19);">-₹ <%= totalDiscount %></span>
                                             </div>
+                                            <div class="mb-3" id="couponDiscountDiv" hidden>
+                                                <span id="couponDiscount" style="color: rgb(0, 164, 19);">-₹ </span>
+                                            </div>
                                             <div class="mb-3">
-                                                <span>₹ <%= totalPrice-totalDiscount %> </span>
+                                                <% 
+                                                let payAmount = totalPrice-totalDiscount
+                                                %>
+                                                <span id="payAmount"><strong>₹ <%= payAmount %></strong> </span>
                                             </div>
                                         </div>
                                     </div>
 
-                                    <div style="color: rgb(0, 164, 19);font-size: 17px;" class="text-center">
-                                        YOU SAVED ₹ <%= totalDiscount %></div>
-                                    <!-- payment -->
+                                    <!-- <div style="color: rgb(0, 164, 19);font-size: 17px;" class="text-center">
+                                        YOU SAVED ₹ <span id="totalSaved"><%=// totalDiscount %> </span>
+                                    </div> -->
                                     <hr>
+
+                                    <!-- payment -->
+                <form action="/shoppingCart/placeOrder" method="post" id="checkout-form">
+                
                                     <div class="mb-2">
-                                        <h5 class="mb-2">Choose Payment</h5>
+                                        <h5 class="mb-4">Choose Payment</h5>
                                         <% 
                                         if(walletBalance){
                                             %>
@@ -162,9 +182,9 @@
                                             <%  
                                         }
                                         %>
-                                        <input type="radio" name="payment" id="payment"  value="COD" class="mx-2" checked><label for="payment">COD</label><br>
-                                        <input type="radio" name="payment" id="payment"  value="Razorpay" class="mx-2" checked><label for="payment">Razorpay</label><br>
-                                        <input type="radio" name="payment" id="payment"  value="Wallet" class="mx-2" checked><label for="payment">Wallet</label><br>
+                                        <input type="radio" name="payment" id="COD"  value="COD" class="mx-2" ><label for="payment">COD</label><br>
+                                        <input type="radio" name="payment" id="Razorpay"  value="Razorpay" class="mx-2" ><label for="payment">Razorpay</label><br>
+                                        <input type="radio" name="payment" id="Wallet"  value="Wallet" class="mx-2" <% if(walletBalance < payAmount){  %> disabled <% } %> ><label for="payment">Wallet</label><br>
                                     </div>
                                 </div>
 
@@ -181,12 +201,69 @@
     </section>
     <!-- Checkout Section End -->
 
+                <!-- Explore Coupons Modal Start -->
+                <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+                aria-hidden="true">
+                <div class="modal-dialog modal-dialog-scrollable">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel">Coupons</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <% 
+                            if(coupons && coupons.length){
+                                coupons.forEach(coupon => {
+                                    %>
+                                    <div class="card px-2 mb-4">
+                                        <div class="coupon bg-white rounded mb-3 d-flex justify-content-between border-1">
+    
+                                            <div class="tengah  d-flex w-100 justify-content-start">
+                                                <div class="ps-2">
+                                                    <span class="badge badge-success">Valid</span>
+                                                    <h2 class="lead"><strong>
+                                                            <%=coupon.name %>
+                                                        </strong></h2>
+                                                    <p class="text-muted mb-0">
+                                                        <%=coupon.discount %>% off on purchase above ₹ <%=coupon.minPurchase %>
+                                                    </p>
+                                                </div>
+                                            </div>
+                                            <div class="kanan">
+                                                <div class="info m-3 mt-4">
+                                                    <a id="<%=coupon.name  %>"
+                                                        class="btn btn-sm btn-outline-primary btn-block"
+                                                        onclick="copyCoupon('<%=coupon.name  %>')">COPY</a>
+                                                </div>
+                                            </div>
+                                        </div>
+    
+                                    </div>
+                                    <%  
+                                })
+                            }else{
+                                %>
+                                <small>No Coupons Available</small>
+                                <%  
+                            }
+                            %>
+
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal End -->
+
 <%- include('../partials/footer.ejs') %>  
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js"
         integrity="sha512-3gJwYpMe3QewGELv8k/BX9vcqhryRdzRMxVfq6ngyWXwo03GFEzjsUm8Q7RZcHPHksttq7/GFoxjCVUjkjvPdw=="
         crossorigin="anonymous" referrerpolicy="no-referrer">
 </script>
+<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script> -->
+
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <script>
     $('#checkout-form').submit((e) => {
@@ -259,4 +336,73 @@
     }
 
 </script>
+
+<script>
+    $('#applyCoupon').submit((e) => {
+        e.preventDefault()
+
+        $.ajax({
+            url:'/applyCoupon',
+            method: 'post',
+            data: $('#applyCoupon').serialize(),
+            success: (res) => {
+                if( res.status === true ){
+                    $('#couponDiscount').html(`${res.couponDiscount}%`)
+                    $('#payAmount').html(`₹ ${res.payAmount}`)
+                    document.getElementById('couponDiscountDiv').hidden = false
+                    document.getElementById('couponDiscountLabelDiv').hidden = false
+                    $('#couponErr').html('')
+                    if(res.isWalletHasPayAmount){
+
+                        //Enabling wallet option
+                        document.getElementById('Wallet').disabled = false
+                        const walletCheckBox = document.getElementById('walletCheckBox');
+                        const razorpayRadio = document.getElementById('Razorpay')
+                        // const COD = document.getElementById('COD')
+
+                        function updatePaymentOptions(){
+                            if(walletCheckBox.checked){
+                                razorpayRadio.disabled = true
+                                razorpayRadio.checked = false
+                                // COD.disabled = true
+                                // COD.checked = false
+                            }else{
+                                razorpayRadio.disabled = false
+                            }
+                        }
+
+                        //For initial setup of options
+                        updatePaymentOptions()
+
+                        //Listens to changes of options and update payment options
+                        walletCheckBox.addEventListener('change',updatePaymentOptions);
+                    }
+                }else{
+                    $('#couponErr').html(res.message)
+                }
+            }
+        })
+    })
+</script>
+
+<script>
+    function removeCoupon() {
+        $.ajax({
+            url: '/removeCoupon',
+            method: 'get',
+            success: (res) => {
+                if (res.status == true) {
+                    location.reload()
+                }
+            }
+        })
+    }
+</script>
+<script>
+    function copyCoupon(couponName) {
+        document.getElementById(couponName).innerHTML = "COPIED"
+        navigator.clipboard.writeText(couponName);
+    }
+</script>
+
 <%- include('../partials/script.ejs') %>

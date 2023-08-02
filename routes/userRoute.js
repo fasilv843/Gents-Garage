@@ -3,16 +3,20 @@ const userCtrl = require('../controllers/userCtrl');
 const productCtrl = require('../controllers/productCtrl')
 const addressCtrl = require('../controllers/addressCtrl')
 const orderCtrl = require('../controllers/orderCtrl')
+const couponCtrl = require('../controllers/couponCtrl')
 const auth = require('../middleware/auth')
 
-const user_route = express.Router()
+const user_route = express();
+
+user_route.set('views','./views/user');
+
 
 user_route.use( async(req, res, next) => {
     res.locals.cartCount = req.session.cartCount
     next()
 })
 
-user_route.use('/',auth.isUserBlocked)
+user_route.use('/',auth.isUserBlocked);
 
 
 // HTTP Mehtods
@@ -78,6 +82,9 @@ user_route.get('/profile/myOrders',orderCtrl.loadMyOrders)
 user_route.get('/viewOrderDetails/:orderId',orderCtrl.loadViewOrderDetails)
 user_route.get('/cancelOrder/:orderId',orderCtrl.cancelOrderByUser)
 user_route.get('/returnOrder/:orderId',orderCtrl.returnOrder)
+
+user_route.post('/applyCoupon',couponCtrl.applyCoupon);
+user_route.get('/removeCoupon',couponCtrl.removeCoupon)
 
 
 module.exports = user_route;
