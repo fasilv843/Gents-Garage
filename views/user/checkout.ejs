@@ -1,7 +1,9 @@
 
 <%- include('../partials/head.ejs') %>
 <%- include('../partials/userHeader.ejs') %>
-<%-// include('../partials/userBreadcrub.ejs') %>
+<%- include('../partials/userBreadcrub.ejs') %>
+
+
 
 
     <!-- Checkout Section Begin -->
@@ -12,7 +14,20 @@
                         <div class="col-lg-8 col-md-6" >
                             <h2 class="">Billing Details</h2>
                             <hr>
+                            <div class="cart__discount">
+                                <h6>Apply Coupons</h6>
+                                <form action="" id="applyCoupon" method="" class="form-group d-flex">
+                                    <input type="text" name="code" class="form-group rounded-0 flex-grow-1 border border-bottom-1" style="height: 40px; border-bottom: 1;" placeholder="Enter Coupon code">
+                                    <button type="submit" class="btn btn-dark rounded-0" style="margin-left: -5px; height: 40px;">Apply</button>
+                                </form>
+                                <div style="position: relative; top: 10px;">
+                                    <!-- <a class="text-primary" style="cursor: pointer;" data-bs-toggle="modal"
+                                        href="#exampleModal">Explore Coupons</a> -->
+                                    <h6 class="text-danger" id="couponErr"></h6>
+                                </div>
+                            </div>
 
+                <form action="/shoppingCart/placeOrder" method="post" id="checkout-form">
                             <% 
                             if(userAddress){
                                 userAddress.addresses.forEach((address) => {
@@ -59,18 +74,7 @@
                         <!-- right side -->
                         <div class="col-lg-4 col-md-6 mt-5 ps-2">
 
-                            <div class="cart__discount">
-                                <h6>Apply Coupons</h6>
-                                <form action="" id="applyCoupon" method="" class="form-group d-flex">
-                                    <input type="text" name="code" class="form-group rounded-0 flex-grow-1 border border-bottom-1" style="height: 40px; border-bottom: 1;" placeholder="Enter Coupon code">
-                                    <button type="submit" class="btn btn-dark rounded-0" style="margin-left: -5px; height: 40px;">Apply</button>
-                                </form>
-                                <div style="position: relative; top: 10px;">
-                                    <a class="text-primary" style="cursor: pointer;" data-bs-toggle="modal"
-                                        href="#exampleModal">Explore Coupons</a>
-                                    <h6 class="text-danger mt-1" id="couponErr"></h6>
-                                </div>
-                            </div>
+
 
                             <div class="px-3 pt-3 pb-5 " style="background-color: #EBEFF1;">
                                 <div class="">
@@ -164,7 +168,6 @@
                                     <hr>
 
                                     <!-- payment -->
-                <form action="/shoppingCart/placeOrder" method="post" id="checkout-form">
                 
                                     <div class="mb-2">
                                         <h5 class="mb-4">Choose Payment</h5>
@@ -280,6 +283,8 @@
                     // console.log('in ajax status razorpay');
                     // location.href = '/orderFailed'
                     razorpayPayment(res.order)
+                }else if(res.status == 'Wallet'){
+                    location.href = '/orderSuccess'
                 }
             }
         })
@@ -358,16 +363,17 @@
                         document.getElementById('Wallet').disabled = false
                         const walletCheckBox = document.getElementById('walletCheckBox');
                         const razorpayRadio = document.getElementById('Razorpay')
-                        // const COD = document.getElementById('COD')
+                        const COD = document.getElementById('COD')
 
                         function updatePaymentOptions(){
                             if(walletCheckBox.checked){
                                 razorpayRadio.disabled = true
                                 razorpayRadio.checked = false
-                                // COD.disabled = true
-                                // COD.checked = false
+                                COD.disabled = true
+                                COD.checked = false
                             }else{
                                 razorpayRadio.disabled = false
+                                COD.disabled = false
                             }
                         }
 
@@ -383,6 +389,34 @@
             }
         })
     })
+</script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+
+        const walletCheckBox = document.getElementById('walletCheckBox');
+        const razorpayRadio = document.getElementById('Razorpay')
+        const CODRadio = document.getElementById('COD')
+
+        function updatePaymentOptions(){
+            if(walletCheckBox.checked && walletBalance >= payAmount){
+                razorpayRadio.disabled = true
+                razorpayRadio.checked = false
+                CODRadio.disabled = true
+                CODRadio.checked = false
+            }else{
+                razorpayRadio.disabled = false
+                CODRadio.disabled = false
+            }
+        }
+
+        //For initial setup of options
+        updatePaymentOptions()
+
+        //Listens to changes of options and update payment options
+        walletCheckBox.addEventListener('change',updatePaymentOptions);
+    });
+    
 </script>
 
 <script>

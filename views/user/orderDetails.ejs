@@ -142,7 +142,7 @@
                         if(status < 4){
                             %>
                             <div class="col-md-2 d-flex justify-content-center align-items-center">
-                                <a href="/cancelOrder/<%= orderData._id %>" class="btn btn-danger">Cancel Order</a>
+                                <a href="/cancelOrder/<%= orderData._id %>?cancelledBy=user" class="btn btn-danger">Cancel Order</a>
                             </div>
                             <%  
                         }else if(status == 4){
@@ -161,6 +161,12 @@
                             %>
                             <div class="col-md-2 d-flex justify-content-center align-items-center">
                                 <h4 style="color: red;">Order Cancelled By Admin</h4>
+                            </div>
+                            <% 
+                        }else if(status > 6){
+                            %>
+                            <div class="col-md-2 d-flex justify-content-center align-items-center">
+                                <h4 style="color: red;"><%= orderData.status %></h4>
                             </div>
                             <% 
                         }

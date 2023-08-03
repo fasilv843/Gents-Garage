@@ -56,6 +56,12 @@ const orderSchema = mongoose.Schema({
     date:{
         type: Date,
         required: true
+    },
+    couponCode:{
+        type: String
+    },
+    couponDiscount:{
+        type: String
     }
 })
 

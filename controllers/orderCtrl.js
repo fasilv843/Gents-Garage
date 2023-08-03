@@ -18,6 +18,7 @@ const loadCheckout = async(req, res ) => {
         const userAddress = await Addresses.findOne({ userId: userId})
         const userData = await User.findById({_id: userId}).populate('cart.productId')
         const cart = userData.cart
+        
         if(!cart){
             return redirect('/shoppingCart')
         }
@@ -45,6 +46,7 @@ const placeOrder = async(req, res) => {
         const paymentMehod = req.body.payment
         const userId = req.session.userId
 
+        console.log('addressId : '+addressId);
 
         //getting selected address
         const userAddress = await Addresses.findOne({userId})
@@ -87,12 +89,21 @@ const placeOrder = async(req, res) => {
             }
             console.log(totalPrice);
 
-            req.session.totalPrice = totalPrice
-    
-            // cart.reduce((acc, curr) => acc+curr.price*curr.quantity, acc)
-    
+            req.session.totalPrice = totalPrice  //??
+
+            let couponCode = '';
+            let couponDiscount = 0;
+
+            if(req.session.coupon){
+                couponCode = req.session.coupon.code
+                couponDiscount = req.session.coupon.discount
+                totalPrice = totalPrice - (totalPrice * (couponDiscount / 100))
+            }
+            
+            
             if(paymentMehod === 'COD'){
                 console.log('Payment method is COD');
+                console.log(address);
                 await new Orders({
                     userId, 
                     deliveryAddress: address,
@@ -100,7 +111,9 @@ const placeOrder = async(req, res) => {
                     products, 
                     paymentMehod,
                     status: 'Order Confirmed',
-                    date: new Date()
+                    date: new Date(),
+                    couponCode,
+                    couponDiscount
                 }).save()
     
                 //Reducing quantity/stock of purchased products from Products Collection
@@ -143,6 +156,64 @@ const placeOrder = async(req, res) => {
 
                 })
                 // console.log('instance created :>');
+            }else if(paymentMehod == 'Wallet'){
+                console.log('Payment method is COD');
+                console.log(address);
+                await new Orders({
+                    userId, 
+                    deliveryAddress: address,
+                    totalPrice,
+                    products, 
+                    paymentMehod,
+                    status: 'Order Confirmed',
+                    date: new Date(),
+                    couponCode,
+                    couponDiscount
+                }).save()
+    
+                //Reducing quantity/stock of purchased products from Products Collection
+                for (const { productId, quantity } of cart) {
+                    await Products.updateOne(
+                        { _id: productId._id },
+                        { $inc: { quantity: -quantity } }
+                    );
+                }
+    
+                //Deleting Cart from user collection
+                await User.findByIdAndUpdate(
+                    {_id:userId},
+                    {
+                        $set:{
+                            cart: []
+                        }
+                    }
+                );
+
+                //Adding user to usedUsers list in Coupons collection
+                if(req.session.coupon != null){
+                    await Coupons.findByIdAndUpdate(
+                        {_id:req.session.coupon._id},
+                        {
+                            $push:{
+                                usedUsers: userId
+                            }
+                        }
+                    )
+                }
+    
+                req.session.cartCount = 0;
+
+                // Decrementing wallet amount
+                await User.findByIdAndUpdate(
+                    { _id: userId },
+                    {
+                        $inc: {
+                            wallet: -totalPrice
+                        }
+                    }
+                );
+
+                res.json({status : 'Wallet'})
             }
 
 
@@ -262,6 +333,12 @@ const loadViewOrderDetails = async(req, res) => {
             case 'Cancelled By Admin':
                 status = 6;
                 break;
+            case 'Pending Return Approval':
+                status = 7;
+                break;
+            case 'Returned':
+                status = 8;
+                break;
         }
 
         res.render('orderDetails',{isLoggedIn:true, page :'Order Details', parentPage: 'My Orders',orderData, status})
@@ -331,22 +408,40 @@ const changeOrderStatus = async(req,res) => {
     }
 }
 
-const cancelOrderByUser = async(req,res) => {
+const cancelOrder = async(req,res) => {
     try {
         const orderId = req.params.orderId
+        const cancelledBy = req.query.cancelledBy
         const userId = req.session.userId
         const orderData = await Orders.findById({_id:orderId})
-        await Orders.findByIdAndUpdate(
-            {_id: orderId},
-            {
-                $set:{
-                    status: 'Cancelled'
-                }
-            }
-        );
 
-        if(orderData.paymentMehod == 'Razorpay'){
-            console.log('cancelled order Payment method razorpay, updating wallet');
+        console.log(cancelledBy);
+        if(cancelledBy == 'user'){
+
+            await Orders.findByIdAndUpdate(
+                {_id: orderId},
+                {
+                    $set:{
+                        status: 'Cancelled'
+                    }
+                }
+            );
+
+        }else if(cancelledBy == 'admin'){
+
+            await Orders.findByIdAndUpdate(
+                {_id: orderId},
+                {
+                    $set:{
+                        status: 'Cancelled By Admin'
+                    }
+                }
+            );
+        }
+
+
+        if(orderData.paymentMehod !== 'COD'){
+            console.log('cancelled order Payment method razorpay or wallet, updating wallet');
             await User.findByIdAndUpdate(
                 {_id: userId },
                 {
@@ -357,42 +452,12 @@ const cancelOrderByUser = async(req,res) => {
             )
         }
 
-        res.redirect('/profile/myOrders')
-    } catch (error) {
-        console.log(error);
-    }
-}
-
-const cancelOrderByAdmin = async(req,res) => {
-    try {
-
-        const orderId = req.params.orderId
-        const userId = req.session.userId
-
-        const orderData = await Orders.findById({_id:orderId})
-
-        await Orders.findByIdAndUpdate(
-            {_id: orderId},
-            {
-                $set:{
-                    status: 'Cancelled By Admin'
-                }
-            }
-        )
-
-        if(orderData.paymentMehod == 'Razorpay'){
-            console.log('cancelled order Payment method razorpay, updating wallet');
-            await User.findByIdAndUpdate(
-                {_id: userId },
-                {
-                    $inc:{
-                        wallet: orderData.totalPrice
-                    }
-                }
-            )
+        if(cancelledBy == 'user'){
+            res.redirect('/profile/myOrders')
+        }else if(cancelledBy == 'admin'){
+            res.redirect('/admin/ordersList')
         }
 
-        res.redirect('/admin/ordersList')
     } catch (error) {
         console.log(error);
     }
@@ -400,12 +465,58 @@ const cancelOrderByAdmin = async(req,res) => {
 
 const returnOrder = async(req, res) => {
     try {
-        console.log('returning order');
+
+        const userId = req.session.userId;
+        const orderId = req.params.orderId
+
+        await Orders.findByIdAndUpdate(
+            {_id: orderId},
+            {
+                $set:{
+                    status: 'Pending Return Approval'
+                }
+            }
+        );
+        
+        res.redirect(`/viewOrderDetails/${orderId}`)
+        
     } catch (error) {
         console.log(error);
     }
 }
 
+const approveReturn = async(req,res,next) => {
+    try {
+        const orderId = req.params.orderId;
+
+        //Changing status into Returned
+        const orderData = await Orders.findByIdAndUpdate(
+            {_id:orderId},
+            {
+                $set:{
+                    status: 'Returned'
+                }
+            }
+        );
+
+        const userId = orderData.userId;
+
+        //Adding amount into users wallet
+        await User.findByIdAndUpdate(
+            {_id:userId},
+            {
+                $inc:{
+                    wallet: orderData.totalPrice
+                }
+            }
+        );
+
+        res.redirect('/admin/ordersList')
+    } catch (error) {
+        console.log(error);
+        next(error)
+    }
+}
 
 
 module.exports = {
@@ -417,8 +528,8 @@ module.exports = {
     loadViewOrderDetails,
     loadOrdersList,
     changeOrderStatus,
-    cancelOrderByUser,
-    cancelOrderByAdmin,
+    cancelOrder,
     verifyPayment,
-    returnOrder
+    returnOrder,
+    approveReturn
 }

@@ -156,7 +156,7 @@ const applyCoupon = async(req, res, next) => {
                     const isCodeUsed = couponData.usedUsers.find( id => id == userId);
                     if(!isCodeUsed){
 
-                        req.session.couponData = couponData;
+                        req.session.coupon = couponData;
                         let payAmount = cartAmount - ( cartAmount* (couponData.discount / 100))
                         let isWalletHasPayAmount = false
                         if(userData.wallet >= payAmount){

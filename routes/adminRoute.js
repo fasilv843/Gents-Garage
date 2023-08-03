@@ -54,7 +54,8 @@ admin_route.get('/products/imageDelete/:id',productCtrl.deleteImage)
 
 admin_route.get('/ordersList',orderCtrl.loadOrdersList)
 admin_route.post('/changeOrderStatus',orderCtrl.changeOrderStatus)
-admin_route.get('/cancelOrderByAdmin/:orderId',orderCtrl.cancelOrderByAdmin)
+admin_route.get('/cancelOrder/:orderId',orderCtrl.cancelOrder)
+admin_route.get('/approveReturn/:orderId',orderCtrl.approveReturn)
 
 admin_route.get('/coupons',couponCtrl.loadCoupons)
 admin_route.get('/coupons/addCoupon',couponCtrl.loadAddCoupon)

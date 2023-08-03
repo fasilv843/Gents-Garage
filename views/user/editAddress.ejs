@@ -1,4 +1,9 @@
 <%- include('../partials/head.ejs') %>
+<style>
+    small.error{
+        color: red;
+    }
+</style>
 <%- include('../partials/userHeader.ejs') %>
 <%- include('../partials/userBreadcrub.ejs') %>
 
@@ -11,30 +16,27 @@
                         <div class="d-flex flex-column col-lg-8 col-md-6">
                             <h6 class="checkout__title">Enter Details</h6>
                             <div class="row">
-                                <div class="col-lg-6">
+                                <div class="col-lg-12">
                                     <div class="checkout__input">
                                         <p>Name<span>*</span></p>
                                         <input type="text" id="name" class="form-control" placeholder="Enter name" name="name" value="<%= address.userName %>" required/>
+                                        <small id="nameErr" class="error"></small>
                                     </div>
                                 </div>
-                                <!-- <div class="col-lg-6">
-                                    <div class="checkout__input">
-                                        <p>Last Name<span>*</span></p>
-                                        <input type="text" id="lname" class="form-control" placeholder="Enter Last name" name="lname" required/>
-                                    </div>
-                                </div> -->
                             </div>
                             <div class="row">
                                 <div class="col-lg-6">
                                     <div class="checkout__input">
                                         <p>Email<span>*</span></p>
                                         <input type="email" id="email" class="form-control" placeholder="Email" value="<%= address.email %>" name="email" required/>
+                                        <small id="emailErr" class="error"></small>
                                     </div>
                                 </div>
                                 <div class="col-lg-6">
                                     <div class="checkout__input">
                                         <p>Mobile<span>*</span></p>
                                         <input type="tel" id="mobile" class="form-control" placeholder="Mobile No." value="<%= address.mobile %>" name="mobile" required/>
+                                        <small id="mobileErr" class="error"></small>
                                     </div>
                                 </div>
                             </div>
@@ -43,12 +45,14 @@
                                     <div class="checkout__input">
                                         <p>Town/City<span>*</span></p>
                                         <input type="text" id="town" class="form-control" placeholder="Town" value="<%= address.town %>" name="town" required/>
+                                        <small id="townErr" class="error"></small>
                                     </div>
                                 </div>
                                 <div class="col-lg-6">
                                     <div class="checkout__input">
                                         <p>State<span>*</span></p>
                                         <input type="text" id="state" class="form-control" placeholder="State" value="<%= address.state %>" name="state" required/>
+                                        <small id="stateErr" class="error"></small>
                                     </div>
                                 </div>
                             </div>
@@ -57,18 +61,21 @@
                                     <div class="checkout__input">
                                         <p>Country<span>*</span></p>
                                         <input type="text" id="country" class="form-control" placeholder="Country" value="<%= address.country %>" name="country" required/>
+                                        <small id="countryErr" class="error"></small>
                                     </div>
                                 </div>
                                 <div class="col-lg-6">
                                     <div class="checkout__input">
                                         <p>ZIP/Post Code<span>*</span></p>
                                         <input type="number" id="zip" class="form-control" placeholder="Enter ZIP Code" value="<%= address.zip %>" name="zip" required/>
+                                        <small id="zipErr" class="error"></small>
                                     </div>
                                 </div>
                             </div>
                             <div class="checkout__input">
                                 <p>Address<span>*</span></p>
                                 <input type="text" id="address" name="address" placeholder="Street Address" value="<%= address.address %>" class="checkout__input__add form-control" required>
+                                <small id="addressErr" class="error"></small>
                             </div>
                             <button type="submit" class="btn btn-dark rounded-pill text-center" onclick="return validateNewAddress()">UPDATE</button>
                         </div>
@@ -79,7 +86,7 @@
     </section>
     <!-- Add Address Section End -->
 
-    <script src="/addressValidation.js"></script>
+    <script src="/validations/addressValidation.js"></script>
     
 
 <%- include('../partials/script.ejs') %>

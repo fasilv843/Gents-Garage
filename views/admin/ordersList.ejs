@@ -123,9 +123,15 @@
                                 if(order.status == 'Order Confirmed' || order.status == 'Shipped'){
                                     %>
                                     <td class="align-middle text-center">
-                                        <a href="/admin/cancelOrderByAdmin/<%= order._id %>" class="btn btn-danger">Cancel</a>
+                                        <a href="/admin/cancelOrder/<%= order._id %>?cancelledBy=admin" class="btn btn-danger">Cancel</a>
                                     </td>
                                     <%  
+                                }else if(order.status === 'Pending Return Approval'){
+                                  %>
+                                  <td class="align-middle text-center">
+                                      <a href="/admin/approveReturn/<%= order._id %>" class="btn btn-warning">Approve</a>
+                                  </td>
+                                  <%  
                                 }
                                 %>
                                 

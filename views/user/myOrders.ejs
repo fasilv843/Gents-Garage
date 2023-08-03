@@ -36,10 +36,11 @@
                                     <% 
                                     //let totalPaid = order.productPrice*order.quantity // - (order.discountPrice*order.quantity)
                                     %>
-                                    <div class="col-md-3 text-center mt-3 justify-content-center d-flex align-items-center">
+                                    <div class="col-md-3 text-center mt-3 d-flex flex-column justify-content-center  align-items-center">
                                         <h6 class="card-text">Amount: ₹ <%= order.totalPrice %></h6>
+                                        <h6 class="card-text">via : <%= order.paymentMehod %></h6>
                                     </div>
-                                    <div class="col-md-2 text-center mt-3 justify-content-center d-flex align-items-center">
+                                    <div class="col-md-2 text-center mt-3 d-flex flex-column justify-content-center align-items-center">
                                         <% 
                                         const dd = order.date.getDate();
                                         const mm = order.date.getMonth() + 1;
@@ -48,6 +49,25 @@
                                         const formattedDate = `${dd}-${mm}-${yyyy}`; 
                                         %>
                                         <h6 class="card-text">Date: <%= formattedDate %></h6>
+                                        <h6 class="card-text" 
+                                        
+                                        <% 
+                                        if(order.status == 'Order Confirmed' || order.status == 'Shipped' || order.status == 'Out For Delivery' || order.status == 'Delivered'){
+                                            %>
+                                            style='color: green;'
+                                            <%  
+                                        }else if(order.status == 'Cancelled' || order.status == 'Cancelled By Admin'){
+                                            %>
+                                            style='color: red;'
+                                            <%  
+                                        }else{
+                                            %>
+                                            style='color: orange;'
+                                            <%  
+                                        }
+                                        %>
+
+                                        ><%= order.status %></h6>
                                     </div>
                                     <div class="col-md-2 text-center mt-3 justify-content-center d-flex align-items-center">
                                         <a href="/viewOrderDetails/<%= order._id %>" class="btn btn-dark">View Details</a>
