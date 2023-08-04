@@ -214,22 +214,22 @@ const loadShop = async(req,res) => {
 
 
         let search = '';
-        // if(req.query.search){
-        //     search = req.query.search
-        // }
+        if(req.query.search){
+            search = req.query.search
+        }
 
         //finding all categories that matches the search query
-        // async function getCategoryIds(search){
-        //     const categories = await Categories.find(
-        //         {
-        //             name:{
-        //                 $regex: '.*' +search+'.*',
-        //                 $options: 'i'
-        //             }
-        //         }
-        //     );
-        //     return categories.map(category => category._id)
-        // }
+        async function getCategoryIds(search){
+            const categories = await Categories.find(
+                {
+                    name:{
+                        $regex: '.*' +search+'.*',
+                        $options: 'i'
+                    }
+                }
+            );
+            return categories.map(category => category._id)
+        }
 
 
 
@@ -256,15 +256,15 @@ const loadShop = async(req,res) => {
             }
         }
 
-        // if(req.query.search){
-        //     search = req.query.search;
-        //     console.log('req.query.search : '+req.query.search);
-        //     query.$or.push({
-        //         'category' : {
-        //             $in: await getCategoryIds(search)
-        //         }
-        //     });
-        // };
+        if(req.query.search){
+            search = req.query.search;
+            console.log('req.query.search : '+req.query.search);
+            query.$or.push({
+                'category' : {
+                    $in: await getCategoryIds(search)
+                }
+            });
+        };
 
         //add category to query to filter based on category
         if(req.query.category){
@@ -323,7 +323,7 @@ const loadShop = async(req,res) => {
             category: req.query.category,
             brand: req.query.brand,
             removeFilter,
-            search: '', //req.query.search,
+            search: req.query.search,
             isLoggedIn,
             page:'Shop'
         });
