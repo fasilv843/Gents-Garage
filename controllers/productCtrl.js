@@ -49,7 +49,7 @@ const addProductDetails = async(req,res) => {
         console.log(catData);
         const prodData = await new Products({
             brand, name:productName, description, category : catData[0]._id,
-            size, price, discountPrice: dprice, quantity , images
+            size, price, discountPrice: dprice, quantity , images, createdAt : new Date()
         }).save();
         
          res.redirect('/admin/products')
@@ -175,9 +175,159 @@ const loadShop = async(req,res) => {
 
         const isLoggedIn = req.session.userId
 
-        const pdtsData = await Products.find({isListed:true})
-        // console.log(pdtsData);
-        res.render('shop',{pdtsData, page:'Shop',isLoggedIn})
+        console.log('req.query.page : '+req.query.page);
+        console.log('req.query.brand : '+req.query.brand);
+        console.log('req.query.sortValue : '+req.query.sortValue);
+        console.log('req.query.minPrice : '+req.query.minPrice);
+        console.log('req.query.maxPrice : '+req.query.maxPrice);
+        console.log('req.query.category : '+req.query.category);
+        // console.log('req.query.page : '+req.query.page);
+
+        let page = 1;
+        if(req.query.page){
+            page = req.query.page
+        }
+
+        let limit = 3;
+        let sortValue = -1;
+        if(req.query.sortValue){
+            if(req.query.sortValue == 2){
+                sortValue = 1;
+            }else{
+                sortValue = -1;
+            }
+        }
+
+        //declaring a default min and max price
+        let minPrice = 1;
+        let maxPrice = Number.MAX_VALUE;
+        console.log('type of minPrice : '+typeof req.query.minPrice);
+        console.log('type of maxPrice : '+typeof req.query.maxPrice);
+        //changing min and max prices to filter by price
+
+        if(req.query.minPrice && parseInt(req.query.minPrice)){
+            minPrice =  parseInt(req.query.minPrice);
+        }
+        if(req.query.maxPrice && parseInt(req.query.maxPrice)){
+            maxPrice =  parseInt(req.query.maxPrice);
+        }
+
+
+        let search = '';
+        // if(req.query.search){
+        //     search = req.query.search
+        // }
+
+        //finding all categories that matches the search query
+        // async function getCategoryIds(search){
+        //     const categories = await Categories.find(
+        //         {
+        //             name:{
+        //                 $regex: '.*' +search+'.*',
+        //                 $options: 'i'
+        //             }
+        //         }
+        //     );
+        //     return categories.map(category => category._id)
+        // }
+
+
+
+        //Declaring a common query object to find products
+        const query = {
+            isListed: true,
+            $or: [
+                {
+                    name:{
+                        $regex: '.*' + search + '.*',
+                        $options: 'i'
+                    }
+                },
+                {
+                    brand:{
+                        $regex: '.*' + search + '.*',
+                        $options: 'i'
+                    }
+                }
+            ],
+            price: {
+                $gte: minPrice,
+                $lte: maxPrice
+            }
+        }
+
+        // if(req.query.search){
+        //     search = req.query.search;
+        //     console.log('req.query.search : '+req.query.search);
+        //     query.$or.push({
+        //         'category' : {
+        //             $in: await getCategoryIds(search)
+        //         }
+        //     });
+        // };
+
+        //add category to query to filter based on category
+        if(req.query.category){
+            query.category = req.query.category
+        };
+
+        //add category to query to filter based on brand
+        if(req.query.brand){
+            query.brand = req.query.brand
+        };
+        console.log('req.query.brand : '+req.query.brand);
+
+        console.log(query);
+
+        let pdtsData = await Products.find(query).populate('category').sort({ createdAt: -1 }).limit(limit*1).skip( (page - 1)*limit );
+
+        // if(req.query.sortValue && req.query.sortValue != 3){
+        //     pdtsData = await Products.find(query).populate('category').sort({ discountPrice: sortValue }).limit(limit*1).skip( (page - 1)*limit )
+        // }else{
+        //     pdtsData = await Products.find(query).populate('category').sort({ createdAt: sortValue }).limit(limit*1).skip( (page - 1)*limit )
+        // }
+
+        console.log('pdtsData : \n\n'+pdtsData);
+
+        const categoryNames = await Categories.find({})
+
+        console.log('categoryNames : \n\n'+categoryNames);
+        const brands = await Products.aggregate([{
+                $group: {
+                    _id: '$brand'
+                }
+        }]);
+
+        let totalProductsCount = await Products.find(query).count()
+        let pageCount = Math.ceil(totalProductsCount / limit)
+
+        let removeFilter = 'false'
+        if(req.query){
+            if(req.query.page){
+                removeFilter = 'false'
+            }else{
+                removeFilter = 'true'
+            }
+        };
+
+        res.render('shop',{
+            pdtsData,
+            userId: req.session.userId,
+            categoryNames,
+            brands,
+            pageCount,
+            currentPage: page,
+            sortValue: req.query.sortValue,
+            minPrice: req.query.minPrice,
+            maxPrice: req.query.maxPrice,
+            category: req.query.category,
+            brand: req.query.brand,
+            removeFilter,
+            search: '', //req.query.search,
+            isLoggedIn,
+            page:'Shop'
+        });
+
     } catch (error) {
         console.log(error);
     }

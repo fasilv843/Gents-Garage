@@ -35,9 +35,13 @@ const productsSchema = mongoose.Schema({
         type: Array,
         required: true
     },
-    isListed:{
+    isListed: {
         type : Boolean,
         default: true
+    },
+    createdAt: {
+        type : Date,
+        required : true
     }
 })
 
