@@ -33,7 +33,7 @@ admin_route.get('/users/block/:id',adminCtrl.blockUser)
 //Category Handling Routes
 admin_route.get('/categories',categoryCtrl.loadCategories)
 admin_route.post('/categories',categoryCtrl.addCategory);
-admin_route.post('/categories/edit',upload.single('image'),categoryCtrl.editCategory)
+admin_route.post('/categories/edit',upload.single('categoryImage'),categoryCtrl.editCategory)
 admin_route.get('/categories/list/:id',categoryCtrl.listCategory)
 
 //Category Size Handling Routes
@@ -45,9 +45,9 @@ admin_route.get('/categories/list/:id',categoryCtrl.listCategory)
 //Product Handling Routes
 admin_route.get('/products',productCtrl.loadProduct)
 admin_route.get('/products/addProduct',productCtrl.loadAddProduct)
-admin_route.post('/products/addProduct',upload.array('image',3),productCtrl.addProductDetails)
+admin_route.post('/products/addProduct',upload.array('productImage',3),productCtrl.addProductDetails)
 admin_route.get('/products/editProduct/:id',productCtrl.loadEditProduct)
-admin_route.post('/products/editProduct',upload.array('image',3),productCtrl.postEditProduct)
+admin_route.post('/products/editProduct',upload.array('productImage',3),productCtrl.postEditProduct)
 admin_route.get('/products/deleteProduct/:id',productCtrl.deleteProduct)
 
 admin_route.get('/products/imageDelete/:id',productCtrl.deleteImage)

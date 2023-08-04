@@ -7,6 +7,10 @@
         const dpriceErr = document.getElementById('dpriceErr')
         const imageErr = document.getElementById('imageErr')
 
+        // function validateImage(){
+        //     const images = document.getElementById('image')
+        // }
+
         function validateBrand(){
             const brand = document.getElementById('brand').value.trim()
 

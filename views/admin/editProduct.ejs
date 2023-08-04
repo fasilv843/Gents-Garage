@@ -277,7 +277,7 @@
                             for(let i=0; i<pdtData.images.length; i++){
                                 %>
                                     <div>
-                                        <img style="width: 5rem;" src="/productImages/<%= pdtData.images[i] %>" alt="Image 1">
+                                        <img style="width: 5rem;" src="/images/productImages/<%= pdtData.images[i] %>" alt="Image 1">
                                         <a href="/admin/products/imageDelete/<%= pdtData._id %>?imageURL=<%= pdtData.images[i] %>" class="btn btn-danger">Delete</a>
                                     </div>
 
@@ -287,7 +287,7 @@
                             for(let i=pdtData.images.length; i<3; i++){
                                 %>
                                     <div>
-                                        <input type="file" class="form-control-file" id="image" name="image" single accept="image/*" required>
+                                        <input type="file" class="form-control-file" id="image" name="productImage" single accept="image/*">
                                         <small id="imageErr" class="error"></small>
                                     </div>
                                 <%

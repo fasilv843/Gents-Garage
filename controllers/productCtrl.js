@@ -147,7 +147,7 @@ const deleteImage = async(req,res) => {
 
         console.log('imageURL :  '+imageURL+'type :'+typeof imageURL);
 
-        const imgFolder = path.join(__dirname,'../public/productImages')
+        const imgFolder = path.join(__dirname,'../public/images/productImages')
         // console.log(imgFolder);
 
         const files = fs.readdirSync(imgFolder);

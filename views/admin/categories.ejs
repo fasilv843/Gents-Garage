@@ -44,7 +44,7 @@
 
                                 
                               <td class="align-middle text-center text-sm">
-                                <img style="width: 5rem;" src="/productImages/<%=  locals.categories[i].image %>" alt="Category Image">
+                                <img style="width: 5rem;" src="/images/categoryImages/<%=  locals.categories[i].image %>" alt="Category Image">
                               </td>
 
                                 <td class="align-middle text-center text-sm">
@@ -66,7 +66,7 @@
                                             <div class="modal-body">
                                                 <form action="/admin/categories/edit" method="post" enctype="multipart/form-data" >
                                                     <input id="catID" value="" type="hidden" name="categoryId">
-                                                    <input type="file" class="input-group mb-2" name="image" id="image" single accept="image/*">
+                                                    <input type="file" class="input-group mb-2" name="categoryImage" id="image" single accept="image/*">
                                                     <input id="catName" class="input-group"  type="text" name="categoryName" placeholder="Enter new name">
                                                     <div class="modal-footer">
                                                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
