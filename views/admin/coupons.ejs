@@ -77,14 +77,33 @@
                                     <% 
                                       if(coupons[i].isCancelled === true){
                                          %>
-                                           <a href="/admin/coupons/cancelCoupon/<%= coupons[i]._id %>" class="btn btn-success">Add</a>
+                                           <a href="#cancelCouponModal" class="btn btn-success modalBTN"  data-bs-toggle="modal" data-id="<%= coupons[i]._id %>">Add</a>
                                          <%
                                       }else{
                                           %>
-                                          <a href="/admin/coupons/cancelCoupon/<%= coupons[i]._id %>" class="btn btn-danger">Cancel</a>
+                                          <a href="#cancelCouponModal" class="btn btn-danger modalBTN"  data-bs-toggle="modal" data-id="<%= coupons[i]._id %>">Cancel</a>
                                           <%
                                       }
                                     %>
+          <!-- Modal Start  -->
+          <div class="modal fade" id="cancelCouponModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                  <div class="modal-header">
+                  <h1 class="modal-title fs-5" id="exampleModalLabel">Are You Sure?</h1>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body">
+                          <strong> Are you sure? Do you want to Delete/Add this product ?</strong>
+                          <div class="modal-footer mt-2">
+                              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                              <a id="confirmBTN" class="btn btn-primary">Confirm</a>
+                          </div>
+                  </div>
+              </div>
+            </div>
+        </div> 
+        <!-- Modal End  -->
                                 </td>  
 
                             </tr>
@@ -113,5 +132,14 @@
   <%- include('../partials/adminFooter.ejs') %>      
 
 </main>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>
+
+<script>
+      $('.modalBTN').click( function () {
+        var id = $(this).data('id');
+        var routeURL = '/admin/coupons/cancelCoupon/'+id
+        $(".modal-footer #confirmBTN").attr('href', routeURL);
+    });
+</script>
 
 <%- include('../partials/adminScript.ejs') %>

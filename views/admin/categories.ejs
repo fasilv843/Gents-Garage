@@ -53,10 +53,10 @@
 
                                 <td class="align-middle text-center">
 
-                                    <a type="button" class="btn btn-primary popupBTN" data-id="<%= categories[i]._id %>" data-val="<%= categories[i].name %>" data-bs-toggle="modal" href="#exampleModal"> Edit</a>
+                                    <a type="button" class="btn btn-primary popupBTN" data-id="<%= categories[i]._id %>" data-val="<%= categories[i].name %>" data-bs-toggle="modal" href="#editCouponModal"> Edit</a>
                                     
-                                    <!-- Modal Start  -->
-                                    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                    <!-- Edit Modal Start  -->
+                                    <div class="modal fade" id="editCouponModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                                         <div class="modal-dialog">
                                         <div class="modal-content">
                                             <div class="modal-header">
@@ -78,7 +78,7 @@
                                         </div>
                                         </div>
                                     </div> 
-                                    <!-- Modal End  -->
+                                    <!--Edit Modal End  -->
     
                                 </td>
 
@@ -86,14 +86,33 @@
                                     <% 
                                         if(categories[i].isListed === true){
                                         %>
-                                            <a href="/admin/categories/list/<%= categories[i]._id %>" class="btn btn-danger" onclick="alert('Do you want unlist This category?')">Unlist</a>
+                                            <a href="#unlistModal" class="btn btn-danger unlistModalBTN"  data-bs-toggle="modal" data-id="<%= categories[i]._id %>">Unlist</a>
                                         <%
                                         }else{
                                             %>
-                                            <a href="/admin/categories/list/<%= categories[i]._id %>" class="btn btn-success">List</a>
+                                            <a href="#unlistModal" class="btn btn-success unlistModalBTN" data-bs-toggle="modal" data-id="<%= categories[i]._id %>">List</a>
                                             <%
                                         }
                                     %>
+                                                                  <!-- Unlist/List Modal Start  -->
+                                                                  <div class="modal fade" id="unlistModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                                                    <div class="modal-dialog">
+                                                                      <div class="modal-content">
+                                                                          <div class="modal-header">
+                                                                          <h1 class="modal-title fs-5" id="exampleModalLabel">Are You Sure?</h1>
+                                                                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                                          </div>
+                                                                          <div class="modal-body">
+                                                                                  <strong> Do you want to List/Unlist this category ?</strong>
+                                                                                  <div class="modal-footer mt-2">
+                                                                                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                                                      <a id="confirmUnlistBTN" class="btn btn-primary">Confirm</a>
+                                                                                  </div>
+                                                                          </div>
+                                                                      </div>
+                                                                    </div>
+                                                                </div> 
+                                                                <!-- Unlist/List Modal End  -->
                                 </td>
 
                             </tr>
@@ -125,6 +144,12 @@
         var cVal = $(this).data('val');
         $(".modal-body #catID").val(cId);
         $(".modal-body #catName").val(cVal);
+    });
+
+    $('.unlistModalBTN').click( function () {
+        var catId = $(this).data('id');
+        var routeURL = '/admin/categories/list/'+catId
+        $(".modal-footer #confirmUnlistBTN").attr('href', routeURL);
     });
 </script>
 

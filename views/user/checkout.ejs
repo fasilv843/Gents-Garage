@@ -276,12 +276,9 @@
             method: 'post',
             data: $('#checkout-form').serialize(),
             success: (res) => {
-                // alert(res)
                 if(res.status == 'COD'){
                     location.href = '/orderSuccess'
                 }else if(res.status == 'Razorpay'){
-                    // console.log('in ajax status razorpay');
-                    // location.href = '/orderFailed'
                     razorpayPayment(res.order)
                 }else if(res.status == 'Wallet'){
                     location.href = '/orderSuccess'
@@ -291,7 +288,6 @@
     });
 
     function razorpayPayment(order){
-        // console.log('Order in function razorpayPayment(order) : \n\n'+order);
         var options = {
             "key": "rzp_test_cs7jdKVcE5oH7L", // Enter the Key ID generated from the Dashboard
             "amount": order.amount, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
@@ -309,7 +305,7 @@
                 "contact": "9000090000"
             },
             "notes": {
-                "address": "Razorpay Corporate Office"
+                "address": "Gents Garage Pvt Ltd"
             },
             "theme": {
                 "color": "#3399cc"
@@ -322,7 +318,7 @@
 
     function verifyPayment(response,order){
 
-        $.ajax({    //Not entering into ajax ??
+        $.ajax({    //This function didn't invoked ??
             url:'/verifyPayment',
             method:'post',
             data:{

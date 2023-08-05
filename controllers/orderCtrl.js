@@ -292,7 +292,7 @@ const loadMyOrders = async(req, res) => {
     try {
         console.log('Loaded my orders');
         const userId = req.session.userId;
-        const orderData = await Orders.find({userId}).populate('products.productId')
+        const orderData = await Orders.find({userId}).populate('products.productId').sort({date: -1})
         // console.log(orderData);
         // if(orderData){
         //     const product = orderData[0].products
@@ -412,8 +412,10 @@ const cancelOrder = async(req,res) => {
     try {
         const orderId = req.params.orderId
         const cancelledBy = req.query.cancelledBy
-        const userId = req.session.userId
+        // const userId = req.session.userId
         const orderData = await Orders.findById({_id:orderId})
+        const userId = orderData.userId
+
 
         console.log(cancelledBy);
         if(cancelledBy == 'user'){

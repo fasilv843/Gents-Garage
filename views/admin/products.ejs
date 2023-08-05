@@ -75,14 +75,37 @@
                                 <% 
                                   if(pdtsData[i].isListed === true){
                                      %>
-                                       <a href="/admin/products/deleteProduct/<%= pdtsData[i]._id %>" class="btn btn-danger" onclick="alert('Do you want to delete this product?')">Delete</a>
+                                       <a href="#confirmationPopUp" class="btn btn-danger modalBTN" data-id="<%= pdtsData[i]._id %>"  data-bs-toggle="modal">Delete</a>
                                      <%
                                   }else{
                                       %>
-                                      <a href="/admin/products/deleteProduct/<%= pdtsData[i]._id %>" class="btn btn-success">Add</a>
+                                      <a href="#confirmationPopUp " class="btn btn-success modalBTN" data-id="<%= pdtsData[i]._id %>" data-bs-toggle="modal">Add</a>
                                       <%
                                   }
                                 %>
+
+
+                                                                  <!-- Modal Start  -->
+                                                                  <div class="modal fade" id="confirmationPopUp" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                                                    <div class="modal-dialog">
+                                                                      <div class="modal-content">
+                                                                          <div class="modal-header">
+                                                                          <h1 class="modal-title fs-5" id="exampleModalLabel">Are You Sure?</h1>
+                                                                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                                          </div>
+                                                                          <div class="modal-body">
+                                                                                  <strong> Are you sure? Do you want to Delete/Add this product ?</strong>
+                                                                                  <div class="modal-footer mt-2">
+                                                                                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                                                      <a id="confirmBTN" class="btn btn-primary">Confirm</a>
+                                                                                  </div>
+                                                                          </div>
+                                                                      </div>
+                                                                    </div>
+                                                                </div> 
+                                                                <!-- Modal End  -->
+
+
 
                               </td>
                               
@@ -104,5 +127,14 @@
   <%- include('../partials/adminFooter.ejs') %>      
 
 </main>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>
+<script>
+    $('.modalBTN').click( function () {
+        var productId = $(this).data('id');
+        var routeURL = '/admin/products/deleteProduct/'+productId
+        $(".modal-footer #confirmBTN").attr('href', routeURL);
+    });
+</script>
 
 <%- include('../partials/adminScript.ejs') %>

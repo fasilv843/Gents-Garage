@@ -44,7 +44,7 @@
                             </div>
                             <div class="col-md-6 col-12">
                                 <label for="expiryDate">Expiry Date</label>
-                                <input type="date" id="expiryDate" class="form-control form-control-md rounded-0" placeholder="Enter Expiry Date" name="expiryDate"  value="<%= couponData.expiryDate %>" required/>
+                                <input type="date" id="expiryDate" class="form-control form-control-md rounded-0" placeholder="Enter Expiry Date" name="expiryDate"  value="<%= couponData.expiryDate ? couponData.expiryDate.toISOString().substr(0, 10) : '' %>" required/>
                                 <small id="expiryDateErr" class="error"></small>                                     
                             </div>
                         </div>

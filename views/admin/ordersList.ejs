@@ -123,7 +123,7 @@
                                 if(order.status == 'Order Confirmed' || order.status == 'Shipped'){
                                     %>
                                     <td class="align-middle text-center">
-                                        <a href="/admin/cancelOrder/<%= order._id %>?cancelledBy=admin" class="btn btn-danger">Cancel</a>
+                                        <a href="#cancelOrderModal"  class="btn btn-danger confirmCancelBTN"  data-bs-toggle="modal" data-id="<%= order._id %>">Cancel</a>
                                     </td>
                                     <%  
                                 }else if(order.status === 'Pending Return Approval'){
@@ -167,6 +167,27 @@
                             </div>
                         </div>
                         <!-- Modal End  -->
+
+
+                                                                                          <!-- Order Cancel Confirmation Modal Start  -->
+                                                                                          <div class="modal fade" id="cancelOrderModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                                                                            <div class="modal-dialog">
+                                                                                              <div class="modal-content">
+                                                                                                  <div class="modal-header">
+                                                                                                  <h1 class="modal-title fs-5" id="exampleModalLabel">Are You Sure?</h1>
+                                                                                                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                                                                  </div>
+                                                                                                  <div class="modal-body">
+                                                                                                          <strong> Do you want to Cancel this Order ?</strong>
+                                                                                                          <div class="modal-footer mt-2">
+                                                                                                              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                                                                              <a id="confirmCancelBTN" class="btn btn-primary">Confirm</a>
+                                                                                                          </div>
+                                                                                                  </div>
+                                                                                              </div>
+                                                                                            </div>
+                                                                                        </div> 
+                                                                                        <!-- Order Cancel Confirmation Modal End  -->
                               
                             </tr>
                          <% 
@@ -192,6 +213,12 @@
     $(document).on("click", ".popupBTN", function () {
         var cId = $(this).data('id');
         $(".modal-body #orderId").val(cId);  
+    });
+
+    $('.confirmCancelBTN').click( function () {
+        var orderId = $(this).data('id');
+        var routeURL = `/admin/cancelOrder/${orderId}?cancelledBy=admin`
+        $(".modal-footer #confirmCancelBTN").attr('href', routeURL);
     });
 </script>
 

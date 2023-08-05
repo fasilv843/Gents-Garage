@@ -70,15 +70,35 @@
                                 <% 
                                   if(!userData[i].isBlocked){
                                      %>
-                                        <a href="/admin/users/block/<%= userData[i]._id %>" class="btn btn-danger" onclick="confirm('GSCCModal')">Block</a>
+                                        <a href="#confirmationPopUp" class="btn btn-danger modalBTN" data-bs-toggle="modal" data-id="<%= userData[i]._id %>">Block</a>
                                      <%
                                   }else{
                                     %>
-                                      <a href="/admin/users/block/<%= userData[i]._id %>" class="btn btn-success">Unblock</a>
+                                      <a href="#confirmationPopUp" class="btn btn-success modalBTN" data-bs-toggle="modal" data-id="<%= userData[i]._id %>">Unblock</a>
                                     <%
                                   }
                                 %>
                               </td>
+
+                                                                  <!-- Modal Start  -->
+                                                                  <div class="modal fade" id="confirmationPopUp" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                                                    <div class="modal-dialog">
+                                                                      <div class="modal-content">
+                                                                          <div class="modal-header">
+                                                                          <h1 class="modal-title fs-5" id="exampleModalLabel">Are You Sure?</h1>
+                                                                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                                          </div>
+                                                                          <div class="modal-body">
+                                                                                  <strong> Do you want to Block/Unblock this user ?</strong>
+                                                                                  <div class="modal-footer mt-2">
+                                                                                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                                                      <a id="confirmBTN" class="btn btn-primary">Confirm</a>
+                                                                                  </div>
+                                                                          </div>
+                                                                      </div>
+                                                                    </div>
+                                                                </div> 
+                                                                <!-- Modal End  -->
                               
                             </tr>
                          <% 
@@ -94,6 +114,15 @@
       </div>
     </div>
   </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>
+<script>
+    $('.modalBTN').click( function () {
+        var userId = $(this).data('id');
+        var routeURL = '/admin/users/block/'+userId
+        $(".modal-footer #confirmBTN").attr('href', routeURL);
+    });
+</script>
 
   <%- include('../partials/adminFooter.ejs') %>      
 
