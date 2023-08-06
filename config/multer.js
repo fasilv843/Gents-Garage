@@ -15,19 +15,19 @@ const storage = multer.diskStorage({
 
 const upload = multer({ 
     storage: storage,
-    imageLimit: 3,
-    fileFilter: (req, file, cb) => {
+    imageLimit: 3
+    // fileFilter: (req, file, cb) => {
         
-        const fileExtension = file.extname.toLowerCase();
-        const allowedExtensions = ['.jpg','.jpeg', '.png', '.gif','.svg','.avif','.webp'];
+    //     const fileExtension = file.extname.toLowerCase();
+    //     const allowedExtensions = ['.jpg','.jpeg', '.png', '.gif','.svg','.avif','.webp'];
 
-        if (!allowedExtensions.includes(fileExtension)) {
-            cb(false, 'Invalid file extension');
-            return;
-        }
+    //     if (!allowedExtensions.includes(fileExtension)) {
+    //         cb(false, 'Invalid file extension');
+    //         return;
+    //     }
 
-        cb(true);
-    }
+    //     cb(true);
+    // }
 });
 
 module.exports = upload

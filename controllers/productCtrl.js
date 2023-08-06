@@ -153,12 +153,10 @@ const deleteImage = async(req,res) => {
         const files = fs.readdirSync(imgFolder);
 
         for (const file of files) {
-            console.log('file : '+file);
-            console.log('imageURL : '+imageURL);
+
             if(file === imageURL){
                 const filePath = path.join(imgFolder, file);
                 fs.unlinkSync(filePath);
-                console.log('deleted '+filePath);
                 break;
             }
         }

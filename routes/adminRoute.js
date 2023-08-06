@@ -4,6 +4,7 @@ const categoryCtrl = require('../controllers/categoryCtrl');
 const productCtrl = require('../controllers/productCtrl');
 const orderCtrl = require('../controllers/orderCtrl')
 const couponCtrl = require('../controllers/couponCtrl')
+const bannerCtrl = require('../controllers/bannerCtrl')
 const upload = require('../config/multer');
 const auth = require('../middleware/auth')
 
@@ -63,5 +64,10 @@ admin_route.post('/coupons/addCoupon',couponCtrl.postAddCoupon)
 admin_route.get('/coupons/editCoupon/:couponId',couponCtrl.loadEditCoupon)
 admin_route.post('/coupons/editCoupon/:couponId',couponCtrl.postEditCoupon)
 admin_route.get('/coupons/cancelCoupon/:couponId',couponCtrl.cancelCoupon)
+
+admin_route.get('/banners',bannerCtrl.loadBannerList) 
+admin_route.post('/addBanner',upload.single('bannerImage'),bannerCtrl.addBanner)
+admin_route.post('/updateBanner/:bannerId',upload.single('bannerImage'),bannerCtrl.UpdateBanner)
+admin_route.post('/deleteBanner/:bannerId',bannerCtrl.deleteBanner)
 
 module.exports = admin_route;

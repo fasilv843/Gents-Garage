@@ -39,10 +39,10 @@ app.use((err, req, res, next) => {
 })
 
 // error page
-app.use((req, res) => {
-    const isLoggedIn = Boolean(req.session.userId)
-    res.status(404).render('404',{isLoggedIn})
-})
+// app.use((req, res) => {
+//     const isLoggedIn = Boolean(req.session.userId)
+//     res.status(404).render('404',{isLoggedIn})
+// })
 
 
 

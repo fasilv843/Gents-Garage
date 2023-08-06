@@ -1,0 +1,156 @@
+
+<%- include('../partials/adminAside.ejs') %>
+
+<main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg ">
+
+   <%- include('../partials/adminNavbar.ejs') %>
+
+
+
+<section>
+    <div class="container">
+        <div class="mb-5 mt-5">
+            <div class="banner-1">
+                <div class="mt-5">
+
+                    <% 
+                    // Code to update existing banner
+                    if(banners && banners.length>0){
+                        for(let i=0; i<banners.length; i++){
+                            %>
+                            <div class="my-3" style="display: grid; place-content: center;">
+                                <div class="card p-4 d-flex aligh-items-center justify-content-center">
+                                    <div>
+                                        <p class="h5 text-center my-3">Banner <%= i+1 %></p>
+                                        <img src="/images/bannerImages/<%= banners[i].image %>" class="img-fluid" alt="" style="max-width: 60%;">
+
+                                        <form action="/admin/updateBanner/<%= banners[i]._id %>" method="post" enctype="multipart/form-data" class="d-flex flex-column">
+                                            <div class="my-3">
+                                                <label for="imageUrl">URL : </label><br>
+                                                <input type="text" name="url" id="urlInput" class="mb-2 urlInput" placeholder="Enter Image URL" value="<%= banners[i].url %>" readonly><br>
+                                                <label for="imageUrl">Heading : </label><br>
+                                                <input type="text" name="heading" class="headingInput" id="headingInput" value="<%= banners[i].heading %>" placeholder="Enter Banner Heading" required readonly>
+                                            </div>
+                                            <input type="file" class="imageInput" id="imageInput" accept="image/*" name="bannerImage" single hidden><br>
+                                            <button type="button" class="btn btn-warning my-3 border-0 editButton" id="editButton" >
+                                                Edit Banner <i class="bi bi-pencil-square"></i>
+                                            </button>
+                                            <div id="footerBTNDiv" class="d-flex flex-column footerBTNDiv">
+                                                <button type="submit" id="updateSubmitBTN" class="btn btn-warning my-3 updateSubmitBTN" hidden>Update Banner</button>
+                                                <button type="button" id="cancelEditBTN" class="btn btn-secondary my-3 cancelEditBTN" hidden>Cancel</button>
+                                            </div>
+                                        </form>
+                                        <form action="/admin/deleteBanner/<%= banners[i]._id %>" method="post" class="d-flex flex-column">
+                                            <button type="submit" class="btn btn-danger deleteBannerBTN">Delete Banner <i class="bi bi-trash"></i></button>
+                                        </form>
+                                        <!-- <a href=""><i class="bi bi-trash"></i></a> -->
+                                    </div>
+                                </div>
+                            </div>
+                            <% 
+                        }
+                    }
+
+                    //Code to add new banners, banner limit is 3
+                    if(banners && banners.length<3){
+                        //for(let i= banners.length; i<bannerLimit; i++){
+                            %>
+                            <div class="my-3" style="display: grid; place-content: center;">
+                                <div class="card p-4">
+                                    <p class="h5 text-center">Banner <%= banners.length+1 %></p>
+                                    <form action="/admin/addBanner" method="post" enctype="multipart/form-data" class="d-flex flex-column">
+
+                                        <div class="my-4 align-content-center">
+                                            <div class="my-3">
+                                                <label for="imageUrl">URL : </label><br>
+                                                <input type="text" name="url" id="addUrl" value="/shop" placeholder="Enter Image URL" required>
+                                            </div>
+                                            <div class="my-3">
+                                                <label for="imageUrl">Heading : </label><br>
+                                                <input type="text" name="heading" id="addHeading" placeholder="Enter Banner Heading" required>
+                                            </div>
+
+                                            <input type="file" id="addImage" accept="image/*" name="bannerImage" single required>
+                                        </div>
+                                        <div class="text-center d-flex flex-column">
+                                            <button class="btn btn-success mt-3" type="submit">
+                                                Add Banner
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                            <%  
+                        //}
+                    }
+                    %>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+
+
+<%- include('../partials/adminFooter.ejs') %>      
+
+</main>
+
+<script>
+
+    document.addEventListener('DOMContentLoaded', () => {
+
+        const editButtons = document.querySelectorAll('.editButton')
+        const urlInputs = document.querySelectorAll('.urlInput');
+        const headingInputs = document.querySelectorAll('.headingInput');
+        const imageInputs = document.querySelectorAll('.imageInput');
+        const footerBTNDivs = document.querySelectorAll('.footerBTNDiv');
+        const updateSubmitBTNs = document.querySelectorAll('.updateSubmitBTN');
+        const cancelEditBTNs = document.querySelectorAll('.cancelEditBTN')
+        const deleteBannerBTNs = document.querySelectorAll('.deleteBannerBTN')
+
+        editButtons.forEach((editButton, index) => {
+
+            editButton.addEventListener('click', () => {
+
+                urlInputs[index].removeAttribute('readonly');
+                headingInputs[index].removeAttribute('readonly');
+
+                imageInputs[index].hidden = false;
+                updateSubmitBTNs[index].hidden = false;
+                cancelEditBTNs[index].hidden = false;
+                editButtons[index].hidden = true;
+                deleteBannerBTNs[index].hidden = true;
+
+                urlInputs[index].focus(); // This will automatically focus the cursor in the input field after clicking the "Edit" button.
+        
+            });
+        })
+
+
+        cancelEditBTNs.forEach((cancelBTN, index) => {
+
+            cancelBTN.addEventListener('click', function () {
+
+                headingInputs[index].setAttribute('readonly', true);
+                urlInputs[index].setAttribute('readonly', true);
+
+                imageInputs[index].hidden = true
+                updateSubmitBTNs[index].hidden = true;
+                cancelEditBTNs[index].hidden = true;
+                editButtons[index].hidden = false;
+                deleteBannerBTNs[index].hidden = false;
+
+            });
+
+        });
+
+
+    })
+
+</script>
+
+
+<%- include('../partials/adminScript.ejs') %>
