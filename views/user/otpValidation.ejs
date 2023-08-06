@@ -28,7 +28,8 @@
                                
                             </div>
                             <form action="/validateOTP" method="post">
-
+                                <!-- action="/profile/forgotPasswordVerification" -->
+                                <!-- action="/profile/otpToChangeMail" -->
                                 <div class="form-outline mb-3 row">
                                     <div class="col-12 mb-3">
                                         <input type="number" id="otp"
@@ -44,17 +45,40 @@
                                 <div class="text-center">
                                     <button class="btn btn-dark btn-md rounded-pill px-5 py-2 login-btn" type="submit">Verify</button>
                                     <p><%= message %></p>
-                                </div>
-
-                                <p>didn't got your otp?<a href="/otpResend">Resend OTP</a></p>
-                                
+                                </div>                                
                             </form>
+                            <p id="resendOTPmsg">didn't got your otp?<button class="border-0" style="color: blue;" onclick="resendOTP('<%= email %>')">Resend OTP</button></p>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </section>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js"
+        integrity="sha512-3gJwYpMe3QewGELv8k/BX9vcqhryRdzRMxVfq6ngyWXwo03GFEzjsUm8Q7RZcHPHksttq7/GFoxjCVUjkjvPdw=="
+        crossorigin="anonymous" referrerpolicy="no-referrer">
+    </script>
+
+    <script>
+        function resendOTP(email){
+            $.ajax({
+                url:'/resendOTP',
+                method: 'post',
+                data:{ email },
+                success: (res) => {
+                    if(res.isResend){
+                        $('#resendOTPmsg').html('OTP Resent Successfully :)')
+                    }else{
+                        $('#resendOTPmsg').html('Error Occured while resending :( ')
+                    }
+                }
+            })
+        }
+        // $('#resendOTPBTN').click(() => {
+
+        // })
+    </script>
 </body>
 
 </html>

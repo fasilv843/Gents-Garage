@@ -77,7 +77,7 @@ const loadSignUp = async(req,res) => {
     }
 }
 
-
+////////////////////////////////////////////////////////////////////////////////
 const saveAndLogin = async(req,res) => {
     try {
         const { fname, lname, email, mobile, password, confirmPassword, referral } = req.body;
@@ -118,7 +118,7 @@ const validateOTP = async(req,res) => {
         // console.log('userOTP : '+userOTP+" "+ typeof userOTP);
         
         if(userOTP == req.session.OTP){
-            console.log('OTP Validated Successfully!');
+            console.log('OTP Validated Successfully!')
             const sPassword = await securePassword(password)
             const referralCode = getReferralCode()
 
@@ -158,19 +158,6 @@ const validateOTP = async(req,res) => {
 
             req.session.userId = newUserData._id;
 
-            // if(referral){
-            //     await User.findByIdAndUpdate({_id: newUserData._id},
-            //         {
-            //             $set:{
-            //                 referredBy : referral
-            //             },
-            //             $inc:{
-            //                 wallet: 100
-            //             }
-            //         }
-            //     )
-            // }
-
             res.redirect('/');
         }else{
             console.log('Incorrect OTP');
@@ -178,6 +165,21 @@ const validateOTP = async(req,res) => {
         }
     } catch (error) {
         console.log(error);
+    }
+}
+
+const resendOTP = async(req, res, next) => {
+    try {
+        console.log('in resend otp controller');
+        const { email } = req.body
+        const OTP = req.session.OTP = getOTP()
+        console.log('resending otp '+OTP+' to '+email);
+        sendVerifyMail(email, OTP); 
+
+        res.json({isResend: true})
+
+    } catch (error) {
+        next(error)
     }
 }
 
@@ -397,6 +399,7 @@ const postEditProfile = async(req, res) => {
     }
 }
 
+
 const loadPassConfirmToChangeMail = async(req,res) => {
     try {
         res.render('passConfirmToChangeMail')
@@ -433,6 +436,7 @@ const loadChangeMail = async(req,res) => {
     }
 }
 
+////////////////////////////////////////////////
 const postChangeMail = async(req,res) => {
     try {
 
@@ -542,6 +546,8 @@ const postChangePassword = async(req, res ) => {
     }
 }
 
+
+/////////////////////////////////////////////////////////
 const forgotPassword = async(req, res ) => {
     try {
         console.log('loaded forgot password');
@@ -633,6 +639,7 @@ module.exports = {
     verifyOTPforgotPass,
     loadResetPassword,
     postResetPassword,
+    resendOTP,
     updateCart
 
 }

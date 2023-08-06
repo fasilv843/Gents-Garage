@@ -30,6 +30,7 @@ user_route.get('/signup',userCtrl.loadSignUp);
 user_route.post('/signup',userCtrl.saveAndLogin);
 
 user_route.post('/validateOTP',userCtrl.validateOTP)
+user_route.post('/resendOTP',userCtrl.resendOTP)
 
 user_route.get('/shop',productCtrl.loadShop)
 user_route.get('/shop/productOverview/:id',productCtrl.loadProductOverview);
