@@ -5,6 +5,7 @@ const productCtrl = require('../controllers/productCtrl');
 const orderCtrl = require('../controllers/orderCtrl')
 const couponCtrl = require('../controllers/couponCtrl')
 const bannerCtrl = require('../controllers/bannerCtrl')
+const offerCtrl = require('../controllers/offerCtrl')
 const upload = require('../config/multer');
 const auth = require('../middleware/auth')
 

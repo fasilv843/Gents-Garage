@@ -171,14 +171,14 @@ const deleteImage = async(req,res) => {
 const loadShop = async(req,res) => {
     try {
 
-        const isLoggedIn = req.session.userId
+        const isLoggedIn = Boolean(req.session.userId);
 
-        console.log('req.query.page : '+req.query.page);
-        console.log('req.query.brand : '+req.query.brand);
-        console.log('req.query.sortValue : '+req.query.sortValue);
-        console.log('req.query.minPrice : '+req.query.minPrice);
-        console.log('req.query.maxPrice : '+req.query.maxPrice);
-        console.log('req.query.category : '+req.query.category);
+        // console.log('req.query.page : '+req.query.page);
+        // console.log('req.query.brand : '+req.query.brand);
+        // console.log('req.query.sortValue : '+req.query.sortValue);
+        // console.log('req.query.minPrice : '+req.query.minPrice);
+        // console.log('req.query.maxPrice : '+req.query.maxPrice);
+        // console.log('req.query.category : '+req.query.category);
         // console.log('req.query.page : '+req.query.page);
 
         let page = 1;
@@ -186,7 +186,7 @@ const loadShop = async(req,res) => {
             page = req.query.page
         }
 
-        let limit = 3;
+        let limit = 6;
         let sortValue = -1;
         if(req.query.sortValue){
             if(req.query.sortValue == 2){
@@ -199,10 +199,8 @@ const loadShop = async(req,res) => {
         //declaring a default min and max price
         let minPrice = 1;
         let maxPrice = Number.MAX_VALUE;
-        console.log('type of minPrice : '+typeof req.query.minPrice);
-        console.log('type of maxPrice : '+typeof req.query.maxPrice);
-        //changing min and max prices to filter by price
 
+        //changing min and max prices to filter by price
         if(req.query.minPrice && parseInt(req.query.minPrice)){
             minPrice =  parseInt(req.query.minPrice);
         }
@@ -300,12 +298,8 @@ const loadShop = async(req,res) => {
         let pageCount = Math.ceil(totalProductsCount / limit)
 
         let removeFilter = 'false'
-        if(req.query){
-            if(req.query.page){
-                removeFilter = 'false'
-            }else{
-                removeFilter = 'true'
-            }
+        if(req.query && !req.query.page){
+            removeFilter = 'true'
         };
 
         res.render('shop',{

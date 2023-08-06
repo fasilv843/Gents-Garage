@@ -1,29 +1,19 @@
 const User = require('../models/userModel');
 const Products = require('../models/productModel')
 const Addresses = require('../models/addressModel')
+const Banners = require('../models/bannerModal')
 const bcrypt = require('bcrypt')
-const nodemailer = require('nodemailer')
-const auth = require('../middleware/auth')
-const dotenv = require('dotenv').config()
-const mongoose = require('mongoose')
+const { sendVerifyMail } = require('../services/nodemailer')
+const { getOTP, getReferralCode, securePassword } = require('../helpers/generator')
+require('dotenv').config()
 
-const securePassword = async(password) => {
-    try {
-        const hashedPassword = await bcrypt.hash(password,10);
-        return hashedPassword;
-    } catch (error) {
-        console.log(error);
-    }
-}
-
-const getOTP = () =>  Math.floor( 1000000*Math.random() )
 
 const loadHome = async(req,res) => {
     try {
         const isLoggedIn = Boolean(req.session.userId)
-        console.log(Boolean(req.session.userId));
-        console.log(isLoggedIn);
-        res.render('home',{page : 'Home', isLoggedIn});
+        const banners = await Banners.find({})
+
+        res.render('home',{page : 'Home', isLoggedIn, banners});
     } catch (error) {
         console.log(error)
     }
@@ -56,10 +46,8 @@ const verifyLogin = async(req,res) => {
             if(passwordMatch){
 
                 if(!userData.isBlocked){
-                    // console.log(userData);
                     req.session.userId = userData._id
                     req.session.cartCount = userData.cart.length
-                    // console.log(userData.cart.length);
                     res.redirect('/')
                 }else{
                     console.log('Sorry:( You are blocked by admins');
@@ -82,40 +70,8 @@ const verifyLogin = async(req,res) => {
 
 const loadSignUp = async(req,res) => {
     try {
-        res.render('signup')
-    } catch (error) {
-        console.log(error);
-    }
-}
-
-const sendVerifyMail = async(userEmail, OTP) => {
-    try {
-        
-        const transporter = nodemailer.createTransport({
-            host:'smtp.gmail.com',
-            port:587,
-            secure:false,
-            requireTLS:true,
-            auth:{
-                user: process.env.GMAIL,
-                pass: process.env.GMAIL_PASSWORD
-            }
-        });
-
-        const mailOptions = {
-            from: process.env.GMAIL,
-            to: userEmail,
-            subject:'Email Verification',
-            html:'<p>Hello please  Enter this otp to verify '+OTP+' your mail.</p>'
-        }
-
-        transporter.sendMail(mailOptions, function(error,info){
-            if(error){
-                console.log(error);
-            }else{
-                console.log('Email has been sent :- ',info.response);
-            }
-        })
+        const referral = req.query.referral
+        res.render('signup', {referral})
     } catch (error) {
         console.log(error);
     }
@@ -124,7 +80,7 @@ const sendVerifyMail = async(userEmail, OTP) => {
 
 const saveAndLogin = async(req,res) => {
     try {
-        const { fname, lname, email, mobile, password, confirmPassword } = req.body;
+        const { fname, lname, email, mobile, password, confirmPassword, referral } = req.body;
         if(password === confirmPassword){
 
             const userData = await User.findOne({email})
@@ -136,7 +92,7 @@ const saveAndLogin = async(req,res) => {
             const OTP = req.session.OTP = getOTP()
             
             sendVerifyMail(email, OTP); 
-            res.render('otpValidation',{ fname, lname, email, mobile, password, message : 'Check Spam mails' })
+            res.render('otpValidation',{ fname, lname, email, mobile, password, referral, message : 'Check Spam mails' })
 
         }else{
             console.log('password not matching');
@@ -154,26 +110,71 @@ const validateOTP = async(req,res) => {
     try {
         const { fname, lname, email, mobile, password } = req.body
 
-        console.log('req.body.OTP : '+req.body.OTP);
-
         const userOTP = req.body.OTP
+        const referral = req.body.referral.trim()
 
-        console.log('req.session.OTP : '+req.session.OTP+" "+ typeof req.session.OTP);
-        console.log('userOTP : '+userOTP+" "+ typeof userOTP);
+        console.log('referral : '+referral);
+        // console.log('req.session.OTP : '+req.session.OTP+" "+ typeof req.session.OTP);
+        // console.log('userOTP : '+userOTP+" "+ typeof userOTP);
         
         if(userOTP == req.session.OTP){
             console.log('OTP Validated Successfully!');
             const sPassword = await securePassword(password)
-            const user = new User({
-                fname, lname, email, mobile, password:sPassword
-            })
+            const referralCode = getReferralCode()
 
-            const newUserData = await user.save();
+            let newUserData;
+            if(referral){
+
+                const isReferrerExist = await User.findOne({referralCode: referral})
+
+                if(isReferrerExist){
+
+                    let referrerId = isReferrerExist._id;
+
+                    newUserData = await new User({
+                        fname, lname, email, mobile,
+                        password:sPassword, referralCode,
+                        referredBy: referral, wallet: 100
+                    }).save();
+    
+                    await User.findByIdAndUpdate(
+                        {_id: referrerId},
+                        {
+                            $inc:{
+                                wallet : 100
+                            }
+                        }
+                    )
+                }
+
+            }else{
+
+                newUserData = await new User({
+                    fname, lname, email, mobile,
+                    password:sPassword, referralCode
+                }).save();
+
+            }
+
             req.session.userId = newUserData._id;
+
+            // if(referral){
+            //     await User.findByIdAndUpdate({_id: newUserData._id},
+            //         {
+            //             $set:{
+            //                 referredBy : referral
+            //             },
+            //             $inc:{
+            //                 wallet: 100
+            //             }
+            //         }
+            //     )
+            // }
+
             res.redirect('/');
         }else{
             console.log('Incorrect OTP');
-            res.render('otpValidation',{ fname, lname, email, mobile, password, message : 'Incorrect OTP' })
+            res.render('otpValidation',{ fname, lname, email, mobile, password, referral, message : 'Incorrect OTP' })
         }
     } catch (error) {
         console.log(error);
@@ -197,10 +198,7 @@ const loadShoppingCart = async(req, res ) => {
     try {
         const userId = req.session.userId;
         const userData = await User.findById({_id:userId}).populate('cart.productId')
-        // console.log(userData);
-
          const cartItems = userData.cart
-        // console.log(cartItems);
 
         //Code to update cart values if product price changed by admin after we added pdt into cart
         for(const { productId } of cartItems ){
@@ -225,8 +223,6 @@ const addToCart = async(req, res) => {
     try {
         const pdtId = req.params.id;
         const userId = req.session.userId;
-        // console.log('pdtId : '+pdtId);
-        // console.log('userId : '+userId);
 
         const userData = await User.findById({_id:userId})
 
@@ -235,7 +231,6 @@ const addToCart = async(req, res) => {
 
         if(isproductExist === -1){
 
-            // console.log('Product not on cart');
             const pdtData = await Products.findById({_id: pdtId})
 
             const cartItem = {
@@ -244,8 +239,6 @@ const addToCart = async(req, res) => {
                 productPrice : pdtData.price,
                 discountPrice : pdtData.discountPrice
             }
-    
-            // console.log(cartItem);
     
             const userData = await User.findByIdAndUpdate(
                 {_id: userId},
@@ -374,7 +367,7 @@ const loadProfile = async(req, res) => {
 const loadEditProfile = async(req, res) => {
     try {
         id = req.session.userId;
-        console.log('userId : '+id);
+        // console.log('userId : '+id);
         const userData = await User.findById({_id:id})
 
         res.render('editProfile',{userData})

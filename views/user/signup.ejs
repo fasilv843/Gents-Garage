@@ -75,6 +75,14 @@
                                             <small id="confirmPasswordErr" class="error"></small>
                                     </div>
                                 </div>
+                                <div class="form-outline mb-3 row">
+                                    <div class=" col-12 mb-3">
+                                        <label class="form-label" for="referral">Referral Code</label>
+                                        <input type="referral" id="referral"
+                                            class="form-control form-control-md rounded-0" value="<%= locals.referral %>" placeholder="Enter Referral (Optional)" name="referral"/>
+                                            <small id="referralErr" class="error"></small>
+                                    </div>
+                                </div>
                                 <div class="text-center">
                                     <button class="btn btn-dark btn-md rounded-pill px-5 py-2 login-btn" type="submit" onclick="return validateSignUp()">SIGN UP</button>
                                     <p><%= locals.message?message:'' %></p>

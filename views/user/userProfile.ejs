@@ -60,6 +60,10 @@
                         <a href="/profile/changePassword" class="btn btn-dark" >
                             Change Password
                         </a>
+                        <div>
+                            <input type="hidden" id="referralCode" value="<%= userData.referralCode %>" readonly>
+                            <button onclick="copyReferralCode()" class="btn btn-dark">Click here to copy refferal code</button>
+                        </div>
                     </div>
                 </div>
 
@@ -171,6 +175,22 @@
 <%- include('../partials/footer.ejs') %>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>
+<script>
+    // Function to copy the referral code to clipboard
+    function copyReferralCode() {
+        const referralCodeValue = document.getElementById('referralCode').value;
+
+        const tempInput = document.createElement('input');
+        document.body.appendChild(tempInput);
+        tempInput.value = referralCodeValue;
+        tempInput.select();
+        document.execCommand('copy');
+        document.body.removeChild(tempInput);
+
+        // Optionally, you can show a notification to indicate the code has been copied
+        alert('Referral code copied to clipboard!');
+    }
+  </script>
 
 <%- include('../partials/script.ejs') %>
 
