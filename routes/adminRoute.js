@@ -7,7 +7,7 @@ const couponCtrl = require('../controllers/couponCtrl')
 const bannerCtrl = require('../controllers/bannerCtrl')
 const offerCtrl = require('../controllers/offerCtrl')
 const upload = require('../config/multer');
-const auth = require('../middleware/auth')
+const {isAdminLoggedIn, isAdminLoggedOut} = require('../middleware/auth')
 
 
 const admin_route = express()
@@ -16,17 +16,15 @@ admin_route.set('views','./views/admin')
 
 
 //Admin Login Handling
-admin_route.get('/login',adminCtrl.loadAdminLogin);
-admin_route.post('/login',adminCtrl.verifyAdminLogin);
-admin_route.post('/logout',adminCtrl.logoutAdmin)
+admin_route.get('/login', isAdminLoggedOut ,adminCtrl.loadAdminLogin);
+admin_route.post('/login', isAdminLoggedOut, adminCtrl.verifyAdminLogin);
+admin_route.post('/logout', isAdminLoggedOut ,adminCtrl.logoutAdmin)
 
 
-admin_route.use('/',auth.isAdminLoggedIn)
+admin_route.use('/', isAdminLoggedIn)
 
 //Admin Dashboard
 admin_route.get('/',adminCtrl.loadDashboard)
-
-
 
 //User Handling
 admin_route.get('/users',adminCtrl.loadUsers)
@@ -70,5 +68,13 @@ admin_route.get('/banners',bannerCtrl.loadBannerList)
 admin_route.post('/addBanner',upload.single('bannerImage'),bannerCtrl.addBanner)
 admin_route.post('/updateBanner/:bannerId',upload.single('bannerImage'),bannerCtrl.UpdateBanner)
 admin_route.post('/deleteBanner/:bannerId',bannerCtrl.deleteBanner)
+
+admin_route.get('/offers',offerCtrl.loadOffer)
+admin_route.get('/offers/addOffer',offerCtrl.loadAddOffer)
+admin_route.get('/offers/editOffer/:offerId',offerCtrl.loadEditOffer)
+
+admin_route.post('/offers/addOffer',offerCtrl.postAddOffer)
+admin_route.post('/offers/editOffer/:offerId',offerCtrl.postEditOffer)
+admin_route.get('/offers/cancelOffer/:offerId',offerCtrl.cancelOffer)
 
 module.exports = admin_route;

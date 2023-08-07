@@ -1,0 +1,73 @@
+
+<%- include('../partials/adminAside.ejs') %>
+
+<main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg ">
+
+   <%- include('../partials/adminNavbar.ejs') %>
+
+ <div class="container-fluid py-4">
+    <div class="row">
+      <div class="col-12">
+        <div class="card my-4">
+          <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+            <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3 d-flex justify-content-between">
+              <h6 class="text-white text-capitalize ps-3">Add Offer</h6>
+
+            </div>
+          </div>
+          <div class="card-body px-0 pb-2">
+            <div class="table-responsive p-0">
+
+                <!-- Copeid Code Start -->
+                
+                    <form action="/admin/offers/addOffer" method="post" class="p-4">
+
+                        <div class="form-outline mb-3 row input-group input-group-outline  ">
+                            <div class=" col-md-6 col-12 mb-3">
+                                <label for="name">Offer Name</label>
+                                <input type="text" id="name" class="form-control form-control-md rounded-0"
+                                placeholder="Enter Offer Name" name="name" required/>
+                                <small id="nameErr" class="error"></small>
+                            </div>
+                            <div class="col-md-6 col-12">
+                                <label for="discount">Discount %</label>
+                                <input type="number" id="discount" class="form-control form-control-md rounded-0" placeholder="Enter Discount" name="discount" required/>
+                                <small id="discountErr" class="error"></small>
+                            </div>
+                        </div>
+                        <div class="form-outline mb-3 row input-group input-group-outline ">
+                            <div class=" col-md-6 col-12 mb-3">
+                                <label for="startingDate">Select Starting Date</label>
+                                <input type="date" id="startingDate"
+                                    class="form-control form-control-md rounded-0" name="startingDate" required/>
+                                <small id="startingDateErr" class="error"></small>
+                            </div>
+                            <div class="col-md-6 col-12">
+                                <label for="expiryDate">Select Expiry Date</label>
+                                <input type="date" id="expiryDate" class="form-control form-control-md rounded-0" name="expiryDate" required/>
+                                <small id="expiryDateErr" class="error"></small>                                     
+                            </div>
+                        </div>
+                        <div class="text-center my-2">
+                            <button class="btn btn-dark btn-md rounded-pill px-5 py-2 login-btn" type="submit" onclick="return validateOffer()">ADD</button>
+                        </div>
+
+                    </form>
+
+
+                <!-- Copeid Code End -->
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <%- include('../partials/adminFooter.ejs') %>      
+
+</main>
+
+    <script src="/validations/offerValidation.js"></script>
+
+<%- include('../partials/adminScript.ejs') %>

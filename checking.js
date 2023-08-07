@@ -1,4 +1,2 @@
-let val = '   hek   ';
 
-console.log(val.trim());
-console.log(val);
+// Just checking how a code works 

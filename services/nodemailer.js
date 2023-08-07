@@ -1,4 +1,4 @@
-// const { getOTP } = require('../helpers/generator')
+
 const nodemailer = require('nodemailer')
 require('dotenv').config()
 
@@ -42,32 +42,3 @@ module.exports = {
     sendVerifyMail
 }
 
-
-
-
-
-// module.exports = {
-
-//     sendEmail : (email) => {
-//         try {
-//             const otp = generateOtp()
-//             console.log(otp);
-//             transporter.sendMail({
-//                 to : email,
-//                 from : process.env.USER_MAIL,
-//                 subject : 'OTP verification',
-//                 html : ` <h1> hey, Your OTP is ${otp}</h1><br>
-//                 <p> Note : The OTP only valid for 1 hour!!! </p>
-//                 `
-//             })
-
-//             return otp
-//         } catch (error) {
-//             res.redirect('/500')
-
-//         }
-
-//     },
-    
-
-// }

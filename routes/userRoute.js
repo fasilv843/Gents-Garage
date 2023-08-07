@@ -4,7 +4,7 @@ const productCtrl = require('../controllers/productCtrl')
 const addressCtrl = require('../controllers/addressCtrl')
 const orderCtrl = require('../controllers/orderCtrl')
 const couponCtrl = require('../controllers/couponCtrl')
-const auth = require('../middleware/auth')
+const {isUserLoggedIn, isUserLoggedOut ,isUserBlocked} = require('../middleware/auth')
 
 const user_route = express();
 
@@ -16,20 +16,19 @@ user_route.use( async(req, res, next) => {
     next()
 })
 
-user_route.use('/',auth.isUserBlocked);
+user_route.use('/', isUserBlocked);
 
 
 // HTTP Mehtods
 user_route.get('/',userCtrl.loadHome); 
 
-user_route.get('/login',userCtrl.loadLogin);
-user_route.post('/login',userCtrl.verifyLogin);
-user_route.get('/logout',userCtrl.logoutUser);
+user_route.get('/login', isUserLoggedOut ,userCtrl.loadLogin);
+user_route.post('/login', isUserLoggedOut,userCtrl.verifyLogin);
 
-user_route.get('/signup',userCtrl.loadSignUp);
-user_route.post('/signup',userCtrl.saveAndLogin);
+user_route.get('/signup', isUserLoggedOut,userCtrl.loadSignUp);
+user_route.post('/signup', isUserLoggedOut,userCtrl.saveAndLogin);
 
-user_route.post('/validateOTP',userCtrl.validateOTP)
+user_route.post('/validateOTP', isUserLoggedOut,userCtrl.validateOTP)
 user_route.post('/resendOTP',userCtrl.resendOTP)
 
 user_route.get('/shop',productCtrl.loadShop)
@@ -37,7 +36,9 @@ user_route.get('/shop/productOverview/:id',productCtrl.loadProductOverview);
 user_route.get('/aboutUs',userCtrl.loadAboutUs);
 
 //to check isUserLoggedIn after this route
-user_route.use('/',auth.isUserLoggedIn)
+user_route.use('/', isUserLoggedIn)
+
+user_route.get('/logout', userCtrl.logoutUser);
 
 //Planned on next week
 user_route.get('/shoppingCart',userCtrl.loadShoppingCart)

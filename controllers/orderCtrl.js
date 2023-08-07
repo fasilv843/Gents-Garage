@@ -142,7 +142,7 @@ const placeOrder = async(req, res) => {
                 var options = {
                     amount: totalPrice*100,
                     currency:'INR',
-                    receipt: " "
+                    receipt: "hello"
                 }
 
                 instance.orders.create(options, (err, order) => {
@@ -150,7 +150,7 @@ const placeOrder = async(req, res) => {
                         console.log(err);
                     }else{
                         console.log('sent json status razorpay');
-                        console.log(order);
+                        // console.log(order);
                         res.json({ status: 'Razorpay', order:order })
                     }
 
@@ -233,16 +233,19 @@ const verifyPayment = async(req,res) => {
 
         const userId = req.session.userId;
         const details = req.body
-
+        console.log(details['response[razorpay_payment_id]']);
+        const keys = Object.keys(details)
+        console.log(keys);
         console.log('in verify payment');
 
         const crypto = require('crypto')
-        let hmac = crypto.createHmac('sha256',env.process.KEY_SECRET)
+        let hmac = crypto.createHmac('sha256',process.env.KEY_SECRET)
         
-        hmac.update(details['payment[razorpay_order_id]']+'|'+details['payment[razorpay_payment_id]'])
+        hmac.update(details['response[razorpay_order_id]']+'|'+details['response[razorpay_payment_id]'])
         hmac = hmac.digest('hex');
-
-        if(hmac === details['payment[razorpay_signature]']){
+        console.log(typeof hmac);
+        console.log(typeof details['response[razorpay_signature]']);
+        if(hmac === details['response[razorpay_signature]']){
                             
             await new Orders({
                 userId, 

@@ -1,0 +1,148 @@
+
+<%- include('../partials/adminAside.ejs') %>
+
+<main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg ">
+
+   <%- include('../partials/adminNavbar.ejs') %>
+
+ <div class="container-fluid py-4">
+    <div class="row">
+      <div class="col-12">
+        <div class="card my-4">
+          <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+            <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3 d-flex justify-content-between">
+              <h6 class="text-white text-capitalize ps-3">Offers List</h6> 
+              <!-- <div> -->
+                <a class="btn bg-gradient-dark me-3" href="/admin/offers/addOffer">Add Offers</a>
+              <!-- </div>   -->
+            </div>
+          </div>
+          <div class="card-body px-0 pb-2">
+            <div class="table-responsive p-0">
+
+              <table class="table align-items-center mb-0">
+
+                <thead>
+                  <tr>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Offer Name</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Discount %</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Duration</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Status</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Edit</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Cancel</th>
+                  </tr>
+                </thead>
+
+                <tbody>
+
+                  <% 
+                    if(offers && offers.length > 0){
+                      for(let i=0; i<offers.length; i++){
+                         %>
+                            <tr>
+
+                                <td class="align-middle text-center text-sm">
+                                    <p class="text-xs font-weight-bold mb-0"><%= offers[i].name %></p>
+                                </td>
+
+                                <td class="align-middle text-center text-sm">
+                                    <p class="text-xs font-weight-bold mb-0"><%= offers[i].discount %></p>
+                                </td>
+
+                                <td class="align-middle text-center text-sm">
+                                    <% 
+                                    const dds = offers[i].startingDate.getDate();
+                                    const mms = offers[i].startingDate.getMonth() + 1;
+                                    const yyyys = offers[i].startingDate.getFullYear();
+                                    
+                                    const startingDate = `${dds}-${mms}-${yyyys}`; 
+
+                                    const dde = offers[i].expiryDate.getDate();
+                                    const mme = offers[i].expiryDate.getMonth() + 1;
+                                    const yyyye = offers[i].expiryDate.getFullYear();
+                                    
+                                    const expiryDate = `${dde}-${mme}-${yyyye}`; 
+                                    %>
+                                    <p class="text-xs font-weight-bold mb-0"><%= startingDate %> to </p>
+                                    <p class="text-xs font-weight-bold mb-0"><%= expiryDate %></p>
+                                </td>
+
+                                <td class="align-middle text-center text-sm">
+                                    <p class="text-xs font-weight-bold mb-0"><%= offers[i].status %></p>
+                                </td>
+
+                                <td class="align-middle text-center text-sm">
+                                    <a href="/admin/offers/editOffer/<%= offers[i]._id %>" class="btn btn-primary">Edit</a>
+                                </td>
+
+                                <td class="align-middle text-center">
+                                    <% 
+                                      if(offers[i].status === 'Available' || offers[i].status === 'Starting Soon'){
+                                         %>
+                                           <a href="#cancelOfferModal" class="btn btn-danger modalBTN"  data-bs-toggle="modal" data-id="<%= offers[i]._id %>">Cancel</a>
+                                         <%
+                                      }else{
+                                          %>
+                                          <a href="#cancelOfferModal" class="btn btn-success modalBTN"  data-bs-toggle="modal" data-id="<%= offers[i]._id %>">Add</a>
+                                          <%
+                                      }
+                                    %>
+                                </td>  
+
+                            </tr>
+                         <% 
+                      }
+                    }else{
+                        %>
+                        <tr>
+                            <td>
+                                <h6>Offers not added yet, add new offers</h6>
+                            </td>
+                        </tr>
+                        <%  
+                    }
+                  %>
+
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+        <!-- Modal Start  -->
+        <div class="modal fade" id="cancelOfferModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                  <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Are You Sure?</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body">
+                        <strong> Are you sure? Do you want to Cancel/Add this Offer ?</strong>
+                        <div class="modal-footer mt-2">
+                              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                              <a id="confirmBTN" class="btn btn-primary">Confirm</a>
+                        </div>
+                  </div>
+              </div>
+            </div>
+        </div> 
+        <!-- Modal End  -->
+
+  <%- include('../partials/adminFooter.ejs') %>      
+
+</main>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>
+
+<script>
+      $('.modalBTN').click( function () {
+        var id = $(this).data('id');
+        var routeURL = '/admin/offers/cancelOffer/'+id
+        $(".modal-footer #confirmBTN").attr('href', routeURL);
+    });
+</script>
+
+<%- include('../partials/adminScript.ejs') %>

@@ -312,21 +312,23 @@
             }
         };
         var rzpl = new Razorpay(options)
-        // console.log('opening razorpay');
+        console.log('opening razorpay');
         rzpl.open()
     }
 
     function verifyPayment(response,order){
-
-        $.ajax({    //This function didn't invoked ??
+        console.log(response,order);
+        console.log('in verify payment function in checkout');
+        $.ajax({
             url:'/verifyPayment',
             method:'post',
             data:{
-                payment,
+                response,
                 order
             },
             success:(res) => {
-                if(res.status==true){
+                console.log(res);
+                if(res.status == true){
                     location.href = '/orderSuccess'
                 }else{
                     // location.href = '/orderFailed'

@@ -15,6 +15,20 @@ const isUserLoggedIn = (req, res, next) => {
     }
 }
 
+const isUserLoggedOut = async(req, res, next) => {
+    try {
+
+        if(req.session.userId){
+            return res.redirect('/')
+        }
+
+        next();
+
+    } catch (error) {
+        console.log(error);
+    }
+}
+
 const isUserBlocked = async(req, res, next) => {
     try {
 
@@ -42,6 +56,7 @@ const isAdminLoggedIn = (req, res, next) => {
         if(!req.session.adminId){
             return res.redirect('/admin/login')
         }
+        console.log('admin logged in calling next()');
         next();
 
     } catch (error) {
@@ -50,8 +65,23 @@ const isAdminLoggedIn = (req, res, next) => {
     }
 }
 
+const isAdminLoggedOut = async(req, res, next) => {
+    try {
+
+        if(req.session.adminId){
+            return res.redirect('/admin')
+        }
+        next();
+
+    } catch (error) {
+        console.log(error);
+    }
+}
+
 module.exports = {
     isUserLoggedIn,
     isAdminLoggedIn,
-    isUserBlocked
+    isUserBlocked,
+    isUserLoggedOut,
+    isAdminLoggedOut
 }
