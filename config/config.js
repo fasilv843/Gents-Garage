@@ -1,13 +1,16 @@
 require('dotenv').config()
 const mongoose = require('mongoose')
+const crypto = require('crypto')
+
 
 
 let mongoConnect = () => mongoose.connect(process.env.MONGO_URL,console.log('Database Connected'));
 
-const sessionSecret = process.env.SESSION_SECRET
+const secretKey = crypto.randomBytes(32).toString('hex')
+
 
 
 module.exports = {
     mongoConnect,
-    sessionSecret
+    secretKey
 }

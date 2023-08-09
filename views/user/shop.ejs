@@ -2,7 +2,6 @@
 <%- include('../partials/userHeader.ejs') %>
 <%- include('../partials/userBreadcrub.ejs') %>
 
-
     <!-- Shop Section Begin -->
     <section class="shop spad">
         <div class="container">
@@ -145,16 +144,40 @@
                                     
                                     <div class="product__item">
                                         <div class="product__item__pic set-bg" data-setbg="/images/productImages/<%= pdtsData[i].images[0] %>"> 
+                                            <% 
+                                            if(pdtsData[i].offer && pdtsData[i].offer.status == 'Available'){
+                                                %>
+                                                <span class="label"><%= pdtsData[i].offer.name %></span>
+                                                <%  
+                                            }
+                                            %>
                                             <ul class="product__hover">
-                                                <li><a href="/addToWishlist"><img src="img/icon/heart.png" alt=""></a></li>
-                                                <li><a href="/shop/productOverview/<%= pdtsData[i]._id %>"><img src="img/icon/search.png" alt=""></a></li>
+                                                <li><a href="/addToWishlist"><img src="img/icon/heart.png" alt="">  <span>Add to Wishlist</span></a></li>
+                                                <li><a href="/shop/productOverview/<%= pdtsData[i]._id %>"><img src="img/icon/search.png" alt="">  <span>View Details</span></a></li>
                                             </ul>
                                         </div>
                                         <div class="product__item__text">
                                             <h6><%= pdtsData[i].name %></h6>
                                             <a href="/shop/addToCart/<%= pdtsData[i]._id  %>" class="add-cart">+ Add To Cart</a>
-                                            <h5>&#8377; <%= pdtsData[i].price - pdtsData[i].discountPrice  %></h5>
-        
+                                            <% 
+                                            let currPrice;
+                                            if(pdtsData[i].offer && pdtsData[i].offer.status == 'Available'){
+                                                currPrice = pdtsData[i].offerPrice
+                                            }else{
+                                                currPrice = pdtsData[i].price - pdtsData[i].discountPrice 
+                                            }
+                                            let discountPercentage = Math.floor(100 - ( (currPrice*100) / pdtsData[i].price ));
+                                            %>
+                                            <div class="d-flex align-content-center">
+                                                <div>
+                                                    <h5>&#8377; <%= currPrice  %></h5>
+                                                    <small style="color: grey; text-decoration: line-through;">&#8377; <%= pdtsData[i].price %></small>
+                                                </div>
+                                                <div>
+                                                    <strong class="ml-3" style="color: green;"><%= discountPercentage %>% off</strong>
+                                                </div>
+                                            </div>
+
                                         </div>
                                     </div>
 

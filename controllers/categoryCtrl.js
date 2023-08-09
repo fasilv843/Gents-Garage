@@ -1,9 +1,15 @@
 const Categories = require('../models/categoryModel');
+const Products = require('../models/productModel');
+const Offers = require('../models/offerModel')
 
 const loadCategories = async(req,res) => {
     try {
-        const categories = await Categories.find({})
-        res.render('categories',{categories, page:'Categories'})
+        const categories = await Categories.find({}).populate('offer')
+        const offerData = await Offers.find({ $or: [
+            {status : 'Starting Soon'},
+            {status : 'Available' }
+        ]});
+        res.render('categories',{categories, page:'Categories', offerData})
     } catch (error) {
         console.log(error);
     }
@@ -86,6 +92,128 @@ const listCategory = async(req,res) => {
     }
 }
 
+const applyCategoryOffer = async(req, res, next) => {
+    try {
+        console.log('applying category offer');
+        const { offerId, categoryId, override } = req.body
+
+        console.log('categoryid : '+categoryId);
+        //Setting offerId to offer field of category
+        await Categories.findByIdAndUpdate(
+            {_id:categoryId},
+            {
+                $set:{
+                    offer: offerId
+                }
+            }
+        );
+
+        const offerData = await Offers.findById({_id:offerId})
+        const products = await Products.find({category: categoryId})
+        console.log('starting of loop');
+        //applying offer to every product in the same category
+        for(const pdt of products){
+
+            const actualPrice = pdt.price - pdt.discountPrice;
+            
+            let offerPrice = 0;
+            if(offerData.status == 'Available'){
+                offerPrice = Math.round( actualPrice - ( (actualPrice*offerData.discount)/100 ))
+            }
+    
+            if(override){
+                await Products.updateOne(
+                    { _id: pdt._id },
+                    {
+                        $set:{
+                            offerPrice,
+                            offer: offerId,
+                            offerAppliedBy: 'Category'
+                        }
+                    }
+                );
+            }else{
+                await Products.updateOne(
+                    {
+                        _id: pdt._id,
+                        offer: { $exists: false }
+                    },
+                    {
+                        $set:{
+                            offerPrice,
+                            offer: offerId,
+                            offerAppliedBy: 'Category'
+                        }
+                    }
+                );
+            }
+
+        }
+
+        res.redirect('/admin/categories')
+
+    } catch (error) {
+        next(error)
+    }
+}
+
+
+const removeCategoryOffer = async(req, res, next) => {
+    try {
+        console.log('removing category offer');
+        const { catId } = req.params
+
+        await Categories.findByIdAndUpdate(
+            {_id:catId},
+            {
+                $unset: {
+                    offer:''
+                }
+            }
+        );
+
+        //Unsetting every prodects that matches catId
+        await Products.updateMany(
+            {
+                category: catId,
+                offerAppliedBy: 'Category'
+            },
+            {
+                $unset:{
+                    offer:'',
+                    offerPrice:'',
+                    offerAppliedBy:''
+                }
+            }
+        );
+        
+        res.redirect('/admin/categories')
+
+    } catch (error) {
+        next(error)
+    }
+}
+
+
+module.exports = {
+    
+    loadCategories,
+    addCategory,
+    editCategory,
+    listCategory,
+
+    applyCategoryOffer,
+    removeCategoryOffer
+}
+
+
+
+
+
+
+
+
+
 //This code i wrote when i included size for a specific category, 
 //but i decided to exclude size field from category. 
 
@@ -157,20 +285,3 @@ const listCategory = async(req,res) => {
 //         console.log(error);
 //     }
 // }
-
-module.exports = {
-    
-    loadCategories,
-    addCategory,
-    editCategory,
-    listCategory
-
-
-
-
-    // deleteList
-    // loadSizeChart,
-    // addSize,
-    // editSize,
-    // deleteSize
-}

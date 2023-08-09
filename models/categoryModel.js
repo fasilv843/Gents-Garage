@@ -12,6 +12,10 @@ const categoySchema = new mongoose.Schema({
     isListed:{
         type: Boolean,
         default: true
+    },
+    offer: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Offers',
     }
     // sizes : {
     //     type : []

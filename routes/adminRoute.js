@@ -76,5 +76,9 @@ admin_route.get('/offers/editOffer/:offerId',offerCtrl.loadEditOffer)
 admin_route.post('/offers/addOffer',offerCtrl.postAddOffer)
 admin_route.post('/offers/editOffer/:offerId',offerCtrl.postEditOffer)
 admin_route.get('/offers/cancelOffer/:offerId',offerCtrl.cancelOffer)
+admin_route.post('/applyOfferToCategory',categoryCtrl.applyCategoryOffer)
+admin_route.post('/removeCategoryOffer/:catId',categoryCtrl.removeCategoryOffer)
+admin_route.post('/applyOfferToProduct',productCtrl.applyProductOffer)
+admin_route.post('/removeProductOffer/:productId',productCtrl.removeProductOffer)
 
 module.exports = admin_route;

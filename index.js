@@ -1,15 +1,13 @@
 const userRoute = require('./routes/userRoute')
 const adminRoute = require('./routes/adminRoute')
-const crypto = require('crypto')
 const path = require('path');
 const express = require('express')
 const session = require('express-session');
 const nocache = require('nocache')
-const {mongoConnect} = require('./config/config')
+const {mongoConnect, secretKey} = require('./config/config')
 require('dotenv').config()
 
 const app = express()
-const secretKey = crypto.randomBytes(32).toString('hex')
 mongoConnect()
 
 app.set('view engine','ejs')

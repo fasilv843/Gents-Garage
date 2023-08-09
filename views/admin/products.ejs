@@ -30,6 +30,7 @@
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Category</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Price</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Action</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Apply Offer</th>
                   </tr>
                 </thead>
 
@@ -104,14 +105,91 @@
                                                                     </div>
                                                                 </div> 
                                                                 <!-- Modal End  -->
-
-
-
                               </td>
+
+                              <% 
+                              if(pdtsData[i].offerAppliedBy && pdtsData[i].offerAppliedBy === 'Category'){
+                                %>
+                                <td>
+                                  <small>Offer Already Applied to Category</small>
+                                  
+                                  <button class="btn btn-secondary applyOfferBTN" data-bs-toggle="modal" data-bs-target="#offerModal" data-id="<%= pdtsData[i]._id %>">
+                                    <i class="bi bi-arrow-left-right"></i>
+                                  </button>
+                                </td>
+                                <%  
+
+                              }else if(pdtsData[i].offerAppliedBy && pdtsData[i].offerAppliedBy === 'Product'){
+                                %>
+                                <td>
+                                  <form action="/admin/removeProductOffer/<%= pdtsData[i]._id %>" method="post">
+                                    <button type="submit" class="btn btn-danger">
+                                      <%= pdtsData[i].offer.name %>
+                                    </button>
+                                  </form>
+                                </td>
+                                <%  
+                              }else{
+                                %>
+                                <td>
+                                  <button class="btn btn-success applyOfferBTN" id="applyPdtOfferBTN" data-bs-toggle="modal"
+                                          data-bs-target="#offerModal" data-id="<%= pdtsData[i]._id %>">Apply</button>
+                                </td>
+                                <% 
+                              }
+                              %>
+
+                              <!-- Modal to apply offer to product start -->
+                              <div class="modal fade" id="offerModal"
+                              tabindex="-1" aria-labelledby="exampleModalLabel"
+                              aria-hidden="true">
+                              <div class="modal-dialog">
+                                  <div class="modal-content">
+
+                                      <div class="modal-header">
+                                          <h5 class="modal-title" id="exampleModalLabel">
+                                            APPLY OFFER
+                                          </h5>
+                                          <button type="button" class="btn-close"
+                                              data-bs-dismiss="modal" aria-label="Close"></button>
+                                      </div>
+
+                                      <form action="/admin/applyOfferToProduct"  method="post">
+                                          <div class="modal-body">
+                                              <input type="hidden" name="productId" value="" id="offerProductId">
+                                              <label for="offer">Select Offer </label>
+                                              <select name="offerId" id="offer" class="form-control">
+                                                  <% 
+                                                  offerData.forEach( (offer) => {
+                                                    %>
+                                                    <option value="<%= offer._id %>">
+                                                      <%= offer.name %>
+                                                    </option>
+                                                    <%  
+                                                  })
+                                                  %>
+                                              </select>
+
+                                          </div>
+                                          <div class="modal-footer">
+                                              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                              <button type="submit" class="btn btn-primary">APPLY</button>
+                                          </div>
+                                      </form>
+                                  </div>
+                              </div>
+                              </div>
+                              <!-- Modal to apply offer to product end -->
                               
                             </tr>
                          <% 
                       }
+                    }else{
+                      %>
+                      <tr>
+                        <td><h6>Products not added yet!</h6></td>
+                      </tr>
+                      <%  
                     }
                   %>
 
@@ -135,6 +213,13 @@
         var routeURL = '/admin/products/deleteProduct/'+productId
         $(".modal-footer #confirmBTN").attr('href', routeURL);
     });
+
+    $('.applyOfferBTN').click( function () {
+      console.log('apply offer btn clicked');
+      let pdtId = $(this).data('id');
+      console.log('pdtId : '+pdtId);
+      $('#offerProductId').val(pdtId)
+    })
 </script>
 
 <%- include('../partials/adminScript.ejs') %>

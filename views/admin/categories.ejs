@@ -31,6 +31,7 @@
                     <th class="text-uppercase text-secondary text-xxs text-center font-weight-bolder opacity-7">Name</th>
                     <th class="text-uppercase text-secondary text-xxs text-center font-weight-bolder opacity-7 ps-2">Edit</th>
                     <th class="text-uppercase text-secondary text-xxs text-center font-weight-bolder opacity-7 ps-2">Unlist</th>
+                    <th class="text-uppercase text-secondary text-xxs text-center font-weight-bolder opacity-7 ps-2">Apply Offer</th>
                   </tr>
                 </thead>
 
@@ -115,6 +116,70 @@
                                                                 <!-- Unlist/List Modal End  -->
                                 </td>
 
+                                <td class="align-middle text-center">
+                                  <% 
+                                  if(offerData && offerData.length){
+                                    if(categories[i].offer && categories[i].offer!=''){
+                                      %>
+                                      <form action="/admin/removeCategoryOffer/<%= categories[i]._id %>" method="post">
+                                        <input type="hidden" name="offerId" value="<%= categories[i].offer._id %>">
+                                        <button type="submit" class="btn btn-danger"><%= categories[i].offer.name %> <span style="color: white;">x</span></button>
+                                      </form>
+                                      <%  
+                                    }else{
+                                      %>
+                                      <button class="btn btn-success offerBTN" data-bs-toggle="modal"  data-bs-target="#offerModal" data-id="<%= categories[i]._id %>">Apply</button>
+                                      <%  
+                                    }
+                                  }else{
+                                    %>
+                                    <p>No Offer Available</p>
+                                    <%  
+                                  }
+                                  %>
+                                  <!-- <a href="#applyOfferModal" class="btn btn-danger applyOfferModal"  data-bs-toggle="modal" data-id="<%=// categories[i]._id %>">Apply</a> -->
+                                </td>
+
+                                <!--OFFER Modal -->
+                                <div class="modal fade" id="offerModal" tabindex="-1"
+                                aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="exampleModalLabel">ADD OFFER</h5>
+                                            <button type="button" class="btn-close"
+                                                data-bs-dismiss="modal"
+                                                aria-label="Close"></button>
+                                        </div>
+                                        <form action="/admin/applyOfferToCategory" method="post">
+                                            <div class="modal-body">
+                                                <input type="hidden" name="categoryId" value="" id="offerCategoryId">
+                                                <label for="offer">Select an offer to apply: </label>
+                                                <select name="offerId" id="offer" class="form-control">
+                                                    <% 
+                                                    offerData.forEach((offer) => {
+                                                      %>
+                                                      <option value="<%= offer._id  %>"> <%= offer.name %> </option>
+                                                      <%  
+                                                    })
+                                                    %>
+                                                </select>
+
+                                                <input type="checkbox" name="override" class="my-1" value="Override Product Offers">
+                                                <small class="my-1">Override Product Offers</small>
+
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary"
+                                                    data-bs-dismiss="modal">Close</button>
+                                                <button type="submit"
+                                                    class="btn btn-primary">ADD</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+
                             </tr>
                          <% 
                       }
@@ -151,6 +216,11 @@
         var routeURL = '/admin/categories/list/'+catId
         $(".modal-footer #confirmUnlistBTN").attr('href', routeURL);
     });
+
+    $('.offerBTN').click( function () {
+      let catId = $(this).data('id');
+      $('#offerCategoryId').val(catId)
+    })
 </script>
 
 <%- include('../partials/adminScript.ejs') %>

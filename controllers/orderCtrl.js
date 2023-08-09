@@ -51,7 +51,6 @@ const placeOrder = async(req, res) => {
         //getting selected address
         const userAddress = await Addresses.findOne({userId})
         const address = userAddress.addresses.find(obj => obj._id.toString() === addressId)
-        // console.log('Address \n\n'+address);
         req.session.deliveryAddress = address;
 
         //getting cart items
@@ -66,14 +65,23 @@ const placeOrder = async(req, res) => {
         let products = []
 
         cart.forEach((pdt) => {
+            let discountPrice;
+            let totalDiscount;
+            if(pdt.productId.offerPrice){
+                discountPrice = pdt.productId.price - pdt.productId.offerPrice
+                totalDiscount = discountPrice*pdt.quantity
+            }else{
+                discountPrice = pdt.discountPrice,
+                totalDiscount = pdt.quantity*pdt.discountPrice
+            }
             const product = {
                 productId: pdt.productId._id,
                 productName: pdt.productId.name,
                 productPrice: pdt.productId.price,
-                discountPrice: pdt.productId.discountPrice,
+                discountPrice,
                 quantity: pdt.quantity,
                 totalPrice: pdt.quantity*pdt.productId.price,
-                totalDiscount: pdt.quantity*pdt.productId.discountPrice
+                totalDiscount
             }
             products.push(product)
         })
@@ -84,8 +92,8 @@ const placeOrder = async(req, res) => {
         if(cart.length){
 
             //Finding total price
-            for(let i=0; i<cart.length; i++){
-                totalPrice += cart[i].productPrice*cart[i].quantity
+            for(let i=0; i<products.length; i++){
+                totalPrice += (products[i].totalPrice - products[i].totalDiscount)
             }
             console.log(totalPrice);
 
@@ -233,28 +241,40 @@ const verifyPayment = async(req,res) => {
 
         const userId = req.session.userId;
         const details = req.body
-        console.log(details['response[razorpay_payment_id]']);
-        const keys = Object.keys(details)
-        console.log(keys);
-        console.log('in verify payment');
+        // console.log(details['response[razorpay_payment_id]']);
+        // const keys = Object.keys(details)
+        // console.log(keys);
+        // console.log('in verify payment');
 
         const crypto = require('crypto')
         let hmac = crypto.createHmac('sha256',process.env.KEY_SECRET)
         
         hmac.update(details['response[razorpay_order_id]']+'|'+details['response[razorpay_payment_id]'])
         hmac = hmac.digest('hex');
-        console.log(typeof hmac);
-        console.log(typeof details['response[razorpay_signature]']);
+        // console.log(typeof hmac);
+        // console.log(typeof details['response[razorpay_signature]']);
         if(hmac === details['response[razorpay_signature]']){
-                            
+                     
+            let totalPrice = req.session.totalPrice
+            let couponCode = '';
+            let couponDiscount = 0;
+
+            if(req.session.coupon){
+                couponCode = req.session.coupon.code
+                couponDiscount = req.session.coupon.discount
+                totalPrice = totalPrice - (totalPrice * (couponDiscount / 100))
+            }
+
             await new Orders({
                 userId, 
                 deliveryAddress: req.session.deliveryAddress,
-                totalPrice:  req.session.totalPrice,
+                totalPrice,
                 products:  req.session.products, 
                 paymentMehod:'Razorpay',
                 status: 'Order Confirmed',
-                date: new Date()
+                date: new Date(),
+                couponCode,
+                couponDiscount
             }).save()
 
             
@@ -353,26 +373,26 @@ const loadViewOrderDetails = async(req, res) => {
 
 const loadOrderSuccess = async(req, res) => {
     try {
-
+        const result = req.query.result
         console.log('loaded Order Success');
         const isLoggedIn = Boolean(req.session.userId)
 
-        res.render('orderSuccess',{isLoggedIn})
+        res.render('orderSuccess',{isLoggedIn, result})
     } catch (error) {
         console.log(error);
     }
 }
 
 
-const loadOrderFailed = async(req, res) => {
-    try {
+// const loadOrderFailed = async(req, res) => {
+//     try {
 
-        console.log('loaded order failed');
-        res.send('Order Failed')
-    } catch (error) {
-        console.log(error);
-    }
-}
+//         console.log('loaded order failed');
+//         res.send('Order Failed')
+//     } catch (error) {
+//         console.log(error);
+//     }
+// }
 
 const loadOrdersList = async(req, res) => {
     try {
@@ -528,7 +548,7 @@ module.exports = {
     loadCheckout,
     placeOrder,
     loadOrderSuccess,
-    loadOrderFailed,
+    // loadOrderFailed,
     loadMyOrders,
     loadViewOrderDetails,
     loadOrdersList,

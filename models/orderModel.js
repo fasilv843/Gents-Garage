@@ -43,6 +43,9 @@ const orderSchema = mongoose.Schema({
         totalDiscount:{
             type:String,
             required:true
+        },    
+        offerId:{
+            type:String
         }
     }],
     paymentMehod:{
@@ -62,7 +65,11 @@ const orderSchema = mongoose.Schema({
     },
     couponDiscount:{
         type: String
-    }
+    },
+
+},
+{
+    timestamps:true,
 })
 
 module.exports = mongoose.model('Orders',orderSchema);

@@ -51,7 +51,7 @@ user_route.post('/shoppingCart/placeOrder',orderCtrl.placeOrder)
 
 
 user_route.get('/orderSuccess',orderCtrl.loadOrderSuccess)
-user_route.get('/orderFailed',orderCtrl.loadOrderFailed)
+// user_route.get('/orderFailed',orderCtrl.loadOrderFailed)
 user_route.post('/verifyPayment',orderCtrl.verifyPayment)
 
 

@@ -117,11 +117,16 @@
                                     <!-- price -->
 
                                     <% 
+                                    //console.log(cart)
                                     let totalPrice = 0;
                                     let totalDiscount = 0
                                     for(let i=0; i<cart.length; i++){
                                         totalPrice += cart[i].productId.price*cart[i].quantity
-                                        totalDiscount += cart[i].productId.discountPrice*cart[i].quantity
+                                        if(cart[i].productId.offerPrice){
+                                            totalDiscount += (cart[i].productId.price - cart[i].productId.offerPrice)*cart[i].quantity
+                                        }else{
+                                            totalDiscount += cart[i].productId.discountPrice*cart[i].quantity
+                                        }
                                     }
                                     %>
 
@@ -277,11 +282,11 @@
             data: $('#checkout-form').serialize(),
             success: (res) => {
                 if(res.status == 'COD'){
-                    location.href = '/orderSuccess'
+                    location.href = '/orderSuccess?result=success'
                 }else if(res.status == 'Razorpay'){
                     razorpayPayment(res.order)
                 }else if(res.status == 'Wallet'){
-                    location.href = '/orderSuccess'
+                    location.href = '/orderSuccess?result=success'
                 }
             }
         });
@@ -329,10 +334,9 @@
             success:(res) => {
                 console.log(res);
                 if(res.status == true){
-                    location.href = '/orderSuccess'
+                    location.href = '/orderSuccess?result=success'
                 }else{
-                    // location.href = '/orderFailed'
-                    alert('payment failed')
+                    location.href = '/orderSuccess?result=failed'
                 }
             }
         });

@@ -42,7 +42,16 @@ const productsSchema = mongoose.Schema({
     createdAt: {
         type : Date,
         required : true
-    }
+    },
+    offer:{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Offers'
+    },
+    offerPrice: { type: Number },
+    offerAppliedBy: { type: String }
+},
+{
+    timestamps:true,
 })
 
 

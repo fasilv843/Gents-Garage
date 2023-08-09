@@ -199,9 +199,9 @@ const loadAboutUs = async(req,res) => {
 const loadShoppingCart = async(req, res ) => {
     try {
         const userId = req.session.userId;
-        const userData = await User.findById({_id:userId}).populate('cart.productId')
+        const userData = await User.findById({_id:userId}).populate('cart.productId').populate('cart.productId.offer')
          const cartItems = userData.cart
-
+        console.log(cartItems[0].productId);
         //Code to update cart values if product price changed by admin after we added pdt into cart
         for(const { productId } of cartItems ){
             await User.updateOne(
@@ -285,7 +285,12 @@ const updateCart = async(req,res) => {
         const pdtData = await Products.findById({ _id: prodId })
 
         const stock = pdtData.quantity;
-        const totalSingle = quantity*(pdtData.price - pdtData.discountPrice)
+        let totalSingle
+        if(pdtData.offerPrice){
+            totalSingle = quantity*pdtData.offerPrice
+        }else{
+            totalSingle = quantity*(pdtData.price - pdtData.discountPrice)
+        }
 
         if(stock >= quantity){
             await User.updateOne(
@@ -297,12 +302,18 @@ const updateCart = async(req,res) => {
                 }
             );
 
-            const userData =  await User.findById({_id: userId})
+            const userData =  await User.findById({_id: userId}).populate('cart.productId')
             let totalPrice = 0;
             let totalDiscount = 0;
             userData.cart.forEach(pdt => {
+
                 totalPrice += pdt.productPrice*pdt.quantity
-                totalDiscount += pdt.discountPrice*pdt.quantity
+                console.log(pdt.offerPrice);
+                if(pdt.productId.offerPrice){
+                    totalDiscount += (pdt.productPrice - pdt.productId.offerPrice)*quantity
+                }else{
+                    totalDiscount += pdt.discountPrice*pdt.quantity
+                }
             })
 
             res.json({

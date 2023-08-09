@@ -13,12 +13,24 @@
 
 
 <div class="mainDiv text-center container">
-    <h1>Order Success &#10003;</h1>
-    <span>Your order will be delivered soon!</span><br>
+    <% 
+    if(result == 'success'){
+        %>
+        <h1 style="color: green;">Order Success &#10003;</h1>
+        <span>Your order will be delivered soon!</span><br>
+        <% 
+    }else if(result == 'failed'){
+        %>
+        <h1 style="color: red;">Order Failed &#10060;</h1>
+        <span>Sorry, something gone wrong </span><br>
+        <% 
+    }
+    %>
+
     <img src="/extras/delivery.jpg" width="400rem" class="img-fluid" alt="">
     <div class="mt-4">
-        <a href="/orders" class="btn btn-success me-2 mb-3">Go to Orders</a>
-        <a href="/shop" class="btn btn-warning mb-3">Continue Shopping</a>
+        <a href="/profile/myOrders" class="btn btn-dark me-2 mb-3">Go to Orders</a>
+        <a href="/shop" class="btn btn-secondary mb-3">Continue Shopping</a>
     </div>
 </div>
 

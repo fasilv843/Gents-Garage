@@ -1,13 +1,18 @@
 const Products = require('../models/productModel')
 const Categories = require('../models/categoryModel');
+const Offers = require('../models/offerModel')
 const fs = require('fs')
 const path = require('path')
 
 const loadProduct = async(req,res) => {
     try {
-        const pdtsData = await Products.find().populate("category")
+        const pdtsData = await Products.find().populate("category").populate('offer')
         // console.log(pdtsData);
-        res.render('products',{pdtsData, page:'Products'})
+        const offerData = await Offers.find({ $or: [
+            {status : 'Starting Soon'},
+            {status : 'Available' }
+        ]});
+        res.render('products',{pdtsData, offerData, page:'Products'})
     } catch (error) {
         console.log(error);
     }
@@ -254,7 +259,7 @@ const loadShop = async(req,res) => {
 
         if(req.query.search){
             search = req.query.search;
-            console.log('req.query.search : '+req.query.search);
+            // console.log('req.query.search : '+req.query.search);
             query.$or.push({
                 'category' : {
                     $in: await getCategoryIds(search)
@@ -271,11 +276,11 @@ const loadShop = async(req,res) => {
         if(req.query.brand){
             query.brand = req.query.brand
         };
-        console.log('req.query.brand : '+req.query.brand);
+        // console.log('req.query.brand : '+req.query.brand);
 
-        console.log(query);
+        // console.log(query);
 
-        let pdtsData = await Products.find(query).populate('category').sort({ createdAt: -1 }).limit(limit*1).skip( (page - 1)*limit );
+        let pdtsData = await Products.find(query).populate('category').populate('offer').sort({ createdAt: -1 }).limit(limit*1).skip( (page - 1)*limit );
 
         // if(req.query.sortValue && req.query.sortValue != 3){
         //     pdtsData = await Products.find(query).populate('category').sort({ discountPrice: sortValue }).limit(limit*1).skip( (page - 1)*limit )
@@ -283,11 +288,11 @@ const loadShop = async(req,res) => {
         //     pdtsData = await Products.find(query).populate('category').sort({ createdAt: sortValue }).limit(limit*1).skip( (page - 1)*limit )
         // }
 
-        console.log('pdtsData : \n\n'+pdtsData);
+        // console.log('pdtsData : \n\n'+pdtsData);
 
         const categoryNames = await Categories.find({})
 
-        console.log('categoryNames : \n\n'+categoryNames);
+        // console.log('categoryNames : \n\n'+categoryNames);
         const brands = await Products.aggregate([{
                 $group: {
                     _id: '$brand'
@@ -328,12 +333,65 @@ const loadShop = async(req,res) => {
 const loadProductOverview = async(req,res) => {
     try {
         const id = req.params.id;
-        console.log(id);
+        // console.log(id);
         const isLoggedIn = Boolean(req.session.userId)
         const pdtData = await Products.findById({_id:id})
         res.render('productOverview',{pdtData, parentPage : 'Shop', page: 'Product Overview',isLoggedIn})
     } catch (error) {
         console.log(error);
+    }
+}
+
+const applyProductOffer = async(req, res, next) => {
+    try {
+        const { offerId, productId } = req.body
+        // console.log('offerid '+offerId+'  \nproductId : '+productId);
+        const product = await Products.findById({_id:productId})
+        const offerData = await Offers.findById({_id:offerId})
+        const actualPrice = product.price - product.discountPrice;
+        
+        let offerPrice = 0;
+        if(offerData.status == 'Available'){
+            offerPrice = Math.round( actualPrice - ( (actualPrice*offerData.discount)/100 ))
+        }
+        // const offerPrice = Math.round( actualPrice - ( (actualPrice*offerData.discount)/100 ))
+
+        await Products.findByIdAndUpdate(
+            {_id:productId},
+            {
+                $set:{
+                    offerPrice,
+                    offer: offerId,
+                    offerAppliedBy: 'Product'
+                }
+            }
+        )
+
+        res.redirect('/admin/products')
+
+    } catch (error) {
+        next(error)
+    }
+}
+
+const removeProductOffer = async(req, res, next) => {
+    try {
+        const { productId } = req.params
+        await Products.findByIdAndUpdate(
+            {_id: productId},
+            {
+                $unset:{
+                    offer:'',
+                    offerPrice:'',
+                    offerAppliedBy:''
+                }
+            }
+        );
+
+        res.redirect('/admin/products')
+
+    } catch (error) {
+        next(error)
     }
 }
 
@@ -348,5 +406,7 @@ module.exports = {
     deleteProduct,
     deleteImage,
     loadShop,
-    loadProductOverview
+    loadProductOverview,
+    applyProductOffer,
+    removeProductOffer
 }

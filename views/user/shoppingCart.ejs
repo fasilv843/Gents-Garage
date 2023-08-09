@@ -23,20 +23,29 @@
                                 <% 
                                 let totalPrice = 0
                                 let totalDiscount = 0
+                                let currPrice;
+                                //let discountPercentage
                                 if(cartItems.length){
-                                    console.log("Cart items : \n\n\n"+cartItems)
                                     for(let i=0; i<cartItems.length; i++){
                                         %>
                                         <tr>
                                             <td class="product__cart__item">
                                                 <div class="product__cart__item__pic">
                                                     <img width="100px" src="/images/productImages/<%= cartItems[i].productId.images[0] %>" alt="Product image">
-                                                    <%// console.log(cartItems[i].images[1]) %>
                                                 </div>
                                                 <div class="product__cart__item__text">
                                                     <h6><%= cartItems[i].productId.name %></h6>
                                                     <h6><%= cartItems[i].productId.brand %></h6>
-                                                    <h5>&#8377;<%= cartItems[i].productId.price - cartItems[i].productId.discountPrice %></h5>
+                                                    <% 
+                                                    if(cartItems[i].productId.offerPrice){
+                                                        console.log('product has offer')
+                                                        currPrice = cartItems[i].productId.offerPrice
+                                                    }else{
+                                                        currPrice = cartItems[i].productId.price - cartItems[i].productId.discountPrice 
+                                                    }
+                                                    //discountPercentage = Math.floor(100 - ( (currPrice*100)/cartItems[i].productId.price ));
+                                                    %>
+                                                    <h5>&#8377;<%= currPrice %></h5>
                                                 </div>
                                                 <span style="color: red;" id="<%= cartItems[i]._id %>msg"></span>
     
@@ -62,12 +71,16 @@
 
                                             </td>
                                             <% 
-                                            let price = cartItems[i].productId.price - cartItems[i].productId.discountPrice
+                                            //let price = cartItems[i].productId.price - cartItems[i].productId.discountPrice
                                             %>
-                                            <td id="total<%= cartItems[i]._id %>" class="cart__price">&#8377;<%= price*cartItems[i].quantity  %></td>
+                                            <td id="total<%= cartItems[i]._id %>" class="cart__price">&#8377;<%= currPrice*cartItems[i].quantity  %></td>
                                             <% 
                                             totalPrice += cartItems[i].productId.price*cartItems[i].quantity
-                                            totalDiscount += cartItems[i].productId.discountPrice*cartItems[i].quantity
+                                            if(cartItems[i].productId.offerPrice){
+                                                totalDiscount = cartItems[i].productId.offerPrice*cartItems[i].quantity
+                                            }else{
+                                                totalDiscount += cartItems[i].productId.discountPrice*cartItems[i].quantity
+                                            }
                                             %>
                                             <td class="cart__close">
                                                 <form action="/shoppingCart/removeItem/<%= cartItems[i].productId._id %>" method="post">
@@ -188,7 +201,6 @@
             success: (res) => {
                 if (res.status == true) {
 
-                    // $(`#${spanID}msg`).html(res.data.st)
                     $(`#total${spanID}`).html(`₹${res.data.totalSingle}`)
                     $(`#totalPrice`).html(`₹${res.data.totalPrice}`)
                     $(`#totalDiscount`).html(`₹${res.data.totalDiscount}`)
