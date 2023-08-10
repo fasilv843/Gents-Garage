@@ -21,7 +21,7 @@ app.use(session({
 }));
 
 app.use(express.json());
-app.use(express.urlencoded({extended:false})); //use it before route, then we don't have to use it on router again
+app.use(express.urlencoded({extended:false}));
 
 app.use(express.static(path.join(__dirname, 'public')))
 

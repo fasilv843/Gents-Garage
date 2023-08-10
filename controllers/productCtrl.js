@@ -192,14 +192,14 @@ const loadShop = async(req,res) => {
         }
 
         let limit = 6;
-        let sortValue = -1;
-        if(req.query.sortValue){
-            if(req.query.sortValue == 2){
-                sortValue = 1;
-            }else{
-                sortValue = -1;
-            }
-        }
+        // let sortValue = -1;
+        // if(req.query.sortValue){
+        //     if(req.query.sortValue == 2){
+        //         sortValue = 1;
+        //     }else{
+        //         sortValue = -1;
+        //     }
+        // }
 
         //declaring a default min and max price
         let minPrice = 1;
@@ -279,16 +279,47 @@ const loadShop = async(req,res) => {
         // console.log('req.query.brand : '+req.query.brand);
 
         // console.log(query);
+        let sortValue = 1;
+        if(req.query.sortValue){
+            sortValue = req.query.sortValue;
+        }
 
-        let pdtsData = await Products.find(query).populate('category').populate('offer').sort({ createdAt: -1 }).limit(limit*1).skip( (page - 1)*limit );
 
-        // if(req.query.sortValue && req.query.sortValue != 3){
-        //     pdtsData = await Products.find(query).populate('category').sort({ discountPrice: sortValue }).limit(limit*1).skip( (page - 1)*limit )
-        // }else{
-        //     pdtsData = await Products.find(query).populate('category').sort({ createdAt: sortValue }).limit(limit*1).skip( (page - 1)*limit )
-        // }
+        let pdtsData;
+        if(sortValue == 1){
+            pdtsData = await Products.find(query).populate('category').populate('offer').sort({ createdAt: -1 }).limit(limit*1).skip( (page - 1)*limit );
 
-        // console.log('pdtsData : \n\n'+pdtsData);
+        }else{
+
+            pdtsData = await Products.find(query).populate('category').populate('offer')
+
+            pdtsData.forEach(((pdt) => {
+                if (pdt.offerPrice) {
+                    pdt.actualPrice = pdt.offerPrice
+                    console.log(pdt.actualPrice);
+                } else {
+                    pdt.actualPrice = pdt.price - pdt.discountPrice
+                }
+            }))
+
+            if(sortValue == 2){
+                //sorting ascending order of actualPrice
+                pdtsData.sort( (a,b) => {
+                    return a.actualPrice - b.actualPrice;
+                });
+
+            }else if(sortValue == 3){
+
+                //sorting descending order of actualPrice
+                pdtsData.sort( (a,b) => {
+                    return b.actualPrice - a.actualPrice;
+                });
+
+            }
+
+            pdtsData = pdtsData.slice((page - 1) * limit, page * limit);
+
+        }
 
         const categoryNames = await Categories.find({})
 
@@ -314,7 +345,7 @@ const loadShop = async(req,res) => {
             brands,
             pageCount,
             currentPage: page,
-            sortValue: req.query.sortValue,
+            sortValue,
             minPrice: req.query.minPrice,
             maxPrice: req.query.maxPrice,
             category: req.query.category,
