@@ -92,37 +92,13 @@ const postEditCoupon = async(req, res, next) => {
 
 const cancelCoupon = async(req, res, next) => {
     try {
-        console.log('cancelling coupon');
-
         const couponId = req.params.couponId;
+
         const couponData = await Coupons.findById({_id:couponId})
-
-        if(couponData.isCancelled){
-
-            await Coupons.findByIdAndUpdate(
-                { _id: couponId },
-                {
-                    $set:{
-                        isCancelled: false
-                    }
-                }
-            );
-
-        }else{
-
-            await Coupons.findByIdAndUpdate(
-                { _id: couponId },
-                {
-                    $set:{
-                        isCancelled: true
-                    }
-                }
-            );
-
-        }
-
+        couponData.isCancelled = !couponData.isCancelled
+        await couponData.save()
+        
         res.redirect('/admin/coupons');
-
     } catch (error) {
         console.log(error);
         next(error)

@@ -79,13 +79,10 @@ const listCategory = async(req,res) => {
         const categoryData = await Categories.findById({_id:id})
 
         if(categoryData){
-            if(categoryData.isListed === true){
-                await Categories.findByIdAndUpdate({_id:id},{$set:{isListed:false}})
-            }else{
-                await Categories.findByIdAndUpdate({_id:id},{$set:{isListed:true}})
-            }
-            res.redirect('/admin/categories')
+            categoryData.isListed = !categoryData.isListed
+            await categoryData.save()
         }
+        res.redirect('/admin/categories')
 
     } catch (error) {
         console.log(error);

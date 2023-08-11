@@ -39,10 +39,6 @@ const productsSchema = mongoose.Schema({
         type : Boolean,
         default: true
     },
-    createdAt: {
-        type : Date,
-        required : true
-    },
     offer:{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Offers'

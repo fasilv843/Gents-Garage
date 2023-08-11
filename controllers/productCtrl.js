@@ -128,13 +128,8 @@ const deleteProduct = async(req,res) => {
     try {
         const id = req.params.id;
         const prodData = await Products.findById({_id:id})
-        
-        console.log(prodData);
-        if(prodData.isListed){
-            await Products.findByIdAndUpdate({_id:id}, {$set:{ isListed: false }});
-        }else{
-            await Products.findByIdAndUpdate({_id:id}, {$set:{ isListed: true }});
-        }
+        prodData.isListed = !prodData.isListed
+        prodData.save()
         
         res.redirect('/admin/products');
     } catch (error) {
