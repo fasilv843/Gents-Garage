@@ -142,10 +142,9 @@
                         if(status < 4){
                             %>
                             <div class="col-md-2 d-flex justify-content-center align-items-center">
-                                <button type="button" class="btn btn-danger cancelOrderBTN" data-toggle="modal"  data-id="<%= orderData._id %>" data-target="#cancelOrderPopup">
+                                <button type="button" class="btn btn-danger cancelOrderBTN" id="cancelOrderBTN" data-toggle="modal"  data-id="<%= orderData._id %>" data-target="#cancelOrderPopup">
                                     Cancel Order
                                 </button>
-                                <!-- <a href="#cancelOrderModal" class="btn btn-danger cancelOrderBTN" data-bs-toggle="modal" data-id="<%=// orderData._id %>">Cancel Order</a> -->
                             </div>
                             <%  
                         }else if(status == 4){
@@ -174,31 +173,6 @@
                             <% 
                         }
                         %>
-
-          <!-- Modal Start  -->
-          <!-- <div class="modal fade" id="cancelOrderModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-            <div class="modal-dialog">
-              <div class="modal-content">
-                  <div class="modal-header">
-                  <h1 class="modal-title fs-5" id="exampleModalLabel">Are You Sure?</h1>
-                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                  </div>
-                  <div class="modal-body">
-                          <strong> Are you sure? Do you want to Canel this Order ?</strong>
-                          <div class="modal-footer mt-2">
-                              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                              <a id="confirmBTN" class="btn btn-primary">Confirm</a>
-                          </div>
-                  </div>
-              </div>
-            </div>
-        </div>  -->
-        <!-- Modal End  -->
-
-        <!-- Button trigger modal -->
-
-
-
                     </div>
                 </div>
             </div>
@@ -274,23 +248,26 @@
           </button>
         </div> 
         <div class="modal-body">
-            <strong> Are you sure? Do you want to Cancel this Order ?</strong>
+            <strong> Are you sure? Do you want to Cancel this Order!?</strong>
             <div class="modal-footer mt-2">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <a id="confirmBTN" href="" class="btn btn-danger">Confirm Cancellation</a>
+                <a id="confirmOrderCancellationBTN" href="" class="btn btn-danger">Confirm Cancellation</a>
             </div>
         </div>
       </div>
     </div>
   </div>
 
-<script>
-    $('.cancelOrderBTN').click( function () {
-        var orderId = $(this).data('id');
-        var routeURL = `/cancelOrder/${orderId}?cancelledBy=user`
-        $(".modal-footer #confirmBTN").attr('href', routeURL);
-    });
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>
 
+<script>
+    $(document).ready(function() {
+        $('#cancelOrderBTN').click(function() {
+            var orderId = $(this).data('id');
+            var routeURL = `/cancelOrder/${orderId}?cancelledBy=user`;
+            $("#confirmOrderCancellationBTN").attr('href', routeURL);
+        });
+    });
 </script>
     
 <%- include('../partials/script.ejs') %>

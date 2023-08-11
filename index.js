@@ -17,7 +17,8 @@ app.use(nocache());
 app.use(session({
     secret: secretKey,
     resave: false,
-    saveUninitialized: true
+    saveUninitialized: true,
+    cookie: { maxAge: 600000 }
 }));
 
 app.use(express.json());

@@ -10,6 +10,12 @@
             <div class="row">
                 <div class="col-lg-8">
                     <div class="shopping__cart__table">
+                        <% 
+                        let totalPrice = 0
+                        let totalDiscount = 0
+                        let currPrice;
+                        if(cartItems.length){
+                        %>
                         <table>
                             <thead>
                                 <tr>
@@ -21,11 +27,9 @@
                             </thead>
                             <tbody>
                                 <% 
-                                let totalPrice = 0
-                                let totalDiscount = 0
-                                let currPrice;
+
                                 //let discountPercentage
-                                if(cartItems.length){
+
                                     for(let i=0; i<cartItems.length; i++){
                                         %>
                                         <tr>
@@ -96,7 +100,8 @@
                                     %>
                                     <tr>
                                         <td>
-                                            <h5> <strong> Add items to the cart</strong> </h5>
+                                            <!-- <h5> <strong> Add items to the cart</strong> </h5> -->
+                                            <img src="/pngwing.com.png" alt="Cart Empty Image">
                                         </td>
                                     </tr>
                                     <%  
@@ -107,7 +112,7 @@
                     </div>
                     <div class="row">
                         <div class="col-lg-6 col-md-6 col-sm-6">
-                            <div class="continue__btn">
+                            <div class="continue__btn mb-3">
                                 <a href="/shop">Continue Shopping</a>
                             </div>
                         </div>

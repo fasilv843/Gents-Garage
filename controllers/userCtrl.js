@@ -92,6 +92,12 @@ const saveAndLogin = async(req,res) => {
             const OTP = req.session.OTP = getOTP()
             
             sendVerifyMail(email, OTP); 
+
+            setTimeout(() => {
+                req.session.OTP = null; // Or delete req.session.otp;
+                console.log('otp time out');
+            }, 600000); 
+
             res.render('otpValidation',{ fname, lname, email, mobile, password, referral, message : 'Check Spam mails' })
 
         }else{
@@ -118,7 +124,6 @@ const validateOTP = async(req,res) => {
         // console.log('userOTP : '+userOTP+" "+ typeof userOTP);
         
         if(userOTP == req.session.OTP){
-            console.log('OTP Validated Successfully!')
             const sPassword = await securePassword(password)
             const referralCode = getReferralCode()
 
@@ -174,6 +179,10 @@ const resendOTP = async(req, res, next) => {
         const { email } = req.body
         const OTP = req.session.OTP = getOTP()
         console.log('resending otp '+OTP+' to '+email);
+        setTimeout(() => {
+            req.session.OTP = null; // Or delete req.session.otp;
+            console.log('otp time out');
+        }, 600000); 
         sendVerifyMail(email, OTP); 
 
         res.json({isResend: true})
@@ -201,7 +210,6 @@ const loadShoppingCart = async(req, res ) => {
         const userId = req.session.userId;
         const userData = await User.findById({_id:userId}).populate('cart.productId').populate('cart.productId.offer')
          const cartItems = userData.cart
-        console.log(cartItems[0].productId);
         //Code to update cart values if product price changed by admin after we added pdt into cart
         for(const { productId } of cartItems ){
             await User.updateOne(
@@ -462,6 +470,12 @@ const postChangeMail = async(req,res) => {
             
             const OTP = req.session.OTP = getOTP()
             console.log('OTP generated when posted new email '+OTP);
+
+            setTimeout(() => {
+                req.session.OTP = null; // Or delete req.session.otp;
+                console.log('otp time out');
+            }, 600000); 
+
             sendVerifyMail(newMail, OTP); 
             req.session.newMail = newMail
             res.render('otpToChangeMail')
@@ -565,6 +579,10 @@ const forgotPassword = async(req, res ) => {
         const userMail = await User.findById({_id: req.session.userId},{email:1,_id:0})
         const OTP = req.session.OTP = getOTP() 
         sendVerifyMail(userMail.email, OTP);
+        setTimeout(() => {
+            req.session.OTP = null; // Or delete req.session.otp;
+            console.log('otp time out');
+        }, 600000); 
         res.render('forgotPasswordVerification')
 
     } catch (error) {
