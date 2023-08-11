@@ -1,12 +1,12 @@
 
 const bcrypt = require('bcrypt')
+const User = require('../models/userModel')
 
 
 const getOTP = () =>  Math.floor( 1000000*Math.random() )
 
-const getReferralCode = () => {
 
-    // Function to generate a random alphanumeric code
+const generateReferralCode = async() => {
     const charset = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     let referralCode = '';
     for (let i = 0; i < 8; i++) {
@@ -14,6 +14,14 @@ const getReferralCode = () => {
         referralCode += charset[randomIndex];
     }
     return referralCode;
+}
+
+const getReferralCode = async() => {
+
+    const referralCode = generateReferralCode()
+    const isreferralExist = await User.findOne({ referralCode})
+    if(isreferralExist) getReferralCode()
+    return referralCode
 }
 
 const securePassword = async(password) => {
