@@ -149,7 +149,7 @@ const loadDashboard = async(req,res) => {
 
         let paymentData = await Orders.aggregate([
             { $match: { status: 'Delivered' }},
-            { $group: { _id: '$paymentMehod', count: { $sum: 1 }}}
+            { $group: { _id: '$paymentMethod', count: { $sum: 1 }}}
         ]);
 
         let paymentMethods = []

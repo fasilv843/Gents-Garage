@@ -43,7 +43,7 @@ const placeOrder = async(req, res) => {
 
         //getting details needed
         const addressId = req.body.address
-        const paymentMehod = req.body.payment
+        const paymentMethod = req.body.payment
         const userId = req.session.userId
 
         console.log('addressId : '+addressId);
@@ -109,7 +109,7 @@ const placeOrder = async(req, res) => {
             }
             
             
-            if(paymentMehod === 'COD'){
+            if(paymentMethod === 'COD'){
                 console.log('Payment method is COD');
                 console.log(address);
                 await new Orders({
@@ -117,7 +117,7 @@ const placeOrder = async(req, res) => {
                     deliveryAddress: address,
                     totalPrice,
                     products, 
-                    paymentMehod,
+                    paymentMethod,
                     status: 'Order Confirmed',
                     date: new Date(),
                     couponCode,
@@ -145,7 +145,7 @@ const placeOrder = async(req, res) => {
                 req.session.cartCount = 0;
                 res.json({status : 'COD'})
 
-            }else if(paymentMehod === 'Razorpay'){
+            }else if(paymentMethod === 'Razorpay'){
                 console.log('Payment method razorpay');
                 var options = {
                     amount: totalPrice*100,
@@ -164,7 +164,7 @@ const placeOrder = async(req, res) => {
 
                 })
                 // console.log('instance created :>');
-            }else if(paymentMehod == 'Wallet'){
+            }else if(paymentMethod == 'Wallet'){
                 console.log('Payment method is COD');
                 console.log(address);
                 await new Orders({
@@ -172,7 +172,7 @@ const placeOrder = async(req, res) => {
                     deliveryAddress: address,
                     totalPrice,
                     products, 
-                    paymentMehod,
+                    paymentMethod,
                     status: 'Order Confirmed',
                     date: new Date(),
                     couponCode,
@@ -270,7 +270,7 @@ const verifyPayment = async(req,res) => {
                 deliveryAddress: req.session.deliveryAddress,
                 totalPrice,
                 products:  req.session.products, 
-                paymentMehod:'Razorpay',
+                paymentMethod:'Razorpay',
                 status: 'Order Confirmed',
                 date: new Date(),
                 couponCode,
@@ -465,7 +465,7 @@ const cancelOrder = async(req,res) => {
         }
 
 
-        if(orderData.paymentMehod !== 'COD'){
+        if(orderData.paymentMethod !== 'COD'){
             console.log('cancelled order Payment method razorpay or wallet, updating wallet');
             await User.findByIdAndUpdate(
                 {_id: userId },
