@@ -1,12 +1,13 @@
   <%- include('../partials/adminAside.ejs') %>
 
-
   <main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg ">
 
     <%- include('../partials/adminNavbar.ejs') %>
 
     <div class="container-fluid py-4">
-      <div class="row">
+      <!-- cards  -->
+      <div class="row d-flex justify-content-center">
+
         <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
           <div class="card">
             <div class="card-header p-3 pt-2">
@@ -14,16 +15,18 @@
                 <i class="material-icons opacity-10">weekend</i>
               </div>
               <div class="text-end pt-1">
-                <p class="text-sm mb-0 text-capitalize">Today's Money</p>
-                <h4 class="mb-0">$53k</h4>
+                <p class="text-sm mb-0 text-capitalize">Total Revenue</p>
+                <h4 class="mb-0"><%= totalIncome %></h4>
               </div>
             </div>
             <hr class="dark horizontal my-0">
-            <div class="card-footer p-3">
-              <p class="mb-0"><span class="text-success text-sm font-weight-bolder">+55% </span>than last week</p>
+            <div class="card-footer p-3 d-flex justify-content-between">
+              <p class="mb-0"><span class="text-success text-sm font-weight-bolder col-6">+<%= thisMonthIncome %></span> on this month</p>
+              <p class="mb-0"><span class="text-success text-sm font-weight-bolder">+<%= thisYearIncome %></span> on this year</p>
             </div>
           </div>
         </div>
+
         <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
           <div class="card">
             <div class="card-header p-3 pt-2">
@@ -31,16 +34,17 @@
                 <i class="material-icons opacity-10">person</i>
               </div>
               <div class="text-end pt-1">
-                <p class="text-sm mb-0 text-capitalize">Today's Users</p>
-                <h4 class="mb-0">2,300</h4>
+                <p class="text-sm mb-0 text-capitalize">Total Users</p>
+                <h4 class="mb-0"><%= totalUsersCount? totalUsersCount: 0 %></h4>
               </div>
             </div>
             <hr class="dark horizontal my-0">
             <div class="card-footer p-3">
-              <p class="mb-0"><span class="text-success text-sm font-weight-bolder">+3% </span>than last month</p>
+              <p class="mb-0"><span class="text-success text-sm font-weight-bolder">+<%= usersOntheMonth? usersOntheMonth: 0 %> </span> on this month</p>
             </div>
           </div>
         </div>
+
         <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
           <div class="card">
             <div class="card-header p-3 pt-2">
@@ -48,16 +52,17 @@
                 <i class="material-icons opacity-10">person</i>
               </div>
               <div class="text-end pt-1">
-                <p class="text-sm mb-0 text-capitalize">New Clients</p>
-                <h4 class="mb-0">3,462</h4>
+                <p class="text-sm mb-0 text-capitalize">Total Number of Sales</p>
+                <h4 class="mb-0"><%= totalSalesCount %></h4>
               </div>
             </div>
             <hr class="dark horizontal my-0">
             <div class="card-footer p-3">
-              <p class="mb-0"><span class="text-danger text-sm font-weight-bolder">-2%</span> than yesterday</p>
+              <p class="mb-0"><span class="text-danger text-sm font-weight-bolder">+<%= salesOnTheYear %></span> Sales on this year</p>
             </div>
           </div>
         </div>
+
         <div class="col-xl-3 col-sm-6">
           <div class="card">
             <div class="card-header p-3 pt-2">
@@ -65,29 +70,57 @@
                 <i class="material-icons opacity-10">weekend</i>
               </div>
               <div class="text-end pt-1">
-                <p class="text-sm mb-0 text-capitalize">Sales</p>
+                <p class="text-sm mb-0 text-capitalize">Sales on This Month</p>
                 <h4 class="mb-0">$103,430</h4>
               </div>
             </div>
             <hr class="dark horizontal my-0">
-            <div class="card-footer p-3">
-              <p class="mb-0"><span class="text-success text-sm font-weight-bolder">+5% </span>than yesterday</p>
+            <div class="card-footer p-3 d-flex justify-content-between">
+              <p class="mb-0"><span class="text-success text-sm font-weight-bolder">+5% </span> on today</p>
+              <p class="mb-0"><span class="text-success text-sm font-weight-bolder">+5% </span> on yesterday</p>
             </div>
           </div>
         </div>
       </div>
-      <div class="row mt-4">
+
+      <!-- graphs  -->
+      <!-- <div class="row mt-4">
+
         <div class="col-lg-4 col-md-6 mt-4 mb-4">
-          <div class="card z-index-2 ">
-            <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2 bg-transparent">
+          <div class="card z-index-2 "> -->
+
+            <!-- <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2 bg-transparent">
               <div class="bg-gradient-primary shadow-primary border-radius-lg py-3 pe-1">
                 <div class="chart">
-                  <canvas id="chart-bars" class="chart-canvas" height="170"></canvas>
+
+                  <div id="chart-bars">
+                    <span id="allCategories" hidden><%=// categories %></span>
+                    <span id="categorySales" hidden><%=// categorySales %></span>
+                  </div>
+                   <canvas id="chart-bars" class="chart-canvas" height="170"></canvas> 
                 </div>
               </div>
-            </div>
-            <div class="card-body">
-              <h6 class="mb-0 ">Website Views</h6>
+            </div> -->
+
+            <!-- <div class=" col-lg-6 col-12 mt-5 mt-lg-0">
+              <div class="p-3 card ">
+                  <h4 class="text-center">Category Sales</h4>
+                  <div class="categoryCard">
+                      <div id="chart-bars">
+                          <span id="categorySales" hidden>
+                              <%=//categorySales %>
+                          </span>
+                          <span id="allCategories" hidden>
+                              <%=//categories %>
+                          </span>
+                      </div>
+
+                  </div>
+              </div>
+          </div> -->
+
+            <!-- <div class="card-body">
+              <h6 class="mb-0 "> Category Sales</h6>
               <p class="text-sm ">Last Campaign Performance</p>
               <hr class="dark horizontal">
               <div class="d-flex ">
@@ -96,8 +129,9 @@
               </div>
             </div>
           </div>
-        </div>
-        <div class="col-lg-4 col-md-6 mt-4 mb-4">
+        </div> -->
+
+        <!-- <div class="col-lg-4 col-md-6 mt-4 mb-4">
           <div class="card z-index-2  ">
             <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2 bg-transparent">
               <div class="bg-gradient-success shadow-success border-radius-lg py-3 pe-1">
@@ -107,7 +141,7 @@
               </div>
             </div>
             <div class="card-body">
-              <h6 class="mb-0 "> Daily Sales </h6>
+              <h6 class="mb-0 "> Total Sales </h6>
               <p class="text-sm "> (<span class="font-weight-bolder">+15%</span>) increase in today sales. </p>
               <hr class="dark horizontal">
               <div class="d-flex ">
@@ -116,8 +150,9 @@
               </div>
             </div>
           </div>
-        </div>
-        <div class="col-lg-4 mt-4 mb-3">
+        </div> -->
+
+        <!-- <div class="col-lg-4 mt-4 mb-3">
           <div class="card z-index-2 ">
             <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2 bg-transparent">
               <div class="bg-gradient-dark shadow-dark border-radius-lg py-3 pe-1">
@@ -136,12 +171,494 @@
               </div>
             </div>
           </div>
+        </div> -->
+
+      <!-- </div> -->
+
+      <div class="row mt-4">
+        <div class="monthlySales  col-12 col-lg-6">
+            <div class="p-3 card h-100">
+                <span class="h4 text-center">Total Sales of <%= salesYear %> - ₹ <%=  totalSales %>
+                </span>
+
+                <div class="filerByYear mt-2">
+                    <form action="" method="get">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <select name="year" id="" class="form-control border border-2 mx-2 px-3">
+                              <% 
+                              displayYears.forEach( year => {
+                                if(year){
+                                %>
+                                <option class="" value="<%= year %>" <% if(salesYear == year ){ %> selected <%}%>> <%= year %> </option>
+                                <%
+                                } 
+                              })
+                              %>
+                            </select>
+                            <button class="btn btn-success text-nowrap mt-3" type="submit">Submit</button>
+                        </div>
+                    </form>
+                </div>
+                <span id="salesData" hidden>
+                    <%= sales %>
+                </span>
+                <span id="monthData" hidden>
+                    <%= months %>
+                </span>
+                <span id="salesYear" hidden>
+                    <%= salesYear %>
+                </span>
+
+                <!-- chart div -->
+                <div id="chart">
+                </div>
+            </div>
         </div>
+
+        <!-- Category Sales Chart Start -->
+        <div class=" col-lg-6 col-12 mt-5 mt-lg-0 ">
+            <div class="p-3 card h-100">
+                <h4 class="text-center">Category Sales</h4>
+                <div class="categoryCard">
+
+                    <div id="catChart">
+                        <span id="categorySales" hidden>
+                            <%= categorySales %>
+                        </span>
+                        <span id="allCategories" hidden>
+                            <%= categories %>
+                        </span>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <!-- Category Sales Chart End -->
+
+    </div>
+
+
+    <div class="row mt-5 mb-5">
+
+      <div class="col-12 col-lg-6">
+          <div class="p-3 card h-100 ">
+              <h4 class="text-center">Payment Method usage</h4>
+              <div class="paymentCard mt-5">
+                  <div id="paymentChart">
+                      <span id="paymentMethods" hidden>
+                          <%= paymentMethods %>
+                      </span>
+                      <span id="paymentCount" hidden>
+                          <%= paymentCount %>
+                      </span>
+                  </div>
+              </div>
+          </div>
       </div>
+
+      <div class="col-12 col-lg-6 mt-5 mt-lg-0">
+          <div class="p-3 card salesReportCard  h-100">
+              <h4 class="text-center">Sales Report</h4>
+              <div class="mt-3">
+                  <form action="" method="get">
+                      <label for="fromDate" class="form-label"> From: </label>
+                      <input type="date" name="fromDate" id="fromDate" class="form-control mb-3" required>
+                      <label for="toDate" class="form-label"> To: </label>
+                      <input type="date" name="toDate" id="toDate" class="form-control mb-3" required>
+
+                      <div class="text-center mt-3">
+                          <button class="btn btn-success w-50" type="submit">Get Report</button>
+                      </div>
+                  </form>
+                  <div class="text-center mt-2">
+                      <a href="/admin"><button class="btn btn-secondary  w-50">Reset</button></a> <!-- use script to remove date value -->
+                  </div>
+              </div>
+          </div>
+      </div>
+    </div>
+
+    <%if(orderDataToDownload && orderDataToDownload.length>0) {%>
+      <div class="salesReportData mb-5 px-3">
+          <div>
+              <h3>Sales Report Table</h3>
+          </div>
+          <div class="mt-3 mb-3">
+              <button class="btn btn-primary" onclick="printTable()">Export Pdf <i
+                      class="bi bi-filetype-pdf"></i></button> <button onclick="exportReportToExcel()"
+                  class="btn btn-success">Export
+                  Excel <i class="bi bi-file-earmark-spreadsheet"></i></button>
+          </div>
+          <div class="table-responsive">
+              <table class="table table-striped table-bordered table-md" id="sortTable"
+                  cellspacing="0" width="100%">
+                  <thead class="thead-light">
+                      <tr>
+                          <th scope="col">#</th>
+                          <th scope="col">Date</th>
+                          <th scope="col">Name</th>
+                          <th scope="col">OrderId</th>
+                          <th scope="col">Quantity</th>
+                          <th scope="col">Payment</th>
+                          <th scope="col">Total</th>
+                      </tr>
+                  </thead>
+                  <tbody>
+                      <% orderDataToDownload.forEach((order, index)=>{ %>
+                          <tr>
+                              <th scope="row"> <%= index +1 %> </th>
+                              <% 
+                              const dd=order.date.getDate(); 
+                              const mm=order.date.getMonth() + 1;
+                              const yyyy=order.date.getFullYear(); 
+                              const formattedDate=`${dd}-${mm}-${yyyy}`; %>
+                                  <td>
+                                      <%=formattedDate %>
+                                  </td>
+                                  <td>
+                                      <%=order.deliveryAddress.userName %>
+                                  </td>
+                                  <td>
+                                      <%=order._id%>
+                                  </td>
+
+                                  <td>
+                                      <%=order.products.length %>
+                                  </td>
+                                  <td>
+                                      <%=order.paymentMehod %>
+                                  </td>
+                                  <td>
+                                      <%=order.totalPrice %>
+                                  </td>
+                          </tr>
+                          <% }) %>
+
+                  </tbody>
+              </table>
+              <div id="salesReportDownloadableTable" hidden>
+                  <table class="table text-center w-100" id="downloadTable">
+                      <div class="text-center">
+                          <h1>Sales Report - Gent's Garage</h1>
+
+                      </div>
+                      <thead>
+                          <tr>
+                              <th scope="col">#</th>
+                              <th scope="col">Date</th>
+                              <th scope="col">Name</th>
+                              <th scope="col">OrderId</th>
+                              <th scope="col">Quantity</th>
+                              <th scope="col">Payment</th>
+                              <th scope="col">Total</th>
+                          </tr>
+                      </thead>
+                      <tbody>
+                          <% orderDataToDownload.forEach((order, index)=>{ %>
+                              <tr>
+                                  <th scope="row">
+                                      <%= index+1 %>
+                                  </th>
+                                  <% 
+                                  const dd=order.date.getDate(); 
+                                  const mm=order.date.getMonth() +1; 
+                                  const yyyy=order.date.getFullYear(); const
+                                  formattedDate=`${dd}-${mm}-${yyyy}`; 
+                                  %>
+                                      <td>
+                                          <%=formattedDate %>
+                                      </td>
+                                      <td>
+                                          <%=order.deliveryAddress.userName %>
+                                      </td>
+                                      <td>
+                                          <%=order._id%>
+                                      </td>
+
+                                      <td>
+                                          <%=order.products.length %>
+                                      </td>
+                                      <td>
+                                          <%=order.paymentMehod %>
+                                      </td>
+                                      <td>
+                                          <%=order.totalPrice %>
+                                      </td>
+                              </tr>
+                              <% }) %>
+
+                      </tbody>
+                  </table>
+              </div>
+          </div>
+      </div>
+      <% } %>
 
     <%- include('../partials/adminFooter.ejs') %>      
 
     </div>
   </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>
+    
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"> </script>
+
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.16.8/xlsx.full.min.js"></script>
+
+
+  
+
+  <!-- Sales Chart  -->
+  <script>
+
+    var salesPerMonthElements = document.getElementById('salesData').innerHTML;
+    var salesData = salesPerMonthElements.split(',')
+
+    var salesMonths = document.getElementById('monthData').innerHTML;
+    var monthData = salesMonths.split(',');
+
+
+    let yearOfSale = document.getElementById('salesYear').textContent
+
+    var options = {
+        series: [{
+            name: "Sales",
+            data: salesData
+
+        }],
+        chart: {
+            height: 350,
+            type: 'line',
+            zoom: {
+                enabled: false
+            }
+        },
+        dataLabels: {
+            enabled: false
+        },
+        stroke: {
+            curve: 'straight'
+        },
+        title: {
+            text: `Sales of the each month in year ${yearOfSale}`,
+            align: 'left'
+        },
+        grid: {
+            row: {
+                colors: ['#f3f3f3', 'transparent'], // takes an array which will be repeated on columns
+                opacity: 0.5
+            },
+        },
+        xaxis: {
+            categories: monthData,
+            title: {
+                text: 'months'
+            }
+        },
+        yaxis: {
+            title: {
+                text: 'sales'
+            }
+        }
+    };
+
+    var chart = new ApexCharts(document.querySelector("#chart"), options);
+    chart.render();
+</script>
+
+
+  <!-- Category Chart  -->
+  <script>
+    var categoryNamesData = document.getElementById('allCategories').innerHTML;
+    var categoryNames = categoryNamesData.split(',') //converted into object
+    var categorySalesData = document.getElementById('categorySales').innerHTML;
+    var categorySales = categorySalesData.split(',')
+
+    console.log('categoryNamesData : '+typeof categoryNamesData);
+    console.log('categoryNamesData : '+categoryNamesData);
+    console.log('categoryNames : '+typeof categoryNames);
+    console.log('categoryNames : '+categoryNames);
+
+
+    function generateRandomColor() {
+        const letters = '0123456789ABCDEF';
+        let color = '#';
+        for (let i = 0; i < 6; i++) {
+            color += letters[Math.floor(Math.random() * 16)];
+        }
+        return color;
+    }
+
+    function pushRandomUniqueColorsToArray(array, numColors) {
+        for (let i = 0; i < numColors; i++) {
+            let newColor;
+            do {
+                newColor = generateRandomColor();
+            } while (array.includes(newColor));
+
+            array.push(newColor);
+        }
+    }
+
+    // Example usage
+    const colorsArray = [];
+    pushRandomUniqueColorsToArray(colorsArray, categorySales.length);
+    var options = {
+        series: [{
+            name: 'Net Sales',
+            data: categorySales
+        }],
+        chart: {
+            type: 'bar',
+            height: 350
+        },
+        plotOptions: {
+            bar: {
+                borderRadius: 0,
+                distributed: true,
+                barHeight: '80%',
+            },
+        },
+        colors: colorsArray,
+        dataLabels: {
+            enabled: false,
+
+        },
+        stroke: {
+            show: true,
+            width: 2,
+            colors: ['transparent']
+        },
+        xaxis: {
+            categories: categoryNames,
+            title: {
+                text: 'Categories'
+            }
+        },
+        yaxis: {
+            title: {
+                text: 'Sales'
+            }
+        },
+        fill: {
+            opacity: 1
+        },
+        tooltip: {
+            y: {
+                formatter: function (val) {
+                    return "₹ " + val
+                }
+            }
+        }
+    };
+
+    var chart = new ApexCharts(document.querySelector("#catChart"), options);
+    chart.render();
+</script>
+
+
+
+    <!-- payment -->
+    <script>
+      var paymentMethodsData = document.getElementById('paymentMethods').innerHTML;
+      var paymentMethods = paymentMethodsData.split(',')
+
+      var paymentCountData = document.getElementById('paymentCount').innerHTML;
+      var paymentCount = paymentCountData.split(',').map(item => Number(item.trim()));
+      paymentCount.map((data) => parseInt(data))
+      console.log(paymentCount);
+
+      var options = {
+          series: paymentCount,
+          chart: {
+              width: 380,
+              type: 'pie',
+          },
+          labels: paymentMethods,
+          responsive: [{
+              breakpoint: 480,
+              options: {
+                  chart: {
+                      width: 200
+                  },
+                  legend: {
+                      position: 'bottom'
+                  }
+              }
+          }]
+      };
+
+      var chart = new ApexCharts(document.querySelector("#paymentChart"), options);
+      chart.render();
+  </script>
+
+<script>
+  function exportReportToExcel() {
+      // Include the SheetJS library
+
+
+      // Get the table element
+      const table = document.getElementById("downloadTable");
+      document.getElementById("downloadTable").hidden = false
+
+      // Convert the table to a workbook
+      const workbook = XLSX.utils.table_to_book(table);
+
+      // Convert the workbook to a binary Excel file
+      const excelBinary = XLSX.write(workbook, { bookType: "xlsx", type: "binary" });
+
+      // Create a Blob object and download the file
+      const blob = new Blob([s2ab(excelBinary)], { type: "application/octet-stream" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = "salesReport.xlsx";
+      link.click();
+
+      // Utility function to convert a string to an ArrayBuffer
+      function s2ab(s) {
+          const buf = new ArrayBuffer(s.length);
+          const view = new Uint8Array(buf);
+          for (let i = 0; i < s.length; i++) {
+              view[i] = s.charCodeAt(i) & 0xff;
+          }
+          return buf;
+      }
+      document.getElementById("downloadTable").hidden = true
+
+
+  }
+
+</script>
+<script>
+  function printTable() {
+      var table = document.getElementById("salesReportDownloadableTable");
+      table.hidden = false;
+
+      var newWin = window.open('', 'Print-Window');
+      newWin.document.open();
+
+      // Add necessary CSS styles for the table
+      newWin.document.write('<html><head><style>');
+      newWin.document.write('table { border-collapse: collapse; width: 100%; }');
+      newWin.document.write('table, th, td { border: 1px solid black; }');
+      newWin.document.write('</style></head><body onload="window.print()">');
+
+      // Write the table HTML
+      newWin.document.write(table.outerHTML);
+
+      newWin.document.write('</body></html>');
+      newWin.document.close();
+
+      setTimeout(function () { newWin.close(); }, 10);
+      table.hidden = true;
+  }
+
+</script>
+
+
 
   <%- include('../partials/adminScript.ejs') %>

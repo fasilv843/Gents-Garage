@@ -66,7 +66,7 @@ const postEditCoupon = async(req, res, next) => {
 
         const isCodeExist = await Coupons.findOne({code})
 
-        if(!isCodeExist){
+        if(!isCodeExist || isCodeExist._id == couponId){
 
             await Coupons.findByIdAndUpdate(
                 { _id: couponId },
@@ -81,7 +81,7 @@ const postEditCoupon = async(req, res, next) => {
             console.log('Code already exist, update expiry date if you want to add same code again');
         }
 
-        res.redirect('admin/coupons');
+        res.redirect('/admin/coupons');
 
     } catch (error) {
         console.log(error);

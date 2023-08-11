@@ -18,9 +18,9 @@
             </div>
           </div>
           <div class="card-body px-0 pb-2">
-            <div class="table-responsive p-0">
+            <div class="table-responsive p-3">
 
-              <table class="table align-items-center mb-0">
+              <table class="table align-items-center mb-0" id="sortTable">
 
                 <thead>
                   <tr>
@@ -124,7 +124,7 @@
                                 <td>
                                   <form action="/admin/removeProductOffer/<%= pdtsData[i]._id %>" method="post">
                                     <button type="submit" class="btn btn-danger">
-                                      <%= pdtsData[i].offer.name %>
+                                      Remove
                                     </button>
                                   </form>
                                 </td>
