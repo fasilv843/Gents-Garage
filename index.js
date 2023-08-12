@@ -31,18 +31,18 @@ app.use('/',userRoute);
 
 app.set('views','./views/errors');
 
-// next to show error
+
 // app.use((err, req, res, next) => {
-//     console.log(err.message);
-//     const isLoggedIn = Boolean(req.session.userId)
-//     res.status(err.status || 404).render('404',{isLoggedIn,err})
+//     console.log(err);
+//     console.log('controller load profile userId err');
+//     res.status(err.status || 404).render('404')
 // })
 
-// error page
-// app.use((req, res) => {
-//     const isLoggedIn = Boolean(req.session.userId)
-//     res.status(404).render('404',{isLoggedIn})
-// })
 
+// Error handling middleware
+app.use((req, res, next) => {
+    res.status(404);
+    res.render("404", { url: req.url });
+});
 
 app.listen(process.env.PORT, console.log("Server us running on "+process.env.SERVER));

@@ -369,10 +369,10 @@ const removeCartItem = async(req, res) => {
     }
 }
 
-const loadProfile = async(req, res) => {
+const loadProfile = async(req, res, next) => {
     try {
         console.log('loaded profile');
-        const userId = req.session.userId;
+        const userId = req.session.userI;
         // console.log('userid : '+userId);
         const userData = await User.findById({_id: userId})
         const userAddress = await Addresses.findOne({userId:userId})
@@ -381,6 +381,7 @@ const loadProfile = async(req, res) => {
         res.render('userProfile',{ userData, userAddress,isLoggedIn:true,page:'Profile'})
     } catch (error) {
         console.log(error);
+        next(error);
     }
 }
 
