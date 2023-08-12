@@ -8,35 +8,35 @@ const { getOTP, getReferralCode, securePassword } = require('../helpers/generato
 require('dotenv').config()
 
 
-const loadHome = async(req,res) => {
+const loadHome = async(req,res, next) => {
     try {
         const isLoggedIn = Boolean(req.session.userId)
         const banners = await Banners.find({})
 
         res.render('home',{page : 'Home', isLoggedIn, banners});
     } catch (error) {
-        console.log(error)
+        next(error);
     }
 }
 
-const loadLogin = async(req,res) => {
+const loadLogin = async(req,res, next) => {
     try {
         res.render('login');
     } catch (error) {
-        console.log(error);
+        next(error);
     }
 }
 
-const logoutUser = async(req, res) => {
+const logoutUser = async(req, res, next) => {
     try {
         req.session.destroy()
         res.redirect('/')
     } catch (error) {
-        console.log();
+        next(error);
     }
 }
 
-const verifyLogin = async(req,res) => {
+const verifyLogin = async(req,res, next) => {
     try {
         const {email, password} = req.body;
         const userData = await User.findOne({email})
@@ -50,42 +50,38 @@ const verifyLogin = async(req,res) => {
                     req.session.cartCount = userData.cart.length
                     res.redirect('/')
                 }else{
-                    console.log('Sorry:( You are blocked by admins');
                     res.render('login',{message: 'Sorry:( You are blocked by admins'})
                     return;
                 }
             }else{
-                console.log('Invalid Password');
                 res.render('login',{message: 'Invalid Password'})
             }
         }else{
-            console.log('User does not exist');
             res.render('login',{message: 'User does not exist'})
         }
         
     } catch (error) {
-        console.log(error);
+        next(error);
     }
 }
 
-const loadSignUp = async(req,res) => {
+const loadSignUp = async(req,res, next) => {
     try {
         const referral = req.query.referral
         res.render('signup', {referral})
     } catch (error) {
-        console.log(error);
+        next(error);
     }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-const saveAndLogin = async(req,res) => {
+const saveAndLogin = async(req,res, next) => {
     try {
         const { fname, lname, email, mobile, password, confirmPassword, referral } = req.body;
         if(password === confirmPassword){
 
             const userData = await User.findOne({email})
             if(userData){
-                console.log('User Already Exists');
                 return res.render('signup',{message : 'User Already Exists'})
             }
 
@@ -95,34 +91,28 @@ const saveAndLogin = async(req,res) => {
 
             setTimeout(() => {
                 req.session.OTP = null; // Or delete req.session.otp;
-                console.log('otp time out');
             }, 600000); 
 
             res.render('otpValidation',{ fname, lname, email, mobile, password, referral, message : 'Check Spam mails' })
 
         }else{
-            console.log('password not matching');
             res.render('signup',{message : 'Password not matching'})
         }
 
 
     } catch (error) {
-        console.log(error);
+        next(error);
     }
 }
 
 
-const validateOTP = async(req,res) => { 
+const validateOTP = async(req,res, next) => { 
     try {
         const { fname, lname, email, mobile, password } = req.body
 
         const userOTP = req.body.OTP
         const referral = req.body.referral.trim()
 
-        console.log('referral : '+referral);
-        // console.log('req.session.OTP : '+req.session.OTP+" "+ typeof req.session.OTP);
-        // console.log('userOTP : '+userOTP+" "+ typeof userOTP);
-        
         if(userOTP == req.session.OTP){
             const sPassword = await securePassword(password)
             const referralCode = getReferralCode()
@@ -131,9 +121,7 @@ const validateOTP = async(req,res) => {
             if(referral){
 
                 const isReferrerExist = await User.findOne({referralCode: referral})
-
                 if(isReferrerExist){
-
                     let referrerId = isReferrerExist._id;
 
                     newUserData = await new User({
@@ -169,7 +157,7 @@ const validateOTP = async(req,res) => {
             res.render('otpValidation',{ fname, lname, email, mobile, password, referral, message : 'Incorrect OTP' })
         }
     } catch (error) {
-        console.log(error);
+        next(error);
     }
 }
 
@@ -188,24 +176,24 @@ const resendOTP = async(req, res, next) => {
         res.json({isResend: true})
 
     } catch (error) {
-        next(error)
+        next(error);
     }
 }
 
 
-const loadAboutUs = async(req,res) => {
+const loadAboutUs = async(req,res, next) => {
     try {
         
         const isLoggedIn = Boolean(req.session.userId)
 
         res.render('aboutUs',{page : 'About Us',isLoggedIn})
     } catch (error) {
-        console.log(error);
+        next(error);
     }
 }
 
 
-const loadShoppingCart = async(req, res ) => {
+const loadShoppingCart = async(req, res, next) => {
     try {
         const userId = req.session.userId;
         const userData = await User.findById({_id:userId}).populate('cart.productId').populate('cart.productId.offer')
@@ -225,11 +213,11 @@ const loadShoppingCart = async(req, res ) => {
 
         res.render('shoppingCart',{page: 'Shopping Cart', parentPage: 'Shop', isLoggedIn: true, userData, cartItems})
     } catch (error) {
-        console.log(error); 
+        next(error); 
     }
 }
 
-const addToCart = async(req, res) => {
+const addToCart = async(req, res, next) => {
     try {
         const pdtId = req.params.id;
         const userId = req.session.userId;
@@ -280,11 +268,11 @@ const addToCart = async(req, res) => {
         }
 
     } catch (error) {
-        console.log(error);
+        next(error);
     }
 }
 
-const updateCart = async(req,res) => {
+const updateCart = async(req, res, next) => {
     try {
         const userId = req.session.userId;
         const quantity = parseInt(req.body.amt)
@@ -335,17 +323,15 @@ const updateCart = async(req,res) => {
             })
         }
     } catch (error) {
-        console.log(error);
+        next(error);
     }
 }
 
-const removeCartItem = async(req, res) => {
+const removeCartItem = async(req, res, next) => {
     try {
         
         const pdtId = req.params.id;
         const userId = req.session.userId;
-
-        console.log('Removing cart item '+pdtId+' from '+userId);
 
         const userData = await User.findOneAndUpdate(
             {_id: userId, 'cart.productId': pdtId },
@@ -365,7 +351,7 @@ const removeCartItem = async(req, res) => {
         res.redirect('/shoppingCart');
 
     } catch (error) {
-        console.log(error);
+        next(error);
     }
 }
 
@@ -378,13 +364,12 @@ const loadProfile = async(req, res, next) => {
 
         res.render('userProfile',{ userData, userAddress,isLoggedIn:true,page:'Profile'})
     } catch (error) {
-        console.log(error);
         next(error);
     }
 }
 
 
-const loadEditProfile = async(req, res) => {
+const loadEditProfile = async(req, res, next) => {
     try {
         id = req.session.userId;
         // console.log('userId : '+id);
@@ -392,15 +377,15 @@ const loadEditProfile = async(req, res) => {
 
         res.render('editProfile',{userData})
     } catch (error) {
-        console.log(error); 
+        next(error); 
     }
 }
 
-const postEditProfile = async(req, res) => {
+const postEditProfile = async(req, res, next) => {
     try {
         const userId = req.session.userId;
         const { fname, lname, mobile} = req.body
-        const newUserData = await User.findByIdAndUpdate(
+        await User.findByIdAndUpdate(
             { _id: userId },
             {
                 $set:{
@@ -409,24 +394,23 @@ const postEditProfile = async(req, res) => {
             }
         );
 
-        // console.log("updated userData : \n\n "+newUserData);
         res.redirect('/profile');
 
     } catch (error) {
-        console.log(error);
+        next(error);
     }
 }
 
 
-const loadPassConfirmToChangeMail = async(req,res) => {
+const loadPassConfirmToChangeMail = async(req,res, next) => {
     try {
         res.render('passConfirmToChangeMail')
     } catch (error) {
-        console.log(error);
+        next(error);
     }
 }
 
-const postPassConfirmToChangeMail = async(req,res) => {
+const postPassConfirmToChangeMail = async(req,res, next) => {
     try {
         const id = req.session.userId;
         const password = req.body.password
@@ -439,23 +423,23 @@ const postPassConfirmToChangeMail = async(req,res) => {
             res.redirect('/profile/')
         }
     } catch (error) {
-        console.log(error);
+        next(error);
     }
 }
 
 
 
-const loadChangeMail = async(req,res) => {
+const loadChangeMail = async(req,res, next) => {
     try {
         res.render('changeMail')
         
     } catch (error) {
-        console.log(error);
+        next(error);
     }
 }
 
 ////////////////////////////////////////////////
-const postChangeMail = async(req,res) => {
+const postChangeMail = async(req,res, next) => {
     try {
 
         const newMail = req.body.email
@@ -482,20 +466,16 @@ const postChangeMail = async(req,res) => {
 
 
     } catch (error) {
-        console.log(error);
+        next(error);
     }
 }
 
-const otpValidationToChangeMail = async(req,res) => {
+const otpValidationToChangeMail = async(req, res, next) => {
     try {
         const userId = req.session.userId;
         const newMail = req.session.newMail;
         const OTP = req.body.OTP;
         const adminOTP = req.session.OTP
-
-        console.log(newMail);
-        console.log(OTP);
-        console.log(adminOTP);
 
         if(OTP == adminOTP){
 
@@ -517,20 +497,20 @@ const otpValidationToChangeMail = async(req,res) => {
             console.log('OTP not correct');
         }
     } catch (error) {
-        console.log(error);
+        next(error);
     }
 }
 
-const loadChangePassword = async(req, res ) => {
+const loadChangePassword = async(req, res, next) => {
     try {
         console.log('loaded change password page');
         res.render('changePass')
     } catch (error) {
-        console.log(error);
+        next(error);
     }
 }
 
-const postChangePassword = async(req, res ) => {
+const postChangePassword = async(req, res, next) => {
     try {
         console.log('posted change password');
 
@@ -566,13 +546,13 @@ const postChangePassword = async(req, res ) => {
             return res.redirect('/profile/changePassword');
         }
     } catch (error) {
-        console.log(error);
+        next(error);
     }
 }
 
 
 /////////////////////////////////////////////////////////
-const forgotPassword = async(req, res ) => {
+const forgotPassword = async(req, res, next) => {
     try {
         console.log('loaded forgot password');
         const userMail = await User.findById({_id: req.session.userId},{email:1,_id:0})
@@ -585,11 +565,11 @@ const forgotPassword = async(req, res ) => {
         res.render('forgotPasswordVerification')
 
     } catch (error) {
-        console.log(error);
+        next(error);
     }
 }
 
-const verifyOTPforgotPass = async(req, res) => {
+const verifyOTPforgotPass = async(req, res, next) => {
     try {
         const userOTP = req.body.OTP
         const adminOTP = req.session.OTP
@@ -601,19 +581,19 @@ const verifyOTPforgotPass = async(req, res) => {
             res.redirect('/profile/forgotPassword')
         }
     } catch (error) {
-        console.log(error);
+        next(error);
     }
 }
 
-const loadResetPassword = async(req, res ) => {
+const loadResetPassword = async(req, res, next) => {
     try {
         res.render('resetPassword')
     } catch (error) {
-        console.log(error);
+        next(error);
     }
 }
 
-const postResetPassword = async(req, res ) => {
+const postResetPassword = async(req, res, next) => {
     try {
         const { newPassword, confirmPassword} = req.body
         if(newPassword !== confirmPassword){
@@ -634,7 +614,7 @@ const postResetPassword = async(req, res ) => {
             return res.redirect('/profile');
         }
     } catch (error) {
-        console.log(error);
+        next(error);
     }
 }
 

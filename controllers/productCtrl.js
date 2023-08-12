@@ -14,7 +14,7 @@ const loadProduct = async(req,res) => {
         ]});
         res.render('products',{pdtsData, offerData, page:'Products'})
     } catch (error) {
-        console.log(error);
+                next(error);
     }
 }
 
@@ -23,7 +23,7 @@ const loadAddProduct = async(req,res) => {
         const categories = await Categories.find({})
         res.render('addProduct',{categories, page:'Products'})
     } catch (error) {
-        console.log(error);
+                next(error);
     }
 }
 
@@ -59,7 +59,7 @@ const addProductDetails = async(req,res) => {
         
          res.redirect('/admin/products')
     } catch (error) {
-        console.log(error);
+                next(error);
     }
 }
 
@@ -73,7 +73,7 @@ const loadEditProduct = async(req,res) => {
         res.render('editProduct',{pdtData, catData, page: 'Products'})
 
     } catch (error) {
-        console.log(error);
+                next(error);
     }
 }
 
@@ -120,7 +120,7 @@ const postEditProduct = async(req,res) => {
         res.redirect('/admin/products')
 
     } catch (error) {
-        console.log(error);
+                next(error);
     }
 }
 
@@ -133,7 +133,7 @@ const deleteProduct = async(req,res) => {
         
         res.redirect('/admin/products');
     } catch (error) {
-        console.log(error);
+                next(error);
     }
 }
 
@@ -164,7 +164,7 @@ const deleteImage = async(req,res) => {
         res.redirect(`/admin/products/editProduct/${id}`);
 
     } catch (error) {
-        console.log(error);
+                next(error);
     }
 }
 
@@ -352,7 +352,7 @@ const loadShop = async(req,res) => {
         });
 
     } catch (error) {
-        console.log(error);
+                next(error);
     }
 }
 
@@ -364,7 +364,7 @@ const loadProductOverview = async(req,res) => {
         const pdtData = await Products.findById({_id:id})
         res.render('productOverview',{pdtData, parentPage : 'Shop', page: 'Product Overview',isLoggedIn})
     } catch (error) {
-        console.log(error);
+                next(error);
     }
 }
 

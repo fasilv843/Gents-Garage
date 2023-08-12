@@ -1,17 +1,16 @@
 const Addresses = require('../models/addressModel')
 const Users = require('../models/userModel')
 
-const loadAddAddress = async(req, res) => {
+const loadAddAddress = async(req, res, next) => {
     try {
         const returnPage = req.query.returnPage
-        console.log('returnPage : '+returnPage);
         res.render('addAddress',{isLoggedIn : true, page:'Add Address', parentPage:'Profile', returnPage})
     } catch (error) {
-        console.log(error);
+        next(error)
     }
 }
 
-const postAddAddress = async(req, res) => {
+const postAddAddress = async(req, res, next) => {
     try {
         const userId = req.session.userId;
         const { name, email, mobile, town, state, country, zip, address } = req.body
@@ -29,8 +28,6 @@ const postAddAddress = async(req, res) => {
                     }
                 }
             );
-            console.log('Address Added to database');
-            // res.redirect('/profile')
 
             switch(returnPage){
                 case 'profile': 
@@ -47,9 +44,6 @@ const postAddAddress = async(req, res) => {
                 addresses :[ newAddress ]
             }).save()
 
-            console.log('Address Saved on database');
-            // console.log('page : '+page);
-
             switch(returnPage){
                 case 'profile': 
                     res.redirect('/profile')
@@ -61,25 +55,24 @@ const postAddAddress = async(req, res) => {
         }
 
     } catch (error) {
-        console.log(error);
+        next(error)
     }
 }
 
-const loadEditAddress = async(req, res) => {
+const loadEditAddress = async(req, res, next) => {
     try {
         const addressId = req.params.id;
         const userId = req.session.userId;
 
         const addressData = await Addresses.findOne({userId, 'addresses._id':addressId})
         const address = addressData.addresses.find(obj => obj._id.toString() === addressId)
-        // console.log(address);
         res.render('editAddress',{address, isLoggedIn: true, page: 'Profile'})
     } catch (error) {
-        console.log(error);
+        next(error)
     }
 }
 
-const postEditAddress = async(req, res) => {
+const postEditAddress = async(req, res, next) => {
     try {
         const addressId = req.params.id;
         const userId = req.session.userId;
@@ -105,16 +98,14 @@ const postEditAddress = async(req, res) => {
         res.redirect('/profile');
         
     } catch (error) {
-        console.log(error);
+        next(error)
     }
 }
 
-const deleteAddress = async(req, res) => {
+const deleteAddress = async(req, res, next) => {
     try {
         const addressId = req.params.id;
         const userId = req.session.userId;
-
-        console.log('loaded delete address');
 
         await Addresses.updateOne(
             {userId, 'addresses._id': addressId},
@@ -124,11 +115,10 @@ const deleteAddress = async(req, res) => {
                 }
             }
         )
-        console.log('address deleted');  //not working
         res.redirect('/profile');
 
     } catch (error) {
-        console.log(error);
+        next(error)
     }
 }
 

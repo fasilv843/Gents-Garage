@@ -1,18 +1,16 @@
 const Offers = require('../models/offerModel');
 
-const loadOffer = async(req, res) => {
+const loadOffer = async(req, res, next) => {
     try {
-        console.log('loading offer');
         const offers = await Offers.find({})
         res.render('offers',{page:'Offers', offers})
     } catch (error) {
-        console.log(error);
+        next(error);
     }
 }
 
 const loadAddOffer = async(req, res, next) => {
     try {
-        console.log('loading add offer');
         res.render('addOffer',{ page: 'Offers' })
     } catch (error) {
         next(error)
@@ -22,21 +20,17 @@ const loadAddOffer = async(req, res, next) => {
 
 const postAddOffer = async(req, res, next) => {
     try {
-        console.log('posting add offer');
         const { discount, startingDate, expiryDate } = req.body
         const name = req.body.name.toUpperCase()
 
         isOfferExists = await Offers.findOne({name})
 
         if(isOfferExists){
-            console.log('Offer already exist');
-
             return res.redirect('/admin/offers/addOffer')
         }
 
         
         if(new Date(startingDate) >= new Date(expiryDate) || new Date(expiryDate) < new Date() ){
-            console.log('starting cannot be equal or greater than expiry date');
             return res.redirect('/admin/offers/addOffer')
         }
 
@@ -46,7 +40,6 @@ const postAddOffer = async(req, res, next) => {
         }else if(new Date(startingDate) > new Date()){
             status = 'Starting Soon'
         }
-        console.log(status);
 
         await new Offers({ name, discount, startingDate, expiryDate, status }).save();
 

@@ -27,12 +27,12 @@ const findIncome = async(startDate = new Date('1990-01-01'), endDate = new Date(
         return income.length ? income[0].totalIncome : 0;
 
     } catch (error) {
-        console.log(error);
+        next(error)
     }
 }
 
 
-const loadDashboard = async(req,res) => {
+const loadDashboard = async(req,res, next) => {
     try {
         //Setting Dates Variables
         const today = new Date();
@@ -189,19 +189,19 @@ const loadDashboard = async(req,res) => {
 
 
     } catch (error) {
-        console.log(error);
+        next(error)
     }
 }
 
-const loadAdminLogin = async(req,res) => {
+const loadAdminLogin = async(req,res, next) => {
     try {
         res.render('login')
     } catch (error) {
-        console.log(error);
+        next(error)
     }
 }
 
-const verifyAdminLogin = async(req,res) => {
+const verifyAdminLogin = async(req,res, next) => {
     try {
         const {email, password} = req.body;
         const adminData = await Admin.findOne({email})
@@ -219,31 +219,31 @@ const verifyAdminLogin = async(req,res) => {
         }
 
     } catch (error) {
-        console.log(error);
+        next(error)
     }
 }
 
-const logoutAdmin = async(req,res) => {
+const logoutAdmin = async(req,res, next) => {
     try {
         req.session.destroy()
         // req.logout()
         res.clearCookie('adminId')
         res.redirect('/admin')
     } catch (error) {
-        console.log();
+        next(error)
     }
 }
 
-const loadUsers = async(req,res) => { 
+const loadUsers = async(req,res, next) => { 
     try {
         const userData = await User.find({})
         res.render('users',{userData, page: 'Users'})
     } catch (error) {
-        console.log('error');
+        next(error)
     }
 }
 
-const blockUser = async(req,res) => {
+const blockUser = async(req,res, next) => {
     try {
         
         const id = req.params.id
@@ -253,7 +253,7 @@ const blockUser = async(req,res) => {
 
         res.redirect('/admin/users')
     } catch (error) {
-        console.log(error);
+        next(error)
     }
 }
 

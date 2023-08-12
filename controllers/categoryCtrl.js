@@ -2,7 +2,7 @@ const Categories = require('../models/categoryModel');
 const Products = require('../models/productModel');
 const Offers = require('../models/offerModel')
 
-const loadCategories = async(req,res) => {
+const loadCategories = async(req, res, next) => {
     try {
         const categories = await Categories.find({}).populate('offer')
         const offerData = await Offers.find({ $or: [
@@ -11,11 +11,11 @@ const loadCategories = async(req,res) => {
         ]});
         res.render('categories',{categories, page:'Categories', offerData})
     } catch (error) {
-        console.log(error);
+        next(error);
     }
 }
 
-const addCategory = async(req,res) => {
+const addCategory = async(req, res, next) => {
     try {
         const categoryName = req.body.categoryName.toUpperCase()
         console.log(categoryName);
@@ -38,11 +38,11 @@ const addCategory = async(req,res) => {
         }
 
     } catch (error) {
-        console.log(error);
+                next(error);
     }
 }
 
-const editCategory = async(req,res) => {
+const editCategory = async(req, res, next) => {
     try {
         const id = req.body.categoryId
         const newName = req.body.categoryName.toUpperCase()
@@ -69,11 +69,11 @@ const editCategory = async(req,res) => {
 
         res.redirect('/admin/categories')
     } catch (error) {
-        console.log(error);
+                next(error);
     }
 }
 
-const listCategory = async(req,res) => {
+const listCategory = async(req,res, next) => {
     try {
         const id = req.params.id;
         const categoryData = await Categories.findById({_id:id})
@@ -85,7 +85,7 @@ const listCategory = async(req,res) => {
         res.redirect('/admin/categories')
 
     } catch (error) {
-        console.log(error);
+                next(error);
     }
 }
 
@@ -221,7 +221,7 @@ module.exports = {
 //         await Categories.findByIdAndDelete({_id:id})
 //         res.redirect('/admin/categories')
 //     } catch (error) {
-//         console.log(error);
+//                 next(error);
 //     }
 // }
 
@@ -233,7 +233,7 @@ module.exports = {
 //         const sizeData = await Categories.findById({_id:id});
 //         res.render('admin/size-chart',{ sizeData, id , page:'Categories'});
 //     } catch (error) {
-//         console.log(error);
+//                 next(error);
 //     }
 // }
 
@@ -243,7 +243,7 @@ module.exports = {
 //         await Categories.findByIdAndUpdate({_id:id},{$addToSet:{sizes:size}})
 //         res.redirect('/admin/categories')
 //     } catch (error) {
-//         console.log(error);
+//                 next(error);
 //     }
 // }
  
@@ -266,7 +266,7 @@ module.exports = {
 //         res.redirect('/admin/categories');
 
 //     } catch (error) {
-//         console.log(error);
+//                 next(error);
 //     }
 // }
 
@@ -279,6 +279,6 @@ module.exports = {
 //         await Categories.findByIdAndUpdate({ _id:id },{ $pull:{ sizes: sizeVal }})
 //         res.redirect('/admin/categories');
 //     } catch (error) {
-//         console.log(error);
+//                 next(error);
 //     }
 // }

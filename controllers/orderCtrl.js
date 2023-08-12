@@ -26,12 +26,10 @@ const loadCheckout = async(req, res ) => {
         const walletBalance = userData.wallet;
 
         const coupons = await Coupons.find({isCancelled : false})
-        // console.log(cart);
-        // console.log(userAddress);
 
         res.render('checkout',{isLoggedIn : true, page:'Checkout', userAddress, cart, coupons, walletBalance})
     } catch (error) {
-        console.log(error);
+        next(error);
     }
 }
 
@@ -39,14 +37,10 @@ const loadCheckout = async(req, res ) => {
 const placeOrder = async(req, res) => {
     try {
 
-        console.log('On placeOrder Controller Ooo');
-
         //getting details needed
         const addressId = req.body.address
         const paymentMethod = req.body.payment
         const userId = req.session.userId
-
-        console.log('addressId : '+addressId);
 
         //getting selected address
         const userAddress = await Addresses.findOne({userId})
@@ -58,9 +52,6 @@ const placeOrder = async(req, res) => {
         const cart = userData.cart
         
         req.session.cart = cart;
-
-        // console.log('Cart : \n\n'+cart)
-        // console.log('type of cart : '+typeof cart);
 
         let products = []
 
@@ -232,7 +223,7 @@ const placeOrder = async(req, res) => {
 
 
     } catch (error) {
-        console.log(error);
+        next(error);
     }
 }
 
@@ -241,18 +232,12 @@ const verifyPayment = async(req,res) => {
 
         const userId = req.session.userId;
         const details = req.body
-        // console.log(details['response[razorpay_payment_id]']);
-        // const keys = Object.keys(details)
-        // console.log(keys);
-        // console.log('in verify payment');
 
         const crypto = require('crypto')
         let hmac = crypto.createHmac('sha256',process.env.KEY_SECRET)
         
         hmac.update(details['response[razorpay_order_id]']+'|'+details['response[razorpay_payment_id]'])
         hmac = hmac.digest('hex');
-        // console.log(typeof hmac);
-        // console.log(typeof details['response[razorpay_signature]']);
         if(hmac === details['response[razorpay_signature]']){
                      
             let totalPrice = req.session.totalPrice
@@ -305,7 +290,7 @@ const verifyPayment = async(req,res) => {
         }
 
     } catch (error) {
-        console.log(error);
+        next(error);
     }
 }
 
@@ -316,14 +301,9 @@ const loadMyOrders = async(req, res) => {
         console.log('Loaded my orders');
         const userId = req.session.userId;
         const orderData = await Orders.find({userId}).populate('products.productId').sort({date: -1})
-        // console.log(orderData);
-        // if(orderData){
-        //     const product = orderData[0].products
-        // }
-        // console.log('Products of first order : \n\n\n'+product);
         res.render('myOrders',{isLoggedIn:true, page: 'My Orders', parentPage: 'Profile',orderData})
     } catch (error) {
-        console.log(error);
+        next(error);
     }
 }
 
@@ -367,7 +347,7 @@ const loadViewOrderDetails = async(req, res) => {
         res.render('orderDetails',{isLoggedIn:true, page :'Order Details', parentPage: 'My Orders',orderData, status})
 
     } catch (error) {
-        console.log(error);
+        next(error);
     }
 }
 
@@ -379,30 +359,17 @@ const loadOrderSuccess = async(req, res) => {
 
         res.render('orderSuccess',{isLoggedIn, result})
     } catch (error) {
-        console.log(error);
+                next(error);
     }
 }
-
-
-// const loadOrderFailed = async(req, res) => {
-//     try {
-
-//         console.log('loaded order failed');
-//         res.send('Order Failed')
-//     } catch (error) {
-//         console.log(error);
-//     }
-// }
 
 const loadOrdersList = async(req, res) => {
     try {
         const ordersData = await Orders.find({}).populate('userId').populate('products.productId')
-
-        // console.log(ordersData);
         
         res.render('ordersList',{ordersData, page:'Orders List'})
     } catch (error) {
-        console.log(error);
+        next(error);
     }
 }
 
@@ -427,7 +394,7 @@ const changeOrderStatus = async(req,res) => {
         res.redirect('/admin/ordersList')
 
     } catch (error) {
-        console.log(error);
+        next(error);
     }
 }
 
@@ -435,7 +402,6 @@ const cancelOrder = async(req,res) => {
     try {
         const orderId = req.params.orderId
         const cancelledBy = req.query.cancelledBy
-        // const userId = req.session.userId
         const orderData = await Orders.findById({_id:orderId})
         const userId = orderData.userId
 
@@ -464,9 +430,8 @@ const cancelOrder = async(req,res) => {
             );
         }
 
-
+        //Updating wallet if order not COD
         if(orderData.paymentMethod !== 'COD'){
-            console.log('cancelled order Payment method razorpay or wallet, updating wallet');
             await User.findByIdAndUpdate(
                 {_id: userId },
                 {
@@ -484,7 +449,7 @@ const cancelOrder = async(req,res) => {
         }
 
     } catch (error) {
-        console.log(error);
+                next(error);
     }
 }
 
@@ -506,7 +471,7 @@ const returnOrder = async(req, res) => {
         res.redirect(`/viewOrderDetails/${orderId}`)
         
     } catch (error) {
-        console.log(error);
+                next(error);
     }
 }
 
@@ -538,7 +503,6 @@ const approveReturn = async(req,res,next) => {
 
         res.redirect('/admin/ordersList')
     } catch (error) {
-        console.log(error);
         next(error)
     }
 }
@@ -555,7 +519,6 @@ const loadInvoice = async(req,res, next) => {
 
         res.render('invoice',{order, isLoggedIn, page:'Invoice', discount})
     } catch (error) {
-        console.log(error);
         next(error)
     }
 }
@@ -565,7 +528,6 @@ module.exports = {
     loadCheckout,
     placeOrder,
     loadOrderSuccess,
-    // loadOrderFailed,
     loadMyOrders,
     loadViewOrderDetails,
     loadOrdersList,

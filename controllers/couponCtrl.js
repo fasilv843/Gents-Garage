@@ -8,7 +8,6 @@ const loadCoupons = async(req, res, next) => {
         const coupons = await Coupons.find({});
         res.render('coupons',{page:'Coupons',coupons})
     } catch (error) {
-        console.log(error);
         next(error)
     }
 }
@@ -17,15 +16,12 @@ const loadAddCoupon = async(req, res, next) => {
     try {
         res.render('addCoupon',{page:'Coupons'})
     } catch (error) {
-        console.log(error);
         next(error)
     }
 }
 
 const postAddCoupon = async(req, res, next) => {
     try {
-
-        console.log('posting add coupon');
 
         const { discount, minPurchase, expiryDate, description } = req.body;
         const code = req.body.code.toUpperCase()
@@ -42,7 +38,7 @@ const postAddCoupon = async(req, res, next) => {
         res.redirect('/admin/coupons')
 
     } catch (error) {
-        console.log(error);
+        next(error);
     }
 }
 
@@ -52,7 +48,6 @@ const loadEditCoupon = async(req, res, next) => {
         const couponData = await Coupons.findById({_id:couponId})
         res.render('editCoupon',{couponData, page:'Coupons'})
     } catch (error) {
-        console.log(error);
         next(error)
     }
 }
@@ -84,7 +79,6 @@ const postEditCoupon = async(req, res, next) => {
         res.redirect('/admin/coupons');
 
     } catch (error) {
-        console.log(error);
         next(error)
     }
 }
@@ -100,7 +94,6 @@ const cancelCoupon = async(req, res, next) => {
         
         res.redirect('/admin/coupons');
     } catch (error) {
-        console.log(error);
         next(error)
     }
 }
@@ -114,7 +107,6 @@ const applyCoupon = async(req, res, next) => {
         const couponData = await Coupons.findOne({code})
         let userData = await User.findById({_id:userId}).populate('cart.productId')
         let cart = userData.cart;
-        console.log(cart);
 
         //finding total cart price
         let totalPrice = 0;
@@ -166,7 +158,6 @@ const applyCoupon = async(req, res, next) => {
         }
 
     } catch (error) {
-        console.log(error)
         next(error)
     }
 }
