@@ -84,6 +84,7 @@ user_route.get('/profile/myOrders',orderCtrl.loadMyOrders)
 user_route.get('/viewOrderDetails/:orderId',orderCtrl.loadViewOrderDetails)
 user_route.get('/cancelOrder/:orderId',orderCtrl.cancelOrder)
 user_route.get('/returnOrder/:orderId',orderCtrl.returnOrder)
+user_route.get('/downloadInvoice/:orderId',orderCtrl.loadInvoice)
 
 user_route.post('/applyCoupon',couponCtrl.applyCoupon);
 user_route.get('/removeCoupon',couponCtrl.removeCoupon)

@@ -543,6 +543,23 @@ const approveReturn = async(req,res,next) => {
     }
 }
 
+const loadInvoice = async(req,res, next) => {
+    try {
+        const { orderId } = req.params
+        const isLoggedIn = Boolean(req.session.userId)
+        const order = await Orders.findById({_id: orderId})
+        let discount;
+        if(order.coupon){
+            discount = Math.floor(order.totalPrice/( 1- (order.couponDiscount/100)))
+        }
+
+        res.render('invoice',{order, isLoggedIn, page:'Invoice', discount})
+    } catch (error) {
+        console.log(error);
+        next(error)
+    }
+}
+
 
 module.exports = {
     loadCheckout,
@@ -556,5 +573,6 @@ module.exports = {
     cancelOrder,
     verifyPayment,
     returnOrder,
-    approveReturn
+    approveReturn,
+    loadInvoice
 }
