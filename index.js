@@ -32,11 +32,10 @@ app.use('/',userRoute);
 app.set('views','./views/errors');
 
 
-// app.use((err, req, res, next) => {
-//     console.log(err);
-//     console.log('controller load profile userId err');
-//     res.status(err.status || 404).render('404')
-// })
+app.use((err, req, res, next) => {
+    console.log(err);
+    res.status(err.status || 500).render('500')
+})
 
 
 // Error handling middleware
