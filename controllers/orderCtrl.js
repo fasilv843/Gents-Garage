@@ -148,8 +148,6 @@ const placeOrder = async(req, res) => {
                     if(err){
                         console.log(err);
                     }else{
-                        console.log('sent json status razorpay');
-                        // console.log(order);
                         res.json({ status: 'Razorpay', order:order })
                     }
 

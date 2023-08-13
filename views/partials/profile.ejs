@@ -1,0 +1,76 @@
+<%- include('../partials/head.ejs') %>
+
+<%- include('../partials/userHeader.ejs') %>
+<%- include('../partials/userBreadcrub.ejs') %>
+
+
+    <section class="bg-light">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12 mb-4 mb-sm-5">
+                    <div class="card card-style1 border-0">
+                        <div class="card-body p-1-9 p-sm-2-3 p-md-6 p-lg-7">
+                            <div class="row align-items-center">
+                                <div class="col-lg-4 mb-4 mb-lg-0">
+                                    <img src="https://bootdey.com/img/Content/avatar/avatar7.png" alt="User image">
+                                </div>
+                                <div class="col-lg-4 ">
+                                    <div class="d-flex flex-column">
+                                        <a href="/profile/myOrders" class="btn btn-dark my-1" >
+                                            My Orders
+                                        </a>
+                
+                                        <a href="/profile/edit" class="btn btn-dark my-1" >
+                                            Edit Profile
+                                        </a>
+                                        <a href="/profile/changePassword" class="btn btn-dark my-1" >
+                                            Change Password
+                                        </a>
+                                        <a href="/profile/walletHistory" class="btn btn-dark my-1" >
+                                            Wallet History
+                                        </a>
+                                        <!-- <div> -->
+                                            <input type="hidden" id="referralCode" value="<%= userData.referralCode %>" readonly>
+                                            <button onclick="copyReferralCode()" class="btn btn-dark my-1">Click here to copy refferal code</button>
+                                        <!-- </div> -->
+                                    </div>
+                                </div>
+                                <div class="col-lg-4 px-xl-10">
+                                     <div class="bg-dark p-3 mb-4 rounded">   <!-- py-1-9 px-1-9 px-sm-6 mb-1-9 -->
+                                        <% const fullName = userData.fname+' '+userData.lname %>
+                                        <h3 class="h2 text-white mb-0"><%= fullName %></h3>
+                                    </div>
+                                    <ul class="list-unstyled mb-1-9">
+                                        <li class="mb-2 mb-xl-3 display-28">
+                                            <span class="display-26 text-secondary me-2 font-weight-600">Email:</span>
+                                            <%= userData.email %>
+                                            <a class="ms-3" href="/profile/passConfirmToChangeMail">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
+                                                    <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
+                                                    <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z"/>
+                                                </svg>
+                                            </a>
+
+                                        </li>
+                                        <li class="mb-2 mb-xl-3 display-28"><span class="display-26 text-secondary me-2 font-weight-600">Mobile:</span> <%= userData.mobile %></li>
+                                        <% 
+                                        const dd = userData.dob.getDate();
+                                        const mm = userData.dob.getMonth() + 1;
+                                        const yyyy = userData.dob.getFullYear();
+                                        
+                                        const formattedDate = `${dd}-${mm}-${yyyy}`; 
+                                        %>
+                                        <li class="mb-2 mb-xl-3 display-28"><span class="display-26 text-secondary me-2 font-weight-600">Date of Birth:</span>  <%= formattedDate %></li>
+                                        <li class="mb-2 mb-xl-3 display-28"><span class="display-26 text-secondary me-2 font-weight-600">Wallet Amount:</span> &#8377; <%= userData.wallet %></li>
+
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+        </div>
+    </section>

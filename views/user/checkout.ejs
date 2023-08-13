@@ -317,32 +317,32 @@
     });
 
     function razorpayPayment(order){
-    var options = {
-        "key": "rzp_test_cs7jdKVcE5oH7L", // Enter the Key ID generated from the Dashboard
-        "amount": order.amount, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
-        "currency": "INR",
-        "name": "Gent's Garage",
-        "description": "Test Transaction",
-        "image": "https://example.com/your_logo",
-        "order_id": order.id, //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
-        "handler": function (response){
-            verifyPayment(response,order)
-        },
-        "prefill": {
-            "name": "Gaurav Kumar",
-            "email": "gaurav.kumar@example.com",
-            "contact": "9000090000"
-        },
-        "notes": {
-            "address": "Gents Garage Pvt Ltd"
-        },
-        "theme": {
-            "color": "#3399cc"
-        }
-    };
-    var rzpl = new Razorpay(options)
-    rzpl.open()
-}
+        var options = {
+            "key": "rzp_test_cs7jdKVcE5oH7L", // Enter the Key ID generated from the Dashboard
+            "amount": order.amount, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
+            "currency": "INR",
+            "name": "Gent's Garage",
+            "description": "Test Transaction",
+            "image": "https://example.com/your_logo",
+            "order_id": order.id, //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
+            "handler": function (response){
+                verifyPayment(response,order)
+            },
+            "prefill": {
+                "name": "Gaurav Kumar",
+                "email": "gaurav.kumar@example.com",
+                "contact": "9000090000"
+            },
+            "notes": {
+                "address": "Gents Garage Pvt Ltd"
+            },
+            "theme": {
+                "color": "#3399cc"
+            }
+        };
+        var rzpl = new Razorpay(options)
+        rzpl.open()
+    }
 
 function verifyPayment(response,order){
     console.log(response,order);

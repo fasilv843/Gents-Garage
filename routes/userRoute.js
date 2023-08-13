@@ -51,7 +51,6 @@ user_route.post('/shoppingCart/placeOrder',orderCtrl.placeOrder)
 
 
 user_route.get('/orderSuccess',orderCtrl.loadOrderSuccess)
-// user_route.get('/orderFailed',orderCtrl.loadOrderFailed)
 user_route.post('/verifyPayment',orderCtrl.verifyPayment)
 
 
@@ -78,7 +77,9 @@ user_route.get('/profile/forgotPassword',userCtrl.forgotPassword)
 user_route.post('/profile/forgotPasswordVerification',userCtrl.verifyOTPforgotPass)
 user_route.get('/profile/resetPassword',userCtrl.loadResetPassword)
 user_route.post('/profile/resetPassword',userCtrl.postResetPassword)
-
+user_route.post('/profile/addMoneyToWallet/',userCtrl.addMoneyToWallet)
+user_route.get('/profile/walletHistory',userCtrl.loadWalletHistory)
+user_route.post('/verifyWalletPayment',userCtrl.verifyWalletPayment)
 
 user_route.get('/profile/myOrders',orderCtrl.loadMyOrders)
 user_route.get('/viewOrderDetails/:orderId',orderCtrl.loadViewOrderDetails)
