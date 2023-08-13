@@ -6,6 +6,7 @@ const session = require('express-session');
 const nocache = require('nocache')
 const {mongoConnect, secretKey} = require('./config/config')
 require('dotenv').config()
+const { err404, err500 } = require('./middleware/errorHandler')
 
 const app = express()
 mongoConnect()
@@ -31,17 +32,7 @@ app.use('/',userRoute);
 
 app.set('views','./views/errors');
 
-
-app.use((err, req, res, next) => {
-    console.log(err);
-    res.status(err.status || 500).render('500')
-})
-
-
-// Error handling middleware
-app.use((req, res, next) => {
-    res.status(404);
-    res.render("404", { url: req.url });
-});
+app.use(err404)
+app.use(err500)
 
 app.listen(process.env.PORT, console.log("Server us running on "+process.env.SERVER));
