@@ -6,6 +6,7 @@ const mobileError = document.getElementById("mobileErr")
 const emailError = document.getElementById("emailErr")
 const passwordError = document.getElementById("passwordErr")
 const cPasswordError = document.getElementById("confirmPasswordErr")
+const dobErr = document.getElementById('dobErr')
 
 
 
@@ -112,6 +113,15 @@ function validateConfirmPassword() {
     return true
 }
 
+function validateDOB(){
+    const dob = document.getElementById('dob').value
+    if(new Date(dob) >= new Date()){
+        dobErr.innerHTML = 'Enter Valid Date'
+        return false
+    }
+    return true
+}
+
 
 
 function validateSignUp() {
@@ -123,7 +133,7 @@ function validateLogin(){
 }
 
 function validateProfile(){
-    return validateFName() && validateLName() && validateMobile()
+    return validateFName() && validateLName() && validateMobile() && validateDOB()
 }
 
 

@@ -390,12 +390,12 @@ const loadEditProfile = async(req, res, next) => {
 const postEditProfile = async(req, res, next) => {
     try {
         const userId = req.session.userId;
-        const { fname, lname, mobile} = req.body
+        const { fname, lname, mobile, dob } = req.body
         await User.findByIdAndUpdate(
             { _id: userId },
             {
                 $set:{
-                    fname, lname, mobile
+                    fname, lname, mobile, dob
                 }
             }
         );

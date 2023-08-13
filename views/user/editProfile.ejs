@@ -56,6 +56,11 @@
                                             class="form-control form-control-md rounded-0" placeholder="Enter Mobile No." name="mobile" required/>
                                         <small id="mobileErr" class="error"></small>
                                     </div>
+                                    <div class="col-md-6 col-12">
+                                        <label class="form-label" for="dob">Date of Birth</label>
+                                        <input type="date" id="dob" class="form-control form-control-md rounded-0" value="<%= userData.dob ? userData.dob.toISOString().substr(0, 10) : ''  %>" name="dob" required/>
+                                        <small id="dobErr" class="error"></small>
+                                    </div>
                                 </div>
 
                                 <div class="text-center">
