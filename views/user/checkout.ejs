@@ -168,32 +168,15 @@
                                         </div>
                                     </div>
 
-                                    <!-- <div style="color: rgb(0, 164, 19);font-size: 17px;" class="text-center">
-                                        YOU SAVED ₹ <span id="totalSaved"><%=// totalDiscount %> </span>
-                                    </div> -->
                                     <hr>
 
-                                    <!-- payment -->
+                                    <!-- Payment Method -->
                 
                                     <div class="mb-2">
                                         <h5 class="mb-4">Choose Payment</h5>
-                                        <% 
-                                        if(walletBalance){
-                                            %>
-                                            <input type="checkbox" name="walletCheckBox" id="walletCheckBox">
-                                            <label for="walletCheckBox">
-                                                <strong>Use wallet balance  
-                                                    <span id="walletBalance">
-                                                        &#8377; <%= Math.round(walletBalance) %>
-                                                    </span>
-                                                </strong>
-                                            </label><br>
-                                            <%  
-                                        }
-                                        %>
                                         <input type="radio" name="payment" id="COD"  value="COD" class="mx-2" ><label for="payment">COD</label><br>
                                         <input type="radio" name="payment" id="Razorpay"  value="Razorpay" class="mx-2" ><label for="payment">Razorpay</label><br>
-                                        <input type="radio" name="payment" id="Wallet"  value="Wallet" class="mx-2" <% if(walletBalance < payAmount){  %> disabled <% } %> ><label for="payment">Wallet</label><br>
+                                        <input type="radio" name="payment" id="Wallet"  value="Wallet" class="mx-2" <% if(walletBalance < payAmount){  %> disabled <% } %> ><label for="payment">Wallet <%= walletBalance %></label><br>
                                     </div>
                                 </div>
 
@@ -367,8 +350,6 @@ function verifyPayment(response,order){
 
 </script>
 
-<!-- <script src='/services/razorpay.js'></script> -->
-
 <script>
     $('#applyCoupon').submit((e) => {
         e.preventDefault()
@@ -384,66 +365,12 @@ function verifyPayment(response,order){
                     document.getElementById('couponDiscountDiv').hidden = false
                     document.getElementById('couponDiscountLabelDiv').hidden = false
                     $('#couponErr').html('')
-                    if(res.isWalletHasPayAmount){
-
-                        //Enabling wallet option
-                        document.getElementById('Wallet').disabled = false
-                        const walletCheckBox = document.getElementById('walletCheckBox');
-                        const razorpayRadio = document.getElementById('Razorpay')
-                        const COD = document.getElementById('COD')
-
-                        function updatePaymentOptions(){
-                            if(walletCheckBox.checked){
-                                razorpayRadio.disabled = true
-                                razorpayRadio.checked = false
-                                COD.disabled = true
-                                COD.checked = false
-                            }else{
-                                razorpayRadio.disabled = false
-                                COD.disabled = false
-                            }
-                        }
-
-                        //For initial setup of options
-                        updatePaymentOptions()
-
-                        //Listens to changes of options and update payment options
-                        walletCheckBox.addEventListener('change',updatePaymentOptions);
-                    }
                 }else{
                     $('#couponErr').html(res.message)
                 }
             }
         })
     })
-</script>
-
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-
-        const walletCheckBox = document.getElementById('walletCheckBox');
-        const razorpayRadio = document.getElementById('Razorpay')
-        const CODRadio = document.getElementById('COD')
-
-        function updatePaymentOptions(){
-            if(walletCheckBox.checked && walletBalance >= payAmount){
-                razorpayRadio.disabled = true
-                razorpayRadio.checked = false
-                CODRadio.disabled = true
-                CODRadio.checked = false
-            }else{
-                razorpayRadio.disabled = false
-                CODRadio.disabled = false
-            }
-        }
-
-        //For initial setup of options
-        updatePaymentOptions()
-
-        //Listens to changes of options and update payment options
-        walletCheckBox.addEventListener('change',updatePaymentOptions);
-    });
-    
 </script>
 
 <script>

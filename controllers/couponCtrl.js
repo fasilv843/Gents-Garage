@@ -131,17 +131,12 @@ const applyCoupon = async(req, res, next) => {
 
                         req.session.coupon = couponData;
                         let payAmount = cartAmount - ( cartAmount* (couponData.discount / 100))
-                        let isWalletHasPayAmount = false
-                        if(userData.wallet >= payAmount){
-                            isWalletHasPayAmount = true
-                        }
 
                         res.json({
                             status:true, 
                             message: 'Success',
                             couponDiscount : couponData.discount,
-                            payAmount,
-                            isWalletHasPayAmount
+                            payAmount
                         });
 
                     }else{
