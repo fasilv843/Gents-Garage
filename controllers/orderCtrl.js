@@ -200,12 +200,21 @@ const placeOrder = async(req, res) => {
     
                 req.session.cartCount = 0;
 
+                const walletHistory = {
+                    date: new Date(),
+                    amount: -totalPrice,
+                    message: 'Product Purchase'
+                }
+
                 // Decrementing wallet amount
                 await User.findByIdAndUpdate(
                     { _id: userId },
                     {
                         $inc: {
                             wallet: -totalPrice
+                        },
+                        $push:{
+                            walletHistory
                         }
                     }
                 );
@@ -430,11 +439,19 @@ const cancelOrder = async(req,res) => {
 
         //Updating wallet if order not COD
         if(orderData.paymentMethod !== 'COD'){
+            const walletHistory = {
+                date: new Date(),
+                amount: orderData.totalPrice,
+                message: 'Refund of Order Cancellation'
+            }
             await User.findByIdAndUpdate(
                 {_id: userId },
                 {
                     $inc:{
                         wallet: orderData.totalPrice
+                    },
+                    $push:{
+                        walletHistory
                     }
                 }
             )
@@ -490,11 +507,19 @@ const approveReturn = async(req,res,next) => {
         const userId = orderData.userId;
 
         //Adding amount into users wallet
+        const walletHistory = {
+            date: new Date(),
+            amount: orderData.totalPrice,
+            message: 'Refund of Returned Order'
+        }
         await User.findByIdAndUpdate(
             {_id:userId},
             {
                 $inc:{
                     wallet: orderData.totalPrice
+                },
+                $push:{
+                    walletHistory
                 }
             }
         );
