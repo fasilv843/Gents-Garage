@@ -5,7 +5,7 @@ const Banners = require('../models/bannerModal');
 const loadBannerList = async(req, res, next) => {
     try {
         console.log('banner list loaded');
-        let bannerLimit = 3;
+        const bannerLimit = 3;
         const banners = await Banners.find({})
         res.render('banner',{page:'Banners', banners, bannerLimit})
     } catch (error) {

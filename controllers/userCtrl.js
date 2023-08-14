@@ -121,7 +121,8 @@ const validateOTP = async(req,res, next) => {
 
         if(userOTP == req.session.OTP){
             const sPassword = await securePassword(password)
-            const referralCode = getReferralCode()
+            const referralCode = await getReferralCode()
+
 
             let newUserData;
             if(referral){

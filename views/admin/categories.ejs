@@ -1,5 +1,7 @@
 
 <%- include('../partials/adminAside.ejs') %>
+<!-- Cropper Link  -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.11/cropper.min.css">
 
 <main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg ">
 
@@ -65,13 +67,17 @@
                                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                             </div>
                                             <div class="modal-body">
-                                                <form action="/admin/categories/edit" method="post" enctype="multipart/form-data" >
+                                                <form  enctype="multipart/form-data" >
                                                     <input id="catID" value="" type="hidden" name="categoryId">
-                                                    <input type="file" class="input-group mb-2" name="categoryImage" id="image" single accept="image/*">
+                                                    <div>
+                                                      <img height="300px" width="300px" src="" id="catImgPreview" alt="Category image preview">
+                                                    </div>
+                                                    <input type="file" class="input-group mb-2" name="categoryImage" id="categoryImage" single accept="image/*">
+                                                    <!-- <button id="cropBTN" onclick="sendData()">Crop</button> -->
                                                     <input id="catName" class="input-group"  type="text" name="categoryName" placeholder="Enter new name">
                                                     <div class="modal-footer">
                                                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                                        <button type="submit" class="btn btn-primary" onclick="return validateModalCategory() ">Update</button>
+                                                        <button type="submit" id="editSubmitBTN" class="btn btn-primary" onclick="return validateModalCategory() ">Update</button>
                                                     </div>
                                                 </form>
                                             </div>
@@ -201,6 +207,10 @@
 
 <script src="/validations/categoryValidation.js"></script>
 
+<!-- Cropper Script  -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.11/cropper.min.js"></script>
+
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>
 
 <script>
@@ -221,6 +231,69 @@
       let catId = $(this).data('id');
       $('#offerCategoryId').val(catId)
     })
+</script>
+<script>
+    const imageInput = document.getElementById('categoryImage');
+    const imagePreview = document.getElementById('catImgPreview');
+    const cropButton = document.getElementById('editSubmitBTN');
+    let cropper;
+
+    imageInput.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        const reader = new FileReader();
+
+        reader.onload = (event) => {
+            imagePreview.src = event.target.result;
+            cropper = new Cropper(imagePreview, {
+                aspectRatio: 1, // Adjust the aspect ratio as needed
+                viewMode: 2,
+            });
+        };
+
+        reader.readAsDataURL(file);
+    });
+
+    cropButton.addEventListener('click', () => {
+
+        const categoryId = document.getElementById('catID').value
+        const categoryName = document.getElementById('catName').value
+        const croppedData = cropper.getData();
+
+        const formData = new FormData();
+        formData.append('x', croppedData.x);
+        formData.append('y', croppedData.y);
+        formData.append('width', croppedData.width);
+        formData.append('height', croppedData.height);
+        formData.append('categoryId', categoryId);
+        formData.append('categoryName', categoryName);
+
+        console.log(croppedData);
+        console.log(croppedData.x);
+        console.log(croppedData.y);
+
+        $.ajax({
+          url: '/admin/categories/edit',
+          method: 'post',
+          data: formData,
+          processData: false, // Prevent jQuery from processing the data
+          contentType: false, // Let the browser set the content type
+
+          // data:{
+          //   x: croppedData.x, 
+          //   y: croppedData.y, 
+          //   width: croppedData.width, 
+          //   height: croppedData.height, 
+          //   categoryId,
+          //   categoryName
+          // },
+
+          success: (res) => {
+            console.log('on success of ajax');
+          }
+          
+        })
+    });
+
 </script>
 
 

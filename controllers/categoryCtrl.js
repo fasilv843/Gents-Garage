@@ -18,7 +18,6 @@ const loadCategories = async(req, res, next) => {
 const addCategory = async(req, res, next) => {
     try {
         const categoryName = req.body.categoryName.toUpperCase()
-        console.log(categoryName);
         if(categoryName){
 
             const isExistCategory = await Categories.findOne({name:categoryName});
@@ -44,25 +43,20 @@ const addCategory = async(req, res, next) => {
 
 const editCategory = async(req, res, next) => {
     try {
+        console.log('on edit category controller its working!');
         const id = req.body.categoryId
         const newName = req.body.categoryName.toUpperCase()
-        console.log(req);
-        console.log('files '+req.files);
-        console.log('file '+req.file);
 
-        console.log(newName);
         const isCategoryExist = await Categories.findOne({name:newName})
 
 
         if(req.file){
             const image = req.file.filename
             if(!isCategoryExist || isCategoryExist._id == id){
-                console.log('Category name and image changed');
                 await Categories.findByIdAndUpdate({_id:id},{ $set :{ name: newName, image:image } })
             }
         }else{
             if(!isCategoryExist){
-                console.log('Category name changed');
                 await Categories.findByIdAndUpdate({_id:id},{ $set :{ name: newName } })
             }
         }
@@ -91,10 +85,9 @@ const listCategory = async(req,res, next) => {
 
 const applyCategoryOffer = async(req, res, next) => {
     try {
-        console.log('applying category offer');
+
         const { offerId, categoryId, override } = req.body
 
-        console.log('categoryid : '+categoryId);
         //Setting offerId to offer field of category
         await Categories.findByIdAndUpdate(
             {_id:categoryId},
@@ -107,7 +100,7 @@ const applyCategoryOffer = async(req, res, next) => {
 
         const offerData = await Offers.findById({_id:offerId})
         const products = await Products.find({category: categoryId})
-        console.log('starting of loop');
+
         //applying offer to every product in the same category
         for(const pdt of products){
 
@@ -157,7 +150,6 @@ const applyCategoryOffer = async(req, res, next) => {
 
 const removeCategoryOffer = async(req, res, next) => {
     try {
-        console.log('removing category offer');
         const { catId } = req.params
 
         await Categories.findByIdAndUpdate(

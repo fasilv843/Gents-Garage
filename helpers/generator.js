@@ -18,10 +18,11 @@ const generateReferralCode = async() => {
 
 const getReferralCode = async() => {
 
-    const referralCode = generateReferralCode()
+    const referralCode = await generateReferralCode()
     const isreferralExist = await User.findOne({ referralCode})
     if(isreferralExist) getReferralCode()
     return referralCode
+
 }
 
 const securePassword = async(password) => {

@@ -3,7 +3,6 @@ const path = require('path');
 
 const storage = multer.diskStorage({
     destination: ((req, file, cb) => {
-        console.log(file.fieldname);
         const folderName = file.fieldname;
         cb(null, path.join(__dirname, '../public/images/', `${folderName}s`))
     }),
@@ -15,7 +14,8 @@ const storage = multer.diskStorage({
 
 const upload = multer({ 
     storage: storage,
-    imageLimit: 3
+    imageLimit: 3,
+ 
     // fileFilter: (req, file, cb) => {
         
     //     const fileExtension = file.extname.toLowerCase();

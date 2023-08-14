@@ -37,7 +37,10 @@ const loadDashboard = async(req,res, next) => {
         //Setting Dates Variables
         const today = new Date();
         const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+        const firstDayOfPreviousMonth = new Date(today.getFullYear(), today.getMonth() - 1, 1);
         const jan1OfTheYear =  new Date(today.getFullYear(), 0, 1);
+        console.log(firstDayOfMonth);
+        console.log(firstDayOfPreviousMonth);
         
         const totalIncome = await findIncome()
         const thisMonthIncome = await findIncome(firstDayOfMonth)
@@ -48,6 +51,9 @@ const loadDashboard = async(req,res, next) => {
 
         const totalSalesCount = await Orders.find({ status: 'Delivered' }).count()
         const salesOnTheYear = await Orders.find({ status: 'Delivered', createdAt:{ $gte: jan1OfTheYear } }).count()
+        const salesOnTheMonth = await Orders.find({ status: 'Delivered', createdAt:{ $gte: firstDayOfMonth } }).count()
+        const salesOnPrevMonth = await Orders.find({ status: 'Delivered', createdAt:{ $gte: firstDayOfPreviousMonth, $lt: firstDayOfMonth } }).count()
+        console.log(salesOnPrevMonth);
         
         let salesYear = 2023;
         if(req.query.salesYear){
@@ -60,7 +66,7 @@ const loadDashboard = async(req,res, next) => {
         ]);
 
         const displayYears = [];  //use map if possible
-        console.log(totalYears);
+        // console.log(totalYears);
         totalYears.forEach((year) => {
             displayYears.push(year._id.createdAt)
         });
@@ -184,7 +190,9 @@ const loadDashboard = async(req,res, next) => {
                 categorySales,
                 paymentMethods,
                 paymentCount,
-                orderDataToDownload
+                orderDataToDownload,
+                salesOnTheMonth,
+                salesOnPrevMonth
         })
 
 
@@ -225,9 +233,9 @@ const verifyAdminLogin = async(req,res, next) => {
 
 const logoutAdmin = async(req,res, next) => {
     try {
-        req.session.destroy()
+        req.session.adminId = null
         // req.logout()
-        res.clearCookie('adminId')
+        // res.clearCookie('adminId')
         res.redirect('/admin')
     } catch (error) {
         next(error)

@@ -16,13 +16,13 @@
               </div>
               <div class="text-end pt-1">
                 <p class="text-sm mb-0 text-capitalize">Total Revenue</p>
-                <h4 class="mb-0"><%= totalIncome %></h4>
+                <h4 class="mb-0">&#8377; <%= totalIncome %></h4>
               </div>
             </div>
             <hr class="dark horizontal my-0">
             <div class="card-footer p-3 d-flex justify-content-between">
-              <p class="mb-0"><span class="text-success text-sm font-weight-bolder col-6">+<%= thisMonthIncome %></span> on this month</p>
-              <p class="mb-0"><span class="text-success text-sm font-weight-bolder">+<%= thisYearIncome %></span> on this year</p>
+              <p class="mb-0"><span class="text-success text-sm font-weight-bolder col-6">+ &#8377;<%= thisMonthIncome %></span> on this month</p>
+              <!-- <p class="mb-0"><span class="text-success text-sm font-weight-bolder">+<%=// thisYearIncome %></span> on this year</p> -->
             </div>
           </div>
         </div>
@@ -71,13 +71,12 @@
               </div>
               <div class="text-end pt-1">
                 <p class="text-sm mb-0 text-capitalize">Sales on This Month</p>
-                <h4 class="mb-0">$103,430</h4>
+                <h4 class="mb-0"><%= salesOnTheMonth %></h4>
               </div>
             </div>
             <hr class="dark horizontal my-0">
             <div class="card-footer p-3 d-flex justify-content-between">
-              <p class="mb-0"><span class="text-success text-sm font-weight-bolder">+5% </span> on today</p>
-              <p class="mb-0"><span class="text-success text-sm font-weight-bolder">+5% </span> on yesterday</p>
+              <p class="mb-0"><span class="text-success text-sm font-weight-bolder"><%= salesOnPrevMonth %> </span> On Last Month</p>
             </div>
           </div>
         </div>

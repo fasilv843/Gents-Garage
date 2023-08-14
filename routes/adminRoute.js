@@ -1,4 +1,5 @@
 const express = require('express');
+const sharp = require('sharp')
 const adminCtrl = require('../controllers/adminCtrl');
 const categoryCtrl = require('../controllers/categoryCtrl');
 const productCtrl = require('../controllers/productCtrl');
@@ -7,7 +8,7 @@ const couponCtrl = require('../controllers/couponCtrl')
 const bannerCtrl = require('../controllers/bannerCtrl')
 const offerCtrl = require('../controllers/offerCtrl')
 const upload = require('../config/multer');
-const {isAdminLoggedIn, isAdminLoggedOut} = require('../middleware/auth')
+const { isAdminLoggedIn, isAdminLoggedOut } = require('../middleware/auth')
 
 
 const admin_route = express()
@@ -18,7 +19,7 @@ admin_route.set('views','./views/admin')
 //Admin Login Handling
 admin_route.get('/login', isAdminLoggedOut ,adminCtrl.loadAdminLogin);
 admin_route.post('/login', isAdminLoggedOut, adminCtrl.verifyAdminLogin);
-admin_route.post('/logout', isAdminLoggedOut ,adminCtrl.logoutAdmin)
+admin_route.post('/logout' ,adminCtrl.logoutAdmin)
 
 
 admin_route.use('/', isAdminLoggedIn)
@@ -33,7 +34,34 @@ admin_route.get('/users/block/:id',adminCtrl.blockUser)
 //Category Handling Routes
 admin_route.get('/categories',categoryCtrl.loadCategories)
 admin_route.post('/categories',categoryCtrl.addCategory);
-admin_route.post('/categories/edit',upload.single('categoryImage'),categoryCtrl.editCategory)
+admin_route.post('/categories/edit',upload.single('categoryImage'),async(req, res) => {
+    try {
+        const { x, y, width, height } = req.body; // Cropping parameters from the front-end
+
+        console.log(req);
+        console.log('x : '+x);
+        console.log('parsed x : '+parseInt(x));
+
+        console.log(req.file);
+        const imagePath = req.file.path
+
+        console.log('imagePath : '+imagePath);
+        console.log(x, y, width, height);
+
+        await sharp(imagePath)
+            .extract({ 
+                left: parseInt(x), 
+                top: parseInt(y), 
+                width: parseInt(width), 
+                height: parseInt(height)
+            })
+            .toFile('/categoryImages');
+
+        res.send('Image cropped and saved.');
+    } catch (error) {
+        console.log(error);
+    }
+},categoryCtrl.editCategory)
 admin_route.get('/categories/list/:id',categoryCtrl.listCategory)
 
 //Category Size Handling Routes
