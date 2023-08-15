@@ -204,7 +204,9 @@ const loadShoppingCart = async(req, res, next) => {
     try {
         const userId = req.session.userId;
         const userData = await User.findById({_id:userId}).populate('cart.productId').populate('cart.productId.offer')
-         const cartItems = userData.cart
+        const cartItems = userData.cart
+
+        console.log(cartItems);
         //Code to update cart values if product price changed by admin after we added pdt into cart
         for(const { productId } of cartItems ){
             await User.updateOne(

@@ -29,6 +29,7 @@
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Discount</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Min Purchase</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Expiry Date</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Count</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Edit</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Cancel</th>
                   </tr>
@@ -47,15 +48,27 @@
                                 </td>
 
                                 <td class="align-middle text-center text-sm">
-                                    <p class="text-xs font-weight-bold mb-0"><%= coupons[i].description %></p>
+                                    <p class="text-xs font-weight-bold mb-0 text-wrap"><%= coupons[i].description %></p>
                                 </td>
 
                                 <td class="align-middle text-center text-sm">
-                                    <p class="text-xs font-weight-bold mb-0"><%= coupons[i].discount %></p>
+                                    <% 
+                                    if(coupons[i].discountType === 'Percentage'){
+                                      %>
+                                      <p class="text-xs font-weight-bold mb-0"><%= coupons[i].discountAmount %> %</p>
+                                      <p class="text-xs font-weight-bold mb-0">upto &#8377;<%= coupons[i].maxDiscountAmount %> </p>
+                                      <%  
+                                    }else if(coupons[i].discountType === 'Fixed Amount'){
+                                      %>
+                                      <p class="text-xs font-weight-bold mb-0">&#8377; <%= coupons[i].discountAmount %></p>
+                                      <%  
+                                    }
+                                    %>
+
                                 </td>
 
                                 <td class="align-middle text-center text-sm">
-                                    <p class="text-xs font-weight-bold mb-0"><%= coupons[i].minPurchase %></p>
+                                    <p class="text-xs font-weight-bold mb-0">&#8377; <%= coupons[i].minPurchase %></p>
                                 </td>
 
                                 <td class="align-middle text-center text-sm">
@@ -67,6 +80,11 @@
                                     const formattedDate = `${dd}-${mm}-${yyyy}`; 
                                     %>
                                     <p class="text-xs font-weight-bold mb-0"><%= formattedDate %></p>
+                                </td>
+
+                                <td class="align-middle text-center text-sm">
+                                  <p class="text-xs font-weight-bold mb-0"> <%= coupons[i].usedUsers.length %> used</p>
+                                  <p class="text-xs font-weight-bold mb-0"> out of <%= coupons[i].couponCount %></p>
                                 </td>
 
                                 <td class="align-middle text-center text-sm">
@@ -141,5 +159,7 @@
         $(".modal-footer #confirmBTN").attr('href', routeURL);
     });
 </script>
+
+
 
 <%- include('../partials/adminScript.ejs') %>

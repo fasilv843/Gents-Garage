@@ -11,7 +11,7 @@ var instance = new Razorpay({
     key_secret:  process.env.KEY_SECRET,
 });
 
-const loadCheckout = async(req, res ) => {
+const loadCheckout = async(req, res, next) => {
     try {
         const userId = req.session.userId;
 
@@ -34,7 +34,7 @@ const loadCheckout = async(req, res ) => {
 }
 
 
-const placeOrder = async(req, res) => {
+const placeOrder = async(req, res, next) => {
     try {
 
         //getting details needed
@@ -86,19 +86,39 @@ const placeOrder = async(req, res) => {
             for(let i=0; i<products.length; i++){
                 totalPrice += (products[i].totalPrice - products[i].totalDiscount)
             }
+            
             console.log(totalPrice);
-
-            req.session.totalPrice = totalPrice  //??
-
+            console.log(req.session.coupon);
+            //reducing coupon discount from totalPrice
             let couponCode = '';
             let couponDiscount = 0;
-
+            let couponDiscountType;
             if(req.session.coupon){
-                couponCode = req.session.coupon.code
-                couponDiscount = req.session.coupon.discount
-                totalPrice = totalPrice - (totalPrice * (couponDiscount / 100))
+
+                const coupon = req.session.coupon
+                couponCode = coupon.code
+                couponDiscount = coupon.discountAmount
+
+                if(coupon.discountType === 'Percentage'){
+
+                    couponDiscountType = 'Percentage';
+                    const reducePrice =  totalPrice * (couponDiscount / 100)
+
+                    if(reducePrice >= coupon.maxDiscountAmount){
+                        totalPrice -= coupon.maxDiscountAmount
+                    }else{
+                        totalPrice -= reducePrice
+                    }
+
+                }else{
+                    couponDiscountType = 'Fixed Amount';
+                    totalPrice = totalPrice - couponDiscount
+                }
+                
             }
             
+            console.log(totalPrice);
+            req.session.totalPrice = totalPrice;
             
             if(paymentMethod === 'COD'){
                 console.log('Payment method is COD');
@@ -112,7 +132,8 @@ const placeOrder = async(req, res) => {
                     status: 'Order Confirmed',
                     date: new Date(),
                     couponCode,
-                    couponDiscount
+                    couponDiscount,
+                    couponDiscountType
                 }).save()
     
                 //Reducing quantity/stock of purchased products from Products Collection
@@ -121,6 +142,18 @@ const placeOrder = async(req, res) => {
                         { _id: productId._id },
                         { $inc: { quantity: -quantity } }
                     );
+                }
+
+                //Adding user to usedUsers list in Coupons collection
+                if(req.session.coupon != null){
+                    await Coupons.findByIdAndUpdate(
+                        {_id:req.session.coupon._id},
+                        {
+                            $push:{
+                                usedUsers: userId
+                            }
+                        }
+                    )
                 }
     
                 //Deleting Cart from user collection
@@ -165,7 +198,8 @@ const placeOrder = async(req, res) => {
                     status: 'Order Confirmed',
                     date: new Date(),
                     couponCode,
-                    couponDiscount
+                    couponDiscount,
+                    couponDiscountType
                 }).save()
     
                 //Reducing quantity/stock of purchased products from Products Collection
@@ -234,7 +268,7 @@ const placeOrder = async(req, res) => {
     }
 }
 
-const verifyPayment = async(req,res) => {
+const verifyPayment = async(req,res,next) => {
     try {
 
         const userId = req.session.userId;
@@ -248,14 +282,7 @@ const verifyPayment = async(req,res) => {
         if(hmac === details['response[razorpay_signature]']){
                      
             let totalPrice = req.session.totalPrice
-            let couponCode = '';
-            let couponDiscount = 0;
-
-            if(req.session.coupon){
-                couponCode = req.session.coupon.code
-                couponDiscount = req.session.coupon.discount
-                totalPrice = totalPrice - (totalPrice * (couponDiscount / 100))
-            }
+            const coupon = req.session.coupon
 
             await new Orders({
                 userId, 
@@ -265,8 +292,9 @@ const verifyPayment = async(req,res) => {
                 paymentMethod:'Razorpay',
                 status: 'Order Confirmed',
                 date: new Date(),
-                couponCode,
-                couponDiscount
+                couponCode: coupon.code,
+                couponDiscount: coupon.discountAmount,
+                couponDiscountType: coupon.discountType
             }).save()
 
             
@@ -277,6 +305,18 @@ const verifyPayment = async(req,res) => {
                     { _id: productId._id },
                     { $inc: { quantity: -quantity } }
                 );
+            }
+
+            //Adding user to usedUsers list in Coupons collection
+            if(coupon != null){
+                await Coupons.findByIdAndUpdate(
+                    {_id:req.session.coupon._id},
+                    {
+                        $push:{
+                            usedUsers: userId
+                        }
+                    }
+                )
             }
 
             //Deleting Cart from user collection
@@ -303,7 +343,7 @@ const verifyPayment = async(req,res) => {
 
 
 
-const loadMyOrders = async(req, res) => {
+const loadMyOrders = async(req, res, next) => {
     try {
         console.log('Loaded my orders');
         const userId = req.session.userId;
@@ -358,7 +398,7 @@ const loadViewOrderDetails = async(req, res) => {
     }
 }
 
-const loadOrderSuccess = async(req, res) => {
+const loadOrderSuccess = async(req, res, next) => {
     try {
         const result = req.query.result
         console.log('loaded Order Success');
@@ -370,7 +410,7 @@ const loadOrderSuccess = async(req, res) => {
     }
 }
 
-const loadOrdersList = async(req, res) => {
+const loadOrdersList = async(req, res, next) => {
     try {
         const ordersData = await Orders.find({}).populate('userId').populate('products.productId')
         
@@ -381,7 +421,7 @@ const loadOrdersList = async(req, res) => {
 }
 
 
-const changeOrderStatus = async(req,res) => {
+const changeOrderStatus = async(req,res, next) => {
     try {
         console.log('loaded change order status');
         const orderId = req.body.orderId
@@ -405,7 +445,7 @@ const changeOrderStatus = async(req,res) => {
     }
 }
 
-const cancelOrder = async(req,res) => {
+const cancelOrder = async(req,res, next) => {
     try {
         const orderId = req.params.orderId
         const cancelledBy = req.query.cancelledBy
@@ -468,7 +508,7 @@ const cancelOrder = async(req,res) => {
     }
 }
 
-const returnOrder = async(req, res) => {
+const returnOrder = async(req, res, next) => {
     try {
 
         const userId = req.session.userId;

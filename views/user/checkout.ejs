@@ -157,7 +157,7 @@
                                                 <span style="color: rgb(0, 164, 19);">-₹ <%= totalDiscount %></span>
                                             </div>
                                             <div class="mb-3" id="couponDiscountDiv" hidden>
-                                                <span id="couponDiscount" style="color: rgb(0, 164, 19);">-₹ </span>
+                                                <span id="couponDiscount" style="color: rgb(0, 164, 19);"></span>
                                             </div>
                                             <div class="mb-3">
                                                 <% 
@@ -360,7 +360,7 @@ function verifyPayment(response,order){
             data: $('#applyCoupon').serialize(),
             success: (res) => {
                 if( res.status === true ){
-                    $('#couponDiscount').html(`${res.couponDiscount}%`)
+                    $('#couponDiscount').html(`-₹ ${res.couponDiscount}`)
                     $('#payAmount').html(`₹ ${res.payAmount}`)
                     document.getElementById('couponDiscountDiv').hidden = false
                     document.getElementById('couponDiscountLabelDiv').hidden = false

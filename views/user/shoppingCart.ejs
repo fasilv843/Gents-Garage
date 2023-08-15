@@ -45,7 +45,7 @@
                                                         console.log('product has offer')
                                                         currPrice = cartItems[i].productId.offerPrice
                                                     }else{
-                                                        currPrice = cartItems[i].productId.price - cartItems[i].productId.discountPrice 
+                                                        currPrice = cartItems[i].productId.price - cartItems[i].productId.discountPrice
                                                     }
                                                     //discountPercentage = Math.floor(100 - ( (currPrice*100)/cartItems[i].productId.price ));
                                                     %>
@@ -81,7 +81,7 @@
                                             <% 
                                             totalPrice += cartItems[i].productId.price*cartItems[i].quantity
                                             if(cartItems[i].productId.offerPrice){
-                                                totalDiscount = cartItems[i].productId.offerPrice*cartItems[i].quantity
+                                                totalDiscount += (cartItems[i].productId.price - cartItems[i].productId.offerPrice)*cartItems[i].quantity
                                             }else{
                                                 totalDiscount += cartItems[i].productId.discountPrice*cartItems[i].quantity
                                             }
@@ -124,8 +124,8 @@
                         <h6>Cart total</h6>
                         <ul>
                             <!-- <li>Subtotal <span>$ 169.50</span></li> -->
-                            <li>Total <span  id="totalPrice"> &#8377; <%= totalPrice %></span></li>
-                            <li>Discount <span  id="totalDiscount"> &#8377; <%= totalDiscount %></span></li>
+                            <li>Total MRP <span  id="totalPrice"> &#8377; <%= totalPrice %></span></li>
+                            <li>Discount <span style="color: green;"  id="totalDiscount"> -&#8377; <%= totalDiscount %></span></li>
                             <li>Amount <span  id="amount"> &#8377; <%= totalPrice - totalDiscount %></span></li>
                         </ul>
                         <% 
@@ -208,7 +208,7 @@
 
                     $(`#total${spanID}`).html(`₹${res.data.totalSingle}`)
                     $(`#totalPrice`).html(`₹${res.data.totalPrice}`)
-                    $(`#totalDiscount`).html(`₹${res.data.totalDiscount}`)
+                    $(`#totalDiscount`).html(`-₹${res.data.totalDiscount}`)
                     $(`#amount`).html(`₹${res.data.totalPrice - res.data.totalDiscount}`)
 
                     document.getElementById(`${spanID}plus`).disabled = false

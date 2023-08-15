@@ -30,11 +30,32 @@
                                 <small id="codeErr" class="error"></small>
                             </div>
                             <div class="col-md-6 col-12">
-                                <label for="discount">Discount</label>
-                                <input type="number" id="discount" class="form-control form-control-md rounded-0" placeholder="Enter Discount" name="discount" required/>
-                                <small id="discountErr" class="error"></small>
-                            </div>
+                              <label for="discountType">Discount Type</label>
+                              <select name="discountType" id="discountType" class="form-control form-control-md " required>
+                                <% 
+                                couponTypes.forEach((type) => {
+                                  %>
+                                  <option value="<%= type %>"> <%= type %> </option>
+                                  <%  
+                                })
+                                %>
+                              </select>
+                              <small id="discountTypeErr" class="error"></small>
+                          </div>
+
                         </div>
+                        <div class="form-outline mb-3 row input-group input-group-outline ">
+                          <div class="col-md-6 col-12">
+                            <label for="discountAmount">Discount Amount</label>
+                            <input type="number" id="discountAmount" class="form-control form-control-md rounded-0" placeholder="Enter Discount" name="discountAmount" required/>
+                            <small id="discountAmountErr" class="error"></small>
+                          </div>
+                          <div class="col-md-6 col-12">
+                              <label for="maxDiscountAmount">Max Discount</label>
+                              <input type="number" id="maxDiscountAmount" class="form-control form-control-md rounded-0" placeholder="Enter Max Discount" name="maxDiscountAmount" required/>
+                              <small id="maxDiscountAmountErr" class="error"></small>                                     
+                          </div>
+                      </div>
                         <div class="form-outline mb-3 row input-group input-group-outline ">
                             <div class=" col-md-6 col-12 mb-3">
                                 <label for="minPurchase">Min Purchase</label>
@@ -49,12 +70,18 @@
                             </div>
                         </div>
                         <div class="form-outline mb-3 row input-group input-group-outline ">
-                            <div class="col-12 mb-3">
+                            <div class="col-md-6 col-12 mb-3">
                                 <label for="description">Description</label>
                                 <input type="text" id="description"
                                     class="form-control rounded-0" placeholder="Enter Coupon Description" name="description" required/>
                                 <small id="descriptionErr" class="error"></small>
                             </div>
+                            <div class="col-md-6 col-12 mb-3">
+                              <label for="description">Coupon Count</label>
+                              <input type="number" id="couponCount"
+                                  class="form-control rounded-0" placeholder="Enter Count (Optional)" name="couponCount"/>
+                              <small id="couponCountErr" class="error"></small>
+                          </div>
                         </div>
                         <div class="text-center my-2">
                             <button class="btn btn-dark btn-md rounded-pill px-5 py-2 login-btn" type="submit" onclick="return validateCoupon()">ADD</button>
@@ -76,7 +103,26 @@
 
 </main>
 
+<script>
+  const discountType = document.getElementById('discountType')
+  const maxDiscountAmount = document.getElementById('maxDiscountAmount')
+
+  discountType.addEventListener('change',() => {
+    if(discountType.value === 'Fixed Amount'){
+      maxDiscountAmount.disabled = true
+      maxDiscountAmount.removeAttribute('required')
+      maxDiscountAmount.placeholder = "Fixed type don't have Max Discount"
+      maxDiscountAmount.value = ''
+    }else if(discountType.value === 'Percentage'){
+      maxDiscountAmount.disabled = false
+      maxDiscountAmount.setAttribute('required','required')
+      maxDiscountAmount.placeholder = 'Enter Max Discount'
+    }
+  })
+</script>
+
 
     <script src="/validations/couponValidation.js"></script>
+
 
 <%- include('../partials/adminScript.ejs') %>

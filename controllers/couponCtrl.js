@@ -5,7 +5,7 @@ const User = require('../models/userModel')
 
 const loadCoupons = async(req, res, next) => {
     try {
-        const coupons = await Coupons.find({});
+        const coupons = await Coupons.find()
         res.render('coupons',{page:'Coupons',coupons})
     } catch (error) {
         next(error)
@@ -14,7 +14,9 @@ const loadCoupons = async(req, res, next) => {
 
 const loadAddCoupon = async(req, res, next) => {
     try {
-        res.render('addCoupon',{page:'Coupons'})
+        const couponTypes = Coupons.schema.path('discountType').enumValues
+        console.log(couponTypes);
+        res.render('addCoupon',{page:'Coupons', couponTypes })
     } catch (error) {
         next(error)
     }
@@ -23,13 +25,22 @@ const loadAddCoupon = async(req, res, next) => {
 const postAddCoupon = async(req, res, next) => {
     try {
 
-        const { discount, minPurchase, expiryDate, description } = req.body;
+        const { discountAmount, discountType, maxDiscountAmount, minPurchase, expiryDate, description } = req.body;
         const code = req.body.code.toUpperCase()
 
+        let couponCount;
+        if(!req.body.couponCount){
+            couponCount = undefined
+        }else{
+            couponCount = parseInt(req.body.couponCount)
+        }
+        
+        console.log('coupon Count : '+couponCount);
+        console.log(' type of coupon Count : '+typeof couponCount);
         const isCodeExist = await Coupons.findOne({code})
         if(!isCodeExist){
             await new Coupons({
-                code, discount, minPurchase, expiryDate, description
+                code, discountAmount, discountType, maxDiscountAmount, minPurchase, expiryDate, description, couponCount
             }).save()
         }else{
             console.log('Code already exist');
@@ -46,7 +57,9 @@ const loadEditCoupon = async(req, res, next) => {
     try {
         const couponId = req.params.couponId;
         const couponData = await Coupons.findById({_id:couponId})
-        res.render('editCoupon',{couponData, page:'Coupons'})
+        const couponTypes = Coupons.schema.path('discountType').enumValues
+
+        res.render('editCoupon',{couponData, page:'Coupons', couponTypes})
     } catch (error) {
         next(error)
     }
@@ -56,7 +69,7 @@ const postEditCoupon = async(req, res, next) => {
     try {
         console.log('posting edit coupon');
         const couponId = req.params.couponId;
-        const { discount, minPurchase, expiryDate, description } = req.body;
+        const { discountAmount, discountType, maxDiscountAmount, minPurchase, expiryDate, description, couponCount } = req.body;
         const code = req.body.code.toUpperCase()
 
         const isCodeExist = await Coupons.findOne({code})
@@ -67,7 +80,7 @@ const postEditCoupon = async(req, res, next) => {
                 { _id: couponId },
                 {
                     $set:{
-                        code, discount, minPurchase, expiryDate, description
+                        code, discountAmount, discountType, maxDiscountAmount, minPurchase, expiryDate, description, couponCount
                     }
                 }
             );
@@ -126,21 +139,41 @@ const applyCoupon = async(req, res, next) => {
         if(couponData && !couponData.isCancelled){
             if(cartAmount >= couponData.minPurchase){
                 if(couponData.expiryDate >= new Date()){
-                    const isCodeUsed = couponData.usedUsers.find( id => id == userId);
-                    if(!isCodeUsed){
+                    if(couponData.couponCount >= couponData.usedUsers.length){
+                        const isCodeUsed = couponData.usedUsers.find( id => id == userId);
+                        if(!isCodeUsed){
+    
+                            req.session.coupon = couponData;
 
-                        req.session.coupon = couponData;
-                        let payAmount = cartAmount - ( cartAmount* (couponData.discount / 100))
+                            let payAmount;
+                            if(couponData.discountType === 'Fixed Amount'){
+                                payAmount = cartAmount - couponData.discountAmount
+                            }else if(couponData.discountType === 'Percentage'){
 
-                        res.json({
-                            status:true, 
-                            message: 'Success',
-                            couponDiscount : couponData.discount,
-                            payAmount
-                        });
+                                const reducePrice = cartAmount* (couponData.discountAmount / 100);
 
+                                if(reducePrice >= couponData.maxDiscountAmount){
+                                    payAmount = cartAmount - couponData.maxDiscountAmount
+                                }else{
+                                    payAmount =  cartAmount - reducePrice
+                                }
+                                
+                            }
+
+                            const couponDiscount = cartAmount - payAmount
+
+                            res.json({
+                                status:true, 
+                                message: 'Success',
+                                couponDiscount,
+                                payAmount
+                            });
+    
+                        }else{
+                            res.json({status:false, message:'Coupon already used'})
+                        }
                     }else{
-                        res.json({status:false, message:'Coupon already used'})
+                        res.json({status: false, message: `Coupon Limit exceeded, try another one`})
                     }
                 }else{
                     res.json({status:false, message:`Coupon expired`})
