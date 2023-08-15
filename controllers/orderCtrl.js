@@ -136,7 +136,7 @@ const placeOrder = async(req, res, next) => {
                     products, 
                     paymentMethod,
                     status: 'Order Confirmed',
-                    date: new Date(),
+                    // date: new Date(),
                     couponCode,
                     couponDiscount,
                     couponDiscountType
@@ -211,7 +211,7 @@ const placeOrder = async(req, res, next) => {
                     products, 
                     paymentMethod,
                     status: 'Order Confirmed',
-                    date: new Date(),
+                    // date: new Date(),
                     couponCode,
                     couponDiscount,
                     couponDiscountType
@@ -315,7 +315,7 @@ const verifyPayment = async(req,res,next) => {
                 products:  req.session.products, 
                 paymentMethod:'Razorpay',
                 status: 'Order Confirmed',
-                date: new Date(),
+                // date: new Date(),
                 couponCode,
                 couponDiscount,
                 couponDiscountType
@@ -384,7 +384,7 @@ const loadMyOrders = async(req, res, next) => {
     try {
         console.log('Loaded my orders');
         const userId = req.session.userId;
-        const orderData = await Orders.find({userId}).populate('products.productId').sort({date: -1})
+        const orderData = await Orders.find({userId}).populate('products.productId').sort({createdAt: -1})
         res.render('myOrders',{isLoggedIn:true, page: 'My Orders', parentPage: 'Profile',orderData})
     } catch (error) {
         next(error);

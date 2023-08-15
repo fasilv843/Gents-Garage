@@ -10,7 +10,7 @@ const findIncome = async(startDate = new Date('1990-01-01'), endDate = new Date(
             { 
                 $match: { 
                     status: 'Delivered',
-                    date:{
+                    createdAt:{
                         $gte: startDate,
                         $lt: endDate 
                     }
@@ -75,7 +75,7 @@ const loadDashboard = async(req,res, next) => {
             {
                 $match: {
                     status: 'Delivered',
-                    date: {
+                    createdAt: {
                         $gte: new Date(`${salesYear}-01-01`),
                         $lt: new Date(`${salesYear + 1}-01-01`)
                     }
@@ -88,7 +88,7 @@ const loadDashboard = async(req,res, next) => {
                 }
             },
             {
-                $sort: { '_id.date' : 1 }
+                $sort: { '_id.createdAt' : 1 }
             }
         ]);
 
@@ -107,7 +107,7 @@ const loadDashboard = async(req,res, next) => {
             return monthNames[monthNumber - 1];
         }
 
-        orderData.forEach((month) => {months.push(getMonthName(month._id.date))})
+        orderData.forEach((month) => {months.push(getMonthName(month._id.createdAt))})
         orderData.forEach((sale) => { sales.push(Math.round(sale.sales))})
         let totalSales = sales.reduce((acc,curr) => acc += curr , 0)
 

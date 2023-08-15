@@ -307,9 +307,9 @@
                           <tr>
                               <th scope="row"> <%= index +1 %> </th>
                               <% 
-                              const dd=order.date.getDate(); 
-                              const mm=order.date.getMonth() + 1;
-                              const yyyy=order.date.getFullYear(); 
+                              const dd=order.createdAt.getDate(); 
+                              const mm=order.createdAt.getMonth() + 1;
+                              const yyyy=order.createdAt.getFullYear(); 
                               const formattedDate=`${dd}-${mm}-${yyyy}`; %>
                                   <td>
                                       <%=formattedDate %>
@@ -359,9 +359,9 @@
                                       <%= index+1 %>
                                   </th>
                                   <% 
-                                  const dd=order.date.getDate(); 
-                                  const mm=order.date.getMonth() +1; 
-                                  const yyyy=order.date.getFullYear(); const
+                                  const dd=order.createdAt.getDate(); 
+                                  const mm=order.createdAt.getMonth() +1; 
+                                  const yyyy=order.createdAt.getFullYear(); const
                                   formattedDate=`${dd}-${mm}-${yyyy}`; 
                                   %>
                                       <td>

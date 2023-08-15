@@ -42,9 +42,9 @@
                                     </div>
                                     <div class="col-md-2 text-center mt-3 d-flex flex-column justify-content-center align-items-center">
                                         <% 
-                                        const dd = order.date.getDate();
-                                        const mm = order.date.getMonth() + 1;
-                                        const yyyy = order.date.getFullYear();
+                                        const dd = order.createdAt.getDate();
+                                        const mm = order.createdAt.getMonth() + 1;
+                                        const yyyy = order.createdAt.getFullYear();
                                         
                                         const formattedDate = `${dd}-${mm}-${yyyy}`; 
                                         %>
