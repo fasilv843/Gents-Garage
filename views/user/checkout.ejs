@@ -174,9 +174,29 @@
                 
                                     <div class="mb-2">
                                         <h5 class="mb-4">Choose Payment</h5>
+
+                                        <% 
+                                        if(walletBalance > 0){
+                                            %>
+                                            <div id="walletCheckBoxDiv" <% if(walletBalance >= payAmount){ %> hidden <% } %>>
+                                                <input type="checkbox" name="walletCheckBox" id="walletCheckBox">
+                                                <label for="walletCheckBox">
+                                                    <strong>
+                                                        Use wallet Balance <span> &#8377; <%= walletBalance %> </span>
+                                                    </strong>
+                                                </label>
+                                            </div>
+                                            <%  
+                                        }
+                                        %>
+
                                         <input type="radio" name="payment" id="COD"  value="COD" class="mx-2" ><label for="payment">COD</label><br>
+
                                         <input type="radio" name="payment" id="Razorpay"  value="Razorpay" class="mx-2" ><label for="payment">Razorpay</label><br>
-                                        <input type="radio" name="payment" id="Wallet"  value="Wallet" class="mx-2" <% if(walletBalance < payAmount){  %> disabled <% } %> ><label for="payment">Wallet <%= walletBalance %></label><br>
+
+                                        <input type="radio" name="payment" id="Wallet"  value="Wallet" class="mx-2" <% if(walletBalance < payAmount){  %> hidden <% } %> >
+                                        <label for="payment" <% if(walletBalance < payAmount){  %> hidden <% } %> >Wallet <strong>&#8377;<%= walletBalance %></strong></label><br>
+
                                     </div>
                                 </div>
 
@@ -365,12 +385,75 @@ function verifyPayment(response,order){
                     document.getElementById('couponDiscountDiv').hidden = false
                     document.getElementById('couponDiscountLabelDiv').hidden = false
                     $('#couponErr').html('')
+
+                    const walletCheckBoxDiv = document.getElementById('walletCheckBoxDiv')
+                    const walletCheckBox = document.getElementById('walletCheckBox')
+                    const razorpayRadio = document.getElementById('Razorpay')
+                    const COD = document.getElementById('COD')
+
+                    if(res.isWalletHasPayAmount){
+
+                        // document.getElementById('Wallet').disabled = false
+                        walletCheckBoxDiv.hidden = false;
+                        walletCheckBox.hidden = true;
+                        // const walletCheckBox = document.getElementById('walletCheckBox')
+                        // const razorpayRadio = document.getElementById('Razorpay')
+                        // const COD = document.getElementById('COD')
+
+                        // function updatePaymentOptions(){
+                        //     if(walletCheckBox.checked){
+                        //         // razorpayRadio.disabled = true
+                        //         // razorpayRadio.checked = false
+                        //         // COD.disabled = true
+                        //         // COD.checked = false
+                        //     }else{
+                        //         // razorpayRadio.disabled = false
+                        //         // COD.disabled = false
+                        //     }
+                        // }
+
+                        //For initial setup of options
+                        // updatePaymentOptions()
+
+                        //Listens to changes of options and update payment options
+                        // walletCheckBox.addEventListener('change',updatePaymentOptions);
+                    }
                 }else{
                     $('#couponErr').html(res.message)
+
                 }
             }
         })
     })
+</script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+
+        // const walletCheckBoxDiv = document.getElementById('walletCheckBoxDiv')
+        const walletCheckBox = document.getElementById('walletCheckBox');
+        const razorpayRadio = document.getElementById('Razorpay')
+        const CODRadio = document.getElementById('COD')
+
+        function updatePaymentOptions(){
+            if(walletCheckBox.checked){
+                // razorpayRadio.disabled = true
+                CODRadio.disabled = true
+                CODRadio.checked = false
+                razorpayRadio.checked = true
+            }else{
+                // razorpayRadio.disabled = false
+                CODRadio.disabled = false
+            }
+        }
+
+        //For initial setup of options
+        updatePaymentOptions()
+
+        //Listens to changes of options and update payment options
+        walletCheckBox.addEventListener('change',updatePaymentOptions);
+    });
+    
 </script>
 
 <script>

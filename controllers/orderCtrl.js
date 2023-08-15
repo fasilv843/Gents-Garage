@@ -40,6 +40,7 @@ const placeOrder = async(req, res, next) => {
         //getting details needed
         const addressId = req.body.address
         const paymentMethod = req.body.payment
+        const isWalletSelected = req.body.walletCheckBox
         const userId = req.session.userId
 
         //getting selected address
@@ -50,7 +51,8 @@ const placeOrder = async(req, res, next) => {
         //getting cart items
         const userData = await User.findById({_id:userId}).populate('cart.productId')
         const cart = userData.cart
-        
+        const walletAmount = req.session.walletAmount = parseInt(userData.wallet)
+        console.log(walletAmount);
         req.session.cart = cart;
 
         let products = []
@@ -116,13 +118,17 @@ const placeOrder = async(req, res, next) => {
                 }
                 
             }
-            
-            console.log(totalPrice);
+
+            // if(isWalletSelected && paymentMethod != 'Wallet'){
+            //     totalPrice = totalPrice - walletAmount
+            // }
+
+            req.session.isWalletSelected = isWalletSelected;
             req.session.totalPrice = totalPrice;
             
             if(paymentMethod === 'COD'){
                 console.log('Payment method is COD');
-                console.log(address);
+
                 await new Orders({
                     userId, 
                     deliveryAddress: address,
@@ -135,6 +141,11 @@ const placeOrder = async(req, res, next) => {
                     couponDiscount,
                     couponDiscountType
                 }).save()
+
+                // if(isWalletSelected){
+                //     userData.wallet = 0
+                //     await userData.save()
+                // }
     
                 //Reducing quantity/stock of purchased products from Products Collection
                 for (const { productId, quantity } of cart) {
@@ -171,6 +182,11 @@ const placeOrder = async(req, res, next) => {
 
             }else if(paymentMethod === 'Razorpay'){
                 console.log('Payment method razorpay');
+
+                if(isWalletSelected){
+                    totalPrice = totalPrice - walletAmount
+                }
+
                 var options = {
                     amount: totalPrice*100,
                     currency:'INR',
@@ -187,8 +203,7 @@ const placeOrder = async(req, res, next) => {
                 })
                 // console.log('instance created :>');
             }else if(paymentMethod == 'Wallet'){
-                console.log('Payment method is COD');
-                console.log(address);
+
                 await new Orders({
                     userId, 
                     deliveryAddress: address,
@@ -282,7 +297,16 @@ const verifyPayment = async(req,res,next) => {
         if(hmac === details['response[razorpay_signature]']){
                      
             let totalPrice = req.session.totalPrice
+
             const coupon = req.session.coupon
+            let couponCode = '';
+            let couponDiscount = 0;
+            let couponDiscountType;
+            if(coupon){
+                couponCode = coupon.code
+                couponDiscount = coupon.discountAmount
+                couponDiscountType = coupon.discountType
+            }
 
             await new Orders({
                 userId, 
@@ -292,12 +316,25 @@ const verifyPayment = async(req,res,next) => {
                 paymentMethod:'Razorpay',
                 status: 'Order Confirmed',
                 date: new Date(),
-                couponCode: coupon.code,
-                couponDiscount: coupon.discountAmount,
-                couponDiscountType: coupon.discountType
+                couponCode,
+                couponDiscount,
+                couponDiscountType
             }).save()
-
             
+            if(req.session.isWalletSelected){
+                const userData = await User.findById({ _id: userId });
+                userData.walletHistory.push(
+                    {
+                        date: new Date(),
+                        amount: userData.wallet,
+                        message: 'Product Purchase'
+                    }
+                )
+
+                userData.wallet = 0;
+                await userData.save()
+            }
+
             //Reducing quantity/stock of purchased products from Products Collection
             const cart = req.session.cart;
             for (const { productId, quantity } of cart) {
