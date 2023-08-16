@@ -57,9 +57,9 @@
 
                               <td class="align-middle text-center text-sm">
                                 <% 
-                                  const dd = userData[i].doj.getDate();
-                                  const mm = userData[i].doj.getMonth() + 1;
-                                  const yyyy = userData[i].doj.getFullYear();
+                                  const dd = userData[i].createdAt.getDate();
+                                  const mm = userData[i].createdAt.getMonth() + 1;
+                                  const yyyy = userData[i].createdAt.getFullYear();
                                   
                                   const formattedDate = `${dd}-${mm}-${yyyy}`; 
                                 %>

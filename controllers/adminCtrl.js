@@ -244,7 +244,7 @@ const logoutAdmin = async(req,res, next) => {
 
 const loadUsers = async(req,res, next) => { 
     try {
-        const userData = await User.find({})
+        const userData = await User.find({}).sort({createdAt : -1})
         res.render('users',{userData, page: 'Users'})
     } catch (error) {
         next(error)
