@@ -332,7 +332,7 @@ const loadShop = async(req,res) => {
         if(req.session.userId){
             userData = await User.findById({_id:req.session.userId})
             wishlist = userData.wishlist;
-            cart = userData.cart
+            cart = userData.cart.map(item => item.productId.toString())
         }
 
         res.render('shop',{
@@ -369,7 +369,7 @@ const loadProductOverview = async(req,res) => {
         if(req.session.userId){
             userData = await User.findById({_id:req.session.userId})
             wishlist = userData.wishlist;
-            cart = userData.cart.map(item => item.productId)
+            cart = userData.cart.map(item => item.productId.toString())
         }
         // console.log(id);
         const isLoggedIn = Boolean(req.session.userId)

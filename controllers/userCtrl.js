@@ -729,7 +729,12 @@ const addToWishlist = async(req, res, next) => {
             userData.wishlist.push(productId)
             await userData.save()
         }
-        res.redirect('/shop')
+        let { returnPage } = req.query
+        if(returnPage == 'shop'){
+            res.redirect('/shop')
+        }else if(returnPage == 'productOverview'){
+            res.redirect(`/shop/productOverview/${productId}`)
+        }
     } catch (error) {
         next(error)
     }
@@ -747,7 +752,14 @@ const removeWishlistItem = async(req, res, next) => {
                 }
             }
         );
-        res.redirect('/shop')
+        const { returnPage } = req.query
+        if(returnPage == 'shop'){
+            res.redirect('/shop')
+        }else if(returnPage == 'productOverview'){
+            res.redirect(`/shop/productOverview/${productId}`)
+        }else if(returnPage == 'wishlist'){
+            res.redirect('/wishlist')
+        }
     } catch (error) {
         next(error)
     }

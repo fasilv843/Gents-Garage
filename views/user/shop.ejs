@@ -192,7 +192,8 @@
                                         <div class="product__item__text">
                                             <h6><%= pdtsData[i].name %></h6>
                                             <% 
-                                            if(cart && cart.length && cart.includes(pdtsData[i]._id)){
+                                            console.log(cart)
+                                            if(cart && cart.length && cart.includes(pdtsData[i]._id.toString())){
                                                 %>
                                                 <a href="/shoppingCart"  class="add-cart">Go to Cart</a>
                                                 <%  

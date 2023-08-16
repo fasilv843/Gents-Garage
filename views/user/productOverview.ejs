@@ -97,7 +97,7 @@
                                     </div>
                                 </div> -->
                                 <% 
-                                if(cart && cart.length && cart.includes(pdtData._id)){
+                                if(cart && cart.length && cart.includes(pdtData._id.toString())){
                                     %>
                                     <a href="/shoppingCart" class="primary-btn">go to cart</a>
                                     <%  
@@ -109,11 +109,11 @@
 
                                 if(wishlist && wishlist.length && wishlist.includes(pdtData._id)){
                                     %>
-                                    <a href="/removeWishlistItem/<%= pdtData._id %>" style="background-color: red;" class="primary-btn"><i class="bi bi-heart-fill"></i></a>
+                                    <a href="/removeWishlistItem/<%= pdtData._id %>?returnPage=productOverview" style="background-color: red;" class="primary-btn"><i class="bi bi-heart-fill"></i></a>
                                     <%  
                                 }else{
                                     %>
-                                    <a href="/addToWishlist/<%= pdtData._id %>" class="primary-btn"><i class="bi bi-heart-fill"></i></a>
+                                    <a href="/addToWishlist/<%= pdtData._id %>?returnPage=productOverview" class="primary-btn"><i class="bi bi-heart-fill"></i></a>
                                     <%  
                                 }
                                 %>
@@ -132,6 +132,92 @@
 
             </div>
         </div>
+
+        
+        <div class="ratingAndReview mt-5">
+            <hr>
+            <div class="d-flex justify-content-between">
+                <h3>Rating and Reviews</h3>
+                <% if(userReviewed==0){ %>
+                    <button class="btn roundded-0 p-2 text-dark"
+                        style="box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px, rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;">
+                        <a href="/reviewProduct?prodId=<%=prod._id%>" class="text-dark">Rate
+                            Product</a></button>
+                    <% }else{%>
+                        <button class="btn roundded-0 p-2 text-dark"
+                            style="box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px, rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;">
+                            <a href="/editReviewProduct?prodId=<%=prod._id%>" class="text-dark">Edit
+                                Review</a></button>
+                        <%}%>
+
+            </div>
+            <div class="mt-4">
+                <div class="row">
+                    <% if(prod.reviews.length>0){ for(let i=0;i<prod.reviews.length&& i<4;i++) {%>
+
+                            <div class="col-md-6 mb-3">
+                                <div class="p-3" style="border: 1px solid rgb(222, 222, 222);">
+                                    <div class=" ">
+                                        <div class="d-flex align-items-center">
+
+                                            <div <% if(prod.reviews[i].rating>2) {%>
+                                                style="background-color: rgb(17, 201, 0);border-radius:
+                                                4px;padding: 2px 5px;"<% } else
+                                                    if(prod.reviews[i].rating==2){%>
+                                                    style="background-color: rgb(255,
+                                                    150,13);border-radius:4px;padding: 2px 5px;"
+
+
+                                                    <% } else if(prod.reviews[i].rating==1){%>
+                                                        style="background-color: rgb(237, 40,
+                                                        33);border-radius:4px;padding: 2px 5px;"
+
+
+                                                        <%}%>>
+                                                            <span class="text-white">
+                                                                <%=prod.reviews[i].rating %> <i
+                                                                        class="bi bi-star-fill text-white"></i>
+                                                            </span>
+                                            </div>
+                                            <strong class="ms-2" style="font-size: 1.2rem;">
+                                                <%=prod.reviews[i].title %>
+                                            </strong>
+                                        </div>
+                                        <div class="review-content mt-2">
+                                            <span class="">
+                                                <%=prod.reviews[i].description %>
+                                            </span><br>
+                                            <span class="text-secondary" style="font-size: .8rem;"><strong
+                                                    class=" text-uppercase ">
+                                                    <%=prod.reviews[i].userId.fname %>
+                                                        <%=prod.reviews[i].userId.lname %>&nbsp;<i
+                                                                class="bi bi-patch-check-fill  me-2"></i>
+                                                </strong>Certified
+                                                Buyer,<% const dd=prod.reviews[i].createdAt.getDate(); const
+                                                    mm=prod.reviews[i].createdAt.getMonth() + 1; const
+                                                    yyyy=prod.reviews[i].createdAt.getFullYear(); const
+                                                    formattedDate=`${dd}-${mm}-${yyyy}`; %>
+                                                    <span>
+                                                        <%=formattedDate %>
+                                                    </span></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <% }} %>
+                                <% if(prod.reviews.length>0) {%> <div class=" p-2 text-center">
+                                        <a href="/allReviews?prodId=<%=prod._id%>"
+                                            class="btn btn-sm btn-primary">See all Reviews</a>
+                                    </div>
+                                    <% } %>
+
+
+                </div>
+
+            </div>
+        </div>
+
+
     </section>
     <!-- Shop Details Section End -->
 
