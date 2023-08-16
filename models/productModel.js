@@ -44,7 +44,9 @@ const productsSchema = mongoose.Schema({
         ref: 'Offers'
     },
     offerPrice: { type: Number },
-    offerAppliedBy: { type: String }
+    offerAppliedBy: { 
+        type: String
+    }
 },
 {
     timestamps:true,

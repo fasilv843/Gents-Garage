@@ -50,10 +50,15 @@ const orderSchema = mongoose.Schema({
     }],
     paymentMethod:{
         type : String,
+        enum: [ 'COD', 'Razorpay', 'Wallet' ],
         required: true
     },
     status:{
         type: String,
+        enum: ['Order Confirmed', 'Shipped', 
+                'Out For Delivery', 'Delivered',
+                'Cancelled', 'Cancelled By Admin',
+                'Pending Return Approval', 'Returned'],
         required: true
     },
     // date:{

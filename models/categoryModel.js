@@ -20,6 +20,9 @@ const categoySchema = new mongoose.Schema({
     // sizes : {
     //     type : []
     // }
+},
+{
+    timestamps: true
 });
 
 module.exports = mongoose.model("Categories",categoySchema)

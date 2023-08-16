@@ -22,8 +22,8 @@
                                 </form>
                                 <div style="position: relative; top: 10px;">
                                     <!-- <button class='btn exploreModal'  style="cursor: pointer;"  data-bs-toggle="modal" data-bs-target="#exploreCouponsModal">Explore Coupons</button> -->
-                                    <!-- <a class="text-primary exploreModal" style="cursor: pointer;" data-bs-toggle="modal"
-                                        href="#exploreCouponsModal">Explore Coupons</a> -->
+                                    <a class="text-primary exploreModal" style="cursor: pointer;" data-bs-toggle="modal"
+                                        href="#exploreCouponsModal">Explore Coupons</a>
                                     <h6 class="text-danger" id="couponErr"></h6>
                                 </div>
                             </div>
@@ -214,7 +214,7 @@
     <!-- Checkout Section End -->
 
                 <!-- Explore Coupons Modal Start -->
-                <div class="modal fade" id="exploreCouponsModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+                <!-- <div class="modal fade" id="exploreCouponsModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
                 aria-hidden="true">
                 <div class="modal-dialog modal-dialog-scrollable">
                     <div class="modal-content">
@@ -224,8 +224,8 @@
                         </div>
                         <div class="modal-body">
                             <% 
-                            if(coupons && coupons.length){
-                                coupons.forEach(coupon => {
+                            //if(coupons && coupons.length){
+                               // coupons.forEach(coupon => {
                                     %>
                                     <div class="card px-2 mb-4">
                                         <div class="coupon bg-white rounded mb-3 d-flex justify-content-between border-1">
@@ -234,42 +234,42 @@
                                                 <div class="ps-2">
                                                     <span class="badge badge-success">Valid</span>
                                                     <h2 class="lead"><strong>
-                                                            <%=coupon.name %>
+                                                            <%=//coupon.name %>
                                                         </strong></h2>
                                                     <p class="text-muted mb-0">
-                                                        <%=coupon.discount %>% off on purchase above ₹ <%=coupon.minPurchase %>
+                                                        <%=//coupon.discount %>% off on purchase above ₹ <%=//coupon.minPurchase %>
                                                     </p>
                                                 </div>
                                             </div>
                                             <div class="kanan">
                                                 <div class="info m-3 mt-4">
-                                                    <a id="<%=coupon.name  %>"
+                                                    <a id="<%=//coupon.name  %>"
                                                         class="btn btn-sm btn-outline-primary btn-block"
-                                                        onclick="copyCoupon('<%=coupon.name  %>')">COPY</a>
+                                                        onclick="copyCoupon('<%=//coupon.name  %>')">COPY</a>
                                                 </div>
                                             </div>
                                         </div>
     
                                     </div>
                                     <%  
-                                })
-                            }else{
+                               // })
+                            //}else{
                                 %>
                                 <small>No Coupons Available</small>
                                 <%  
-                            }
+                           // }
                             %>
 
                         </div>
 
                     </div>
                 </div>
-            </div>
+            </div> -->
 
 
 
   <!-- Modal -->
-  <!-- <div class="modal fade" id="exploreCouponsModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal fade" id="exploreCouponsModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog">
       <div  id="myInput" class="modal-content">
         <div class="modal-header">
@@ -287,7 +287,7 @@
         </div>
       </div>
     </div>
-  </div> -->
+  </div>
             <!-- Modal End -->
 
 <%- include('../partials/footer.ejs') %>  

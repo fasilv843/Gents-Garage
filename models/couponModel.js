@@ -48,6 +48,9 @@ const couponSchema = mongoose.Schema({
         default: Infinity
     }
 
+},
+{
+    timestamps: true
 })
 
 
