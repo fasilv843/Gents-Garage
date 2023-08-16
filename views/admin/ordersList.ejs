@@ -24,6 +24,7 @@
 
                 <thead>
                   <tr>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">#</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Date</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">User</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Products</th>
@@ -39,10 +40,14 @@
 
                   <% 
                     if(ordersData){
-                      console.log(ordersData)
-                      for(const order of ordersData){
+                      //console.log(ordersData)
+                      for(const [index, order] of ordersData.entries()){
                          %>
                             <tr>
+
+                              <td class="align-middle text-center text-sm">
+                                <p class="text-xs font-weight-bold mb-0"><%= ((pageNum - 1)*limit) +index + 1 %></p>
+                              </td>
 
                                 <% 
                                 const dd = order.createdAt.getDate();
@@ -199,10 +204,79 @@
               </table>
             </div>
           </div>
+
+
         </div>
       </div>
     </div>
   </div>
+
+
+  <div class="mx-3 d-flex justify-content-between">
+
+    <div>
+      <ul class="list-unstyled d-flex justify-content-center">
+        <li class="mx-1 p-2 rounded-pill">Limit : </li>
+
+        <li class="mx-1 p-2 rounded-pill"
+          <% if(limit == 10){  %> style="color: black; background-color: lightblue;"  <% } %> >
+          <a href="?limit=10">10</a>
+        </li>
+
+        <li class="mx-1 p-2 rounded-pill"
+        <% if(limit == 25){  %> style="color: black; background-color: lightblue;"  <% } %> >
+        <a href="?limit=25">25</a>
+        </li>  
+
+        <li class="mx-1 p-2 rounded-pill"
+          <% if(limit == 50){  %> style="color: black; background-color: lightblue;"  <% } %> >
+          <a href="?limit=50">50</a>
+        </li>
+
+        <li class="mx-1 p-2 rounded-pill"
+        <% if(limit == 100){  %> style="color: black; background-color: lightblue;"  <% } %> >
+        <a href="?limit=100">100</a>
+        </li>
+
+      </ul>
+    </div>
+
+                                          <!-- Pagination  -->
+                                          <div class="row">
+                                            <div class="col-lg-12 d-flex  align-items-center">
+                                                <div class="product__pagination  d-flex justify-content-end">
+                                                    <% 
+                                                    if(pageNum > 1){
+                                                      %>
+                                                      <a class="mx-1 btn" 
+                                                        href="?pageNum=<%= pageNum-1 %>&limit=<%= limit %>">Prev
+                                                      </a>
+                                                      <% 
+                                                    }
+                                                    for(let i=1; i<= pageCount; i++){
+                                                        %>
+                                                        <a class="mx-1 btn p-2 rounded-pill" 
+                                                        <% if(pageNum === i){ %> 
+                                                          style="color: black; background-color: lightblue;"
+                                                        <% } %>
+                                                          href="?pageNum=<%= i %>&limit=<%= limit %>"><%= i %>
+                                                        </a>
+                                                        <%  
+                                                    }
+                                                    if(pageNum < pageCount){
+                                                      %>
+                                                      <a class="mx-1 btn" 
+                                                        href="?pageNum=<%= pageNum+1 %>&limit=<%= limit %>">Next
+                                                      </a>
+                                                      <% 
+                                                    }
+                                                    %>
+                                                </div>
+                                            </div>
+                                        </div>
+  </div>
+
+
 
   <%- include('../partials/adminFooter.ejs') %>      
 

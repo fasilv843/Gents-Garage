@@ -19,7 +19,7 @@ app.use(session({
     secret: secretKey,
     resave: false,
     saveUninitialized: true,
-    cookie: { maxAge: 600000 }
+    cookie: { maxAge: 30 * 24 * 60 * 60 * 1000 } //30 days
 }));
 
 app.use(express.json());

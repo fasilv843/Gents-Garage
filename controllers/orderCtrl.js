@@ -450,9 +450,27 @@ const loadOrderSuccess = async(req, res, next) => {
 
 const loadOrdersList = async(req, res, next) => {
     try {
-        const ordersData = await Orders.find({}).populate('userId').populate('products.productId')
+
+        let pageNum = 1;
+        if(req.query.pageNum){
+            pageNum = parseInt(req.query.pageNum) 
+        }
+
+        console.log(pageNum);
+
+        let limit = 10;
+        if(req.query.limit){
+            limit = parseInt(req.query.limit);
+        }
+
+        console.log(limit);
+
+        const totalOrderCount = await Orders.find({}).count()
+        let pageCount = Math.ceil( totalOrderCount / limit)
+
+        const ordersData = await Orders.find({}).populate('userId').populate('products.productId').sort({ createdAt: -1 }).skip( (pageNum - 1)*limit ).limit(limit);
         
-        res.render('ordersList',{ordersData, page:'Orders List'})
+        res.render('ordersList',{ordersData, page:'Orders List',pageCount, pageNum, limit})
     } catch (error) {
         next(error);
     }

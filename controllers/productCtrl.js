@@ -187,14 +187,6 @@ const loadShop = async(req,res) => {
         }
 
         let limit = 6;
-        // let sortValue = -1;
-        // if(req.query.sortValue){
-        //     if(req.query.sortValue == 2){
-        //         sortValue = 1;
-        //     }else{
-        //         sortValue = -1;
-        //     }
-        // }
 
         //declaring a default min and max price
         let minPrice = 1;
