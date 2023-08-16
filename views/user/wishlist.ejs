@@ -1,0 +1,88 @@
+
+<%- include('../partials/head.ejs') %>
+<%- include('../partials/userHeader.ejs') %>
+<%- include('../partials/userBreadcrub.ejs') %>
+
+
+    <!-- Shopping Cart Section Begin -->
+    <section class="shopping-cart spad">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="shopping__cart__table">
+
+                        <table>
+                            <thead>
+                                <tr>
+                                    <!-- <th>Image</th> -->
+                                    <th>Product</th>
+                                    <!-- <th>Total</th> -->
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% 
+                                if(wishlist && wishlist.length){
+                                    wishlist.forEach((pdt) => {
+                                        %>
+                                        <tr>
+                                            <td class="product__cart__item">
+                                                <div class="product__cart__item__pic">
+                                                    <img width="100px" src="/images/productImages/<%= pdt.images[0] %>" alt="Product image">
+                                                </div>
+                                                <div class="product__cart__item__text">
+                                                    <h6><%= pdt.name %></h6>
+                                                    <h6><%= pdt.brand %></h6>
+                                                    <% 
+                                                    let currPrice;
+                                                    if(pdt.offerPrice){
+                                                       // console.log('product has offer'+hello)
+                                                        currPrice = pdt.offerPrice
+                                                    }else{
+                                                        currPrice = pdt.price - pdt.discountPrice
+                                                    }
+                                                    let discountPercentage = Math.floor(100 - ( (currPrice*100)/pdt.price ));
+                                                    %>
+                                                    <h5>&#8377;<%= currPrice %></h5>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <a class="btn btn-danger" href="/removeWishlistItem/<%= pdt._id %>?returnPage=wishlist">Remove</a>
+                                            </td>
+                                            <td>
+                                                <a class="btn btn-dark" href="/addToCart/<%= pdt._id %>">Add To Cart</a>
+                                            </td>
+                                        </tr>
+                                        <%  
+                                    })
+                                }else{
+                                    %>
+                                    <tr>
+                                        <td>
+                                            <h5> <strong>No wishes yet! Make a new wish</strong> </h5>
+                                        </td>
+                                    </tr>
+                                    <%  
+                                }
+                                %>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-6 col-md-6 col-sm-6">
+                            <div class="continue__btn mb-3">
+                                <a href="/shop">Continue Shopping</a>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- Shopping Cart Section End -->
+
+
+
+<%- include('../partials/footer.ejs') %>  
+<%- include('../partials/script.ejs') %>

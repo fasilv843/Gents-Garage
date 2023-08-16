@@ -706,6 +706,52 @@ const verifyWalletPayment = async(req, res, next) => {
     }
 }
 
+const loadWishlist = async(req, res, next) => {
+    try {
+        console.log('loading wishlist');
+        const userId = req.session.userId
+        const isLoggedIn = Boolean(req.session.userId)
+        const userData = await User.findById({_id:userId}).populate('wishlist')
+        const wishlist = userData.wishlist
+        console.log(wishlist);
+        res.render('wishlist',{page:'Wishlist', parentPage:'Shop', isLoggedIn, wishlist})
+    } catch (error) {
+        next(error)
+    }
+}
+
+const addToWishlist = async(req, res, next) => {
+    try {
+        const { productId } = req.params
+        const { userId } = req.session
+        const userData = await User.findById({_id: userId});
+        if(!userData.wishlist.includes(productId)){
+            userData.wishlist.push(productId)
+            await userData.save()
+        }
+        res.redirect('/shop')
+    } catch (error) {
+        next(error)
+    }
+}
+
+const removeWishlistItem = async(req, res, next) => {
+    try {
+        const { productId } = req.params
+        const { userId } = req.session
+        await User.findByIdAndUpdate(
+            {_id: userId},
+            {
+                $pull:{
+                    wishlist: productId
+                }
+            }
+        );
+        res.redirect('/shop')
+    } catch (error) {
+        next(error)
+    }
+}
 
 
 module.exports = {
@@ -738,6 +784,9 @@ module.exports = {
     updateCart,
     loadWalletHistory,
     addMoneyToWallet,
-    verifyWalletPayment
+    verifyWalletPayment,
+    loadWishlist,
+    addToWishlist,
+    removeWishlistItem
 
 }

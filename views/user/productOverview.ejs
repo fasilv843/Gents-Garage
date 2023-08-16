@@ -96,7 +96,27 @@
                                         <input type="text" value="1">
                                     </div>
                                 </div> -->
-                                <a href="/shop/addToCart/<%= pdtData._id %>" class="primary-btn">add to cart</a>
+                                <% 
+                                if(cart && cart.length && cart.includes(pdtData._id)){
+                                    %>
+                                    <a href="/shoppingCart" class="primary-btn">go to cart</a>
+                                    <%  
+                                }else{
+                                    %>
+                                    <a href="/shop/addToCart/<%= pdtData._id %>" class="primary-btn">add to cart</a>
+                                    <%  
+                                }
+
+                                if(wishlist && wishlist.length && wishlist.includes(pdtData._id)){
+                                    %>
+                                    <a href="/removeWishlistItem/<%= pdtData._id %>" style="background-color: red;" class="primary-btn"><i class="bi bi-heart-fill"></i></a>
+                                    <%  
+                                }else{
+                                    %>
+                                    <a href="/addToWishlist/<%= pdtData._id %>" class="primary-btn"><i class="bi bi-heart-fill"></i></a>
+                                    <%  
+                                }
+                                %>
                             </div>
                             <!-- <div class="product__details__btns__option">
                                 <a href="#"><i class="fa fa-heart"></i> add to wishlist</a>

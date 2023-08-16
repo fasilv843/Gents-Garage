@@ -47,7 +47,9 @@ user_route.post('/shoppingCart/removeItem/:id',userCtrl.removeCartItem)
 user_route.put('/updateCart',userCtrl.updateCart);
 user_route.get('/shoppingCart/proceedToCheckout',orderCtrl.loadCheckout)
 user_route.post('/shoppingCart/placeOrder',orderCtrl.placeOrder)
-// user_route.get('/wishlist',productCtrl.loadWishlist)
+user_route.get('/wishlist',userCtrl.loadWishlist)
+user_route.get('/addToWishlist/:productId',userCtrl.addToWishlist)
+user_route.get('/removeWishlistItem/:productId',userCtrl.removeWishlistItem)
 
 
 user_route.get('/orderSuccess',orderCtrl.loadOrderSuccess)

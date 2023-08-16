@@ -172,14 +172,37 @@
                                             }
                                             %>
                                             <ul class="product__hover">
-                                                <li><a href="/addToWishlist"><img src="img/icon/heart.png" alt="">  <span>Add to Wishlist</span></a></li>
-                                                <li><a href="/shop/productOverview/<%= pdtsData[i]._id %>"><img src="img/icon/search.png" alt="">  <span>View Details</span></a></li>
+
+                                                <li>
+                                                    <% 
+                                                    if(wishlist && wishlist.length && wishlist.includes(pdtsData[i]._id)){
+                                                        %>
+                                                        <a class="btn btn-danger" href="/removeWishlistItem/<%= pdtsData[i]._id %>?returnPage=shop"><i class="bi bi-heart-fill"></i></a>
+                                                        <%  
+                                                    }else{
+                                                        %>
+                                                        <a class="btn btn-dark" href="/addToWishlist/<%= pdtsData[i]._id %>?returnPage=shop"><i class="bi bi-heart-fill"></i></a>
+                                                        <%  
+                                                    }
+                                                    %>
+                                                </li>
+                                                <li><a class="btn btn-dark" href="/shop/productOverview/<%= pdtsData[i]._id %>"><i class="bi bi-search"></i></a></li>
                                             </ul>
                                         </div>
                                         <div class="product__item__text">
                                             <h6><%= pdtsData[i].name %></h6>
-                                            <a href="/shop/addToCart/<%= pdtsData[i]._id  %>" class="add-cart">+ Add To Cart</a>
                                             <% 
+                                            if(cart && cart.length && cart.includes(pdtData._id)){
+                                                %>
+                                                <a href="/shoppingCart"  class="add-cart">Go to Cart</a>
+                                                <%  
+                                            }else{
+                                                %>
+                                                <a href="/shop/addToCart/<%= pdtsData[i]._id  %>" class="add-cart">+ Add To Cart</a>
+                                                <%  
+                                            }
+
+                                            
                                             let currPrice;
                                             if(pdtsData[i].offer && pdtsData[i].offer.status == 'Available'){
                                                 currPrice = pdtsData[i].offerPrice

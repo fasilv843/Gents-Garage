@@ -1,6 +1,7 @@
 const Products = require('../models/productModel')
 const Categories = require('../models/categoryModel');
 const Offers = require('../models/offerModel')
+const User = require('../models/userModel')
 const fs = require('fs')
 const path = require('path')
 
@@ -325,6 +326,15 @@ const loadShop = async(req,res) => {
             removeFilter = 'true'
         };
 
+        let userData;
+        let wishlist;
+        let cart;
+        if(req.session.userId){
+            userData = await User.findById({_id:req.session.userId})
+            wishlist = userData.wishlist;
+            cart = userData.cart
+        }
+
         res.render('shop',{
             pdtsData,
             userId: req.session.userId,
@@ -339,6 +349,8 @@ const loadShop = async(req,res) => {
             brand: req.query.brand,
             removeFilter,
             search: req.query.search,
+            wishlist,
+            cart,
             isLoggedIn,
             page:'Shop'
         });
@@ -351,10 +363,18 @@ const loadShop = async(req,res) => {
 const loadProductOverview = async(req,res) => {
     try {
         const id = req.params.id;
+        let userData;
+        let wishlist;
+        let cart;
+        if(req.session.userId){
+            userData = await User.findById({_id:req.session.userId})
+            wishlist = userData.wishlist;
+            cart = userData.cart.map(item => item.productId)
+        }
         // console.log(id);
         const isLoggedIn = Boolean(req.session.userId)
         const pdtData = await Products.findById({_id:id})
-        res.render('productOverview',{pdtData, parentPage : 'Shop', page: 'Product Overview',isLoggedIn})
+        res.render('productOverview',{pdtData, parentPage : 'Shop', page: 'Product Overview',isLoggedIn, wishlist, cart})
     } catch (error) {
                 next(error);
     }

@@ -62,6 +62,10 @@ const userSchema = new mongoose.Schema({
             type : String
         }
     }],
+    wishlist:[{
+        type : mongoose.Schema.Types.ObjectId,
+        ref: 'Products'
+    }],
     referralCode:{
         type: String,
         required : true,
