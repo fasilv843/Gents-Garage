@@ -25,9 +25,10 @@ const loadCheckout = async(req, res, next) => {
 
         const walletBalance = userData.wallet;
 
-        const coupons = await Coupons.find({isCancelled : false})
+        const coupons = await Coupons.findByIsCancelled(false)
+        // console.log(coupons);
 
-        res.render('checkout',{isLoggedIn : true, page:'Checkout', userAddress, cart, coupons, walletBalance})
+        res.render('checkout',{isLoggedIn : true, page:'Checkout', userAddress, cart, coupons, walletBalance, userId})
     } catch (error) {
         next(error);
     }

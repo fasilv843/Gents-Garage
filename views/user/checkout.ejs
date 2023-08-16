@@ -16,14 +16,14 @@
                             <hr>
                             <div class="cart__discount">
                                 <h6>Apply Coupons</h6>
-                                <form action="" id="applyCoupon" method="" class="form-group d-flex">
+                                <form action="" id="applyCoupon" method="" class="form-group d-flex applyCoupon">
                                     <input type="text" name="code" class="form-group rounded-0 flex-grow-1 border border-bottom-1" style="height: 40px; border-bottom: 1;" placeholder="Enter Coupon code">
                                     <button type="submit" class="btn btn-dark rounded-0" style="margin-left: -5px; height: 40px;">Apply</button>
                                 </form>
                                 <div style="position: relative; top: 10px;">
-                                    <!-- <button class='btn exploreModal'  style="cursor: pointer;"  data-bs-toggle="modal" data-bs-target="#exploreCouponsModal">Explore Coupons</button> -->
-                                    <a class="text-primary exploreModal" style="cursor: pointer;" data-bs-toggle="modal"
-                                        href="#exploreCouponsModal">Explore Coupons</a>
+                                    <a class="text-primary" style="cursor: pointer;" data-toggle="modal" data-target="#exploreCouponsModal">
+                                        Explore Coupons
+                                    </a>
                                     <h6 class="text-danger" id="couponErr"></h6>
                                 </div>
                             </div>
@@ -213,82 +213,78 @@
     </section>
     <!-- Checkout Section End -->
 
-                <!-- Explore Coupons Modal Start -->
-                <!-- <div class="modal fade" id="exploreCouponsModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-                aria-hidden="true">
-                <div class="modal-dialog modal-dialog-scrollable">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="exampleModalLabel">Coupons</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body">
-                            <% 
-                            //if(coupons && coupons.length){
-                               // coupons.forEach(coupon => {
-                                    %>
-                                    <div class="card px-2 mb-4">
-                                        <div class="coupon bg-white rounded mb-3 d-flex justify-content-between border-1">
-    
-                                            <div class="tengah  d-flex w-100 justify-content-start">
-                                                <div class="ps-2">
-                                                    <span class="badge badge-success">Valid</span>
-                                                    <h2 class="lead"><strong>
-                                                            <%=//coupon.name %>
-                                                        </strong></h2>
-                                                    <p class="text-muted mb-0">
-                                                        <%=//coupon.discount %>% off on purchase above ₹ <%=//coupon.minPurchase %>
-                                                    </p>
-                                                </div>
-                                            </div>
-                                            <div class="kanan">
-                                                <div class="info m-3 mt-4">
-                                                    <a id="<%=//coupon.name  %>"
-                                                        class="btn btn-sm btn-outline-primary btn-block"
-                                                        onclick="copyCoupon('<%=//coupon.name  %>')">COPY</a>
-                                                </div>
-                                            </div>
-                                        </div>
-    
-                                    </div>
-                                    <%  
-                               // })
-                            //}else{
-                                %>
-                                <small>No Coupons Available</small>
-                                <%  
-                           // }
-                            %>
+  
+  <!-- Explore Coupons Modal Start -->
+  <div class="modal fade" id="exploreCouponsModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Explore Coupons</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body" style="height: 70vh; overflow-y: auto;">
+            <% 
+            if(coupons && coupons.length){
+                coupons.forEach(coupon => {
+                    %>
+                    <div class="card px-2 mb-4">
+                        <div class="coupon bg-white rounded mb-3 d-flex justify-content-between border-1">
 
+                            <div class="tengah  d-flex w-100 justify-content-start">
+                                <div class="p-2">
+                                    <% 
+                                    if(coupon.usedUsers.includes(userId)){
+                                        %>
+                                        <span class="badge badge-danger my-1">Used</span>
+                                        <%  
+                                    }else{
+                                        %>
+                                        <span class="badge badge-success my-1">Not Used</span>
+                                        <% 
+                                    }
+                                    %>
+                                    <h4 class="lead my-1"><strong>
+                                            <%=coupon.code %>
+                                        </strong></h4>
+                                    <p class="text-muted mb-0 my-1">
+                                        <%= coupon.description %>
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="d-flex align-items-center">
+                                <div class="info m-3 mt-4">
+                                    <!-- <form action="" class="applyCouponModal" method="post"> -->
+                                        <!-- <input type="text" value="<%=// coupon.code  %>" name="code" > -->
+                                            
+                                        <a id="<%= coupon.code %>" class="btn btn-sm btn-outline-secondary btn-block" onclick="copyCoupon('<%= coupon.code  %>')">
+                                            COPY
+                                        </a>
+                                    <!-- </form> -->
+
+                                </div>
+                            </div>
                         </div>
 
                     </div>
-                </div>
-            </div> -->
-
-
-
-  <!-- Modal -->
-  <div class="modal fade" id="exploreCouponsModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-      <div  id="myInput" class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLabel"> Are you sure? </h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="tru">&times;</span>
-          </button>
-        </div> 
-        <div class="modal-body">
-            <strong> Are you sure? Do you want to Cancel this Order!?</strong>
-            <div class="modal-footer mt-2">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <a id="confirmOrderCancellationBTN" href="" class="btn btn-danger">Confirm Cancellation</a>
-            </div>
+                    <%  
+                })
+            }else{
+                %>
+                <small>No Coupons Available</small>
+                <%  
+            }
+            %>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <!-- <button type="button" class="btn btn-primary">Save changes</button> -->
         </div>
       </div>
     </div>
   </div>
-            <!-- Modal End -->
+  <!-- Explore Coupons Modal End -->
 
 <%- include('../partials/footer.ejs') %>  
 
@@ -367,7 +363,6 @@ function verifyPayment(response,order){
         }
     });
 }
-
 </script>
 
 <script>
@@ -377,7 +372,7 @@ function verifyPayment(response,order){
         $.ajax({
             url:'/applyCoupon',
             method: 'post',
-            data: $('#applyCoupon').serialize(),
+            data: $('#applyCoupon').serialize(),   //$(this).serialize(),
             success: (res) => {
                 if( res.status === true ){
                     $('#couponDiscount').html(`-₹ ${res.couponDiscount}`)
@@ -392,31 +387,8 @@ function verifyPayment(response,order){
                     const COD = document.getElementById('COD')
 
                     if(res.isWalletHasPayAmount){
-
-                        // document.getElementById('Wallet').disabled = false
                         walletCheckBoxDiv.hidden = false;
                         walletCheckBox.hidden = true;
-                        // const walletCheckBox = document.getElementById('walletCheckBox')
-                        // const razorpayRadio = document.getElementById('Razorpay')
-                        // const COD = document.getElementById('COD')
-
-                        // function updatePaymentOptions(){
-                        //     if(walletCheckBox.checked){
-                        //         // razorpayRadio.disabled = true
-                        //         // razorpayRadio.checked = false
-                        //         // COD.disabled = true
-                        //         // COD.checked = false
-                        //     }else{
-                        //         // razorpayRadio.disabled = false
-                        //         // COD.disabled = false
-                        //     }
-                        // }
-
-                        //For initial setup of options
-                        // updatePaymentOptions()
-
-                        //Listens to changes of options and update payment options
-                        // walletCheckBox.addEventListener('change',updatePaymentOptions);
                     }
                 }else{
                     $('#couponErr').html(res.message)
@@ -430,19 +402,16 @@ function verifyPayment(response,order){
 <script>
     document.addEventListener('DOMContentLoaded', () => {
 
-        // const walletCheckBoxDiv = document.getElementById('walletCheckBoxDiv')
         const walletCheckBox = document.getElementById('walletCheckBox');
         const razorpayRadio = document.getElementById('Razorpay')
         const CODRadio = document.getElementById('COD')
 
         function updatePaymentOptions(){
             if(walletCheckBox.checked){
-                // razorpayRadio.disabled = true
                 CODRadio.disabled = true
                 CODRadio.checked = false
                 razorpayRadio.checked = true
             }else{
-                // razorpayRadio.disabled = false
                 CODRadio.disabled = false
             }
         }
