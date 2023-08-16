@@ -39,6 +39,28 @@ const productsSchema = mongoose.Schema({
         type : Boolean,
         default: true
     },
+    reviews:[{
+        userId:{
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'User'
+        },
+        title:{
+            type: String
+        },
+        description:{
+            type: String
+        },
+        rating:{
+            type: Number
+        },
+        createdAt:{
+            type: Date
+        }
+    }],
+    totalRating:{
+        type: Number,
+        default: 0
+    },
     offer:{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Offers'

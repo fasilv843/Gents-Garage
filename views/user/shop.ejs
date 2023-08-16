@@ -192,7 +192,7 @@
                                         <div class="product__item__text">
                                             <h6><%= pdtsData[i].name %></h6>
                                             <% 
-                                            if(cart && cart.length && cart.includes(pdtData._id)){
+                                            if(cart && cart.length && cart.includes(pdtsData[i]._id)){
                                                 %>
                                                 <a href="/shoppingCart"  class="add-cart">Go to Cart</a>
                                                 <%  
@@ -202,7 +202,7 @@
                                                 <%  
                                             }
 
-                                            
+
                                             let currPrice;
                                             if(pdtsData[i].offer && pdtsData[i].offer.status == 'Available'){
                                                 currPrice = pdtsData[i].offerPrice
