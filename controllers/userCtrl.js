@@ -232,49 +232,49 @@ const addToCart = async(req, res, next) => {
         const userId = req.session.userId;
 
         const userData = await User.findById({_id:userId})
+        const pdtData = await Products.findById({_id: pdtId})
+        
+        if(pdtData.quantity){
+            
+            const isproductExist = userData.cart.findIndex((pdt) => pdt.productId == pdtId)
+            if(isproductExist === -1){
 
-        const isproductExist = await userData.cart.findIndex((pdt) => pdt.productId == pdtId)
-        console.log('isproductExist : '+isproductExist);
 
-        if(isproductExist === -1){
-
-            const pdtData = await Products.findById({_id: pdtId})
-
-            const cartItem = {
-                productId : pdtId,
-                quantity : 1,
-                productPrice : pdtData.price,
-                discountPrice : pdtData.discountPrice
-            }
+                const cartItem = {
+                    productId : pdtId,
+                    quantity : 1,
+                    productPrice : pdtData.price,
+                    discountPrice : pdtData.discountPrice
+                }
+        
+                const userData = await User.findByIdAndUpdate(
+                    {_id: userId},
+                    {
+                        $push:{
+                            cart: cartItem
+                        }
+                    }
+                )
     
-            const userData = await User.findByIdAndUpdate(
-                {_id: userId},
-                {
-                    $push:{
-                        cart: cartItem
+                req.session.cartCount++;
+
+            }else{
+                    
+                await User.updateOne(
+                    {_id: userId, 'cart.productId' : pdtId},
+                    {
+                        $inc:{
+                            "cart.$.quantity":1
+                        }
                     }
-                }
-            )
-
-            req.session.cartCount++;
-
-            res.redirect('/shoppingCart')
-
-        }else{
-                
-            await User.updateOne(
-                {_id: userId, 'cart.productId' : pdtId},
-                {
-                    $inc:{
-                        "cart.$.quantity":1
-                    }
-                }
-            );
-
-            console.log('Product already exist on cart, quantity incremeted by 1');
-            res.redirect('/shoppingCart')
+                );
+    
+                console.log('Product already exist on cart, quantity incremeted by 1');
+            }
 
         }
+
+        res.redirect('/shoppingCart')
 
     } catch (error) {
         next(error);
