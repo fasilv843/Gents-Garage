@@ -13,6 +13,7 @@ user_route.set('views','./views/user');
 
 user_route.use( async(req, res, next) => {
     res.locals.cartCount = req.session.cartCount
+    res.locals.wishCount = req.session.wishCount
     next()
 })
 

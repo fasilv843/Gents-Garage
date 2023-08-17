@@ -38,9 +38,20 @@
                 </ul>
             </div> -->
         </div>
-        <div class="offcanvas__nav__option">
+        <div class="offcanvas__nav__option ">
             <!-- <a href="#" class="search-switch"><img src="img/icon/search.png" alt=""></a> -->
-            <a href="#"><img src="/img/icon/heart.png" alt=""></a>
+            <!-- <a href="#"><img src="/img/icon/heart.png" alt=""></a> -->
+            <a href="/wishlist" class="text-decoreation-none text-dark mt-1 mx-3 position-relative" ><i class="bi bi-heart-fill text-danger "></i>
+                <% 
+                if(locals.wishCount){
+                    %>
+                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-dark text-white" style="top: -5px;">
+                        <%= wishCount %>
+                    </span>
+                    <%  
+                }
+                %>
+            </a>
             <a href="/shoppingCart" class="text-decoreation-none text-dark">
                 <% 
                 if(locals.cartCount){
@@ -126,8 +137,8 @@
                         </ul>
                     </nav>
                 </div>
-                <div class="col-lg-3 col-md-3">
-                    <div class="header__nav__option d-flex justify-content-around" >
+                <div class="col-lg-3 col-md-3 d-none d-md-block">
+                    <div class="header__nav__option d-flex justify-content-around " >
                         <!-- <a href="#" class="search-switch"><img src="img/icon/search.png" alt=""></a> -->
                         <div class="shop__sidebar__search mx-3">
                             <div class="d-flex" >
@@ -136,7 +147,18 @@
                             </div>
                         </div>
                         <!-- <a href=""></a> -->
-                        <a href="/wishlist" class="text-decoreation-none text-dark mt-1 mx-3" ><i class="bi bi-heart"></i></a>
+                        <a href="/wishlist" class="text-decoreation-none text-dark mt-1 mx-3 position-relative" ><i class="bi bi-heart-fill text-danger "></i>
+                            <% 
+                            if(locals.wishCount){
+                                %>
+                                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-dark text-white" style="top: -5px;">
+                                    <%= wishCount %>
+                                </span>
+                                <%  
+                            }
+                            %>
+                        </a>
+
                         <a href="/shoppingCart" class="text-decoreation-none text-dark  position-relative">
                             <% 
                             if(locals.cartCount){

@@ -54,6 +54,7 @@ const verifyLogin = async(req,res, next) => {
                 if(!userData.isBlocked){
                     req.session.userId = userData._id
                     req.session.cartCount = userData.cart.length
+                    req.session.wishCount = userData.wishlist.length
                     res.redirect('/')
                 }else{
                     res.render('login',{message: 'Sorry:( You are blocked by admins'})
@@ -246,7 +247,7 @@ const addToCart = async(req, res, next) => {
                     discountPrice : pdtData.discountPrice
                 }
         
-                const userData = await User.findByIdAndUpdate(
+                await User.findByIdAndUpdate(
                     {_id: userId},
                     {
                         $push:{
@@ -702,6 +703,7 @@ const addToWishlist = async(req, res, next) => {
         if(!userData.wishlist.includes(productId)){
             userData.wishlist.push(productId)
             await userData.save()
+            req.session.wishCount++
         }
         let { returnPage } = req.query
         if(returnPage == 'shop'){
@@ -726,6 +728,7 @@ const removeWishlistItem = async(req, res, next) => {
                 }
             }
         );
+        req.session.wishCount--
         const { returnPage } = req.query
         if(returnPage == 'shop'){
             res.redirect('/shop')
