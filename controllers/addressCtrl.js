@@ -63,10 +63,11 @@ const loadEditAddress = async(req, res, next) => {
     try {
         const addressId = req.params.id;
         const userId = req.session.userId;
+        const { returnPage } = req.query
 
         const addressData = await Addresses.findOne({userId, 'addresses._id':addressId})
         const address = addressData.addresses.find(obj => obj._id.toString() === addressId)
-        res.render('editAddress',{address, isLoggedIn: true, page: 'Profile'})
+        res.render('editAddress',{address, isLoggedIn: true, page: 'Profile',returnPage})
     } catch (error) {
         next(error)
     }
@@ -77,6 +78,8 @@ const postEditAddress = async(req, res, next) => {
         const addressId = req.params.id;
         const userId = req.session.userId;
         const { name, email, mobile, town, state, country, zip, address } = req.body
+        const { returnPage } = req.query
+
 
         await Addresses.updateOne(
             {userId, 'addresses._id':addressId},
@@ -94,8 +97,12 @@ const postEditAddress = async(req, res, next) => {
             }
 
         )
-        console.log('Address edited');
-        res.redirect('/profile');
+            console.log(returnPage);
+        if(returnPage == 'profile'){
+            res.redirect('/profile');
+        }else if(returnPage == 'checkout'){
+            res.redirect('/shoppingCart/proceedToCheckout')
+        }
         
     } catch (error) {
         next(error)
