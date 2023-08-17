@@ -24,9 +24,7 @@ const loadCheckout = async(req, res, next) => {
         }
 
         const walletBalance = userData.wallet;
-
         const coupons = await Coupons.findByIsCancelled(false)
-        // console.log(coupons);
 
         res.render('checkout',{isLoggedIn : true, page:'Checkout', userAddress, cart, coupons, walletBalance, userId})
     } catch (error) {
@@ -90,9 +88,6 @@ const placeOrder = async(req, res, next) => {
                 totalPrice += (products[i].totalPrice - products[i].totalDiscount)
             }
             
-            console.log(totalPrice);
-            console.log(req.session.coupon);
-            //reducing coupon discount from totalPrice
             let couponCode = '';
             let couponDiscount = 0;
             let couponDiscountType;
@@ -120,10 +115,6 @@ const placeOrder = async(req, res, next) => {
                 
             }
 
-            // if(isWalletSelected && paymentMethod != 'Wallet'){
-            //     totalPrice = totalPrice - walletAmount
-            // }
-
             req.session.isWalletSelected = isWalletSelected;
             req.session.totalPrice = totalPrice;
             
@@ -137,16 +128,10 @@ const placeOrder = async(req, res, next) => {
                     products, 
                     paymentMethod,
                     status: 'Order Confirmed',
-                    // date: new Date(),
                     couponCode,
                     couponDiscount,
                     couponDiscountType
                 }).save()
-
-                // if(isWalletSelected){
-                //     userData.wallet = 0
-                //     await userData.save()
-                // }
     
                 //Reducing quantity/stock of purchased products from Products Collection
                 for (const { productId, quantity } of cart) {
@@ -392,7 +377,7 @@ const loadMyOrders = async(req, res, next) => {
     }
 }
 
-const loadViewOrderDetails = async(req, res) => {
+const loadViewOrderDetails = async(req, res, next) => {
     try {
         console.log('loaded view order details page');
         const orderId = req.params.orderId;

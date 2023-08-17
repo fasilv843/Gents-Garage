@@ -206,7 +206,6 @@ const loadShoppingCart = async(req, res, next) => {
         const userData = await User.findById({_id:userId}).populate('cart.productId').populate('cart.productId.offer')
         const cartItems = userData.cart
 
-        // console.log(cartItems);
         //Code to update cart values if product price changed by admin after we added pdt into cart
         for(const { productId } of cartItems ){
             await User.updateOne(
@@ -313,7 +312,6 @@ const updateCart = async(req, res, next) => {
             userData.cart.forEach(pdt => {
 
                 totalPrice += pdt.productPrice*pdt.quantity
-                console.log(pdt.offerPrice);
                 if(pdt.productId.offerPrice){
                     totalDiscount += (pdt.productPrice - pdt.productId.offerPrice)*quantity
                 }else{
@@ -355,8 +353,6 @@ const removeCartItem = async(req, res, next) => {
 
         req.session.cartCount--;
 
-        
-        console.log(userData);
         res.redirect('/shoppingCart');
 
     } catch (error) {
@@ -366,7 +362,6 @@ const removeCartItem = async(req, res, next) => {
 
 const loadProfile = async(req, res, next) => {
     try {
-        console.log('loaded profile');
         const userId = req.session.userId;
         const userData = await User.findById({_id: userId})
         const userAddress = await Addresses.findOne({userId:userId})
@@ -381,9 +376,7 @@ const loadProfile = async(req, res, next) => {
 const loadEditProfile = async(req, res, next) => {
     try {
         id = req.session.userId;
-        // console.log('userId : '+id);
         const userData = await User.findById({_id:id})
-
         res.render('editProfile',{userData})
     } catch (error) {
         next(error); 
@@ -428,7 +421,6 @@ const postPassConfirmToChangeMail = async(req,res, next) => {
         if(passwordMatch){
             res.redirect('/profile/changeMail')
         }else{
-            console.log("Password didn't Match");
             res.redirect('/profile/')
         }
     } catch (error) {
@@ -441,7 +433,6 @@ const postPassConfirmToChangeMail = async(req,res, next) => {
 const loadChangeMail = async(req,res, next) => {
     try {
         res.render('changeMail')
-        
     } catch (error) {
         next(error);
     }
@@ -488,18 +479,14 @@ const otpValidationToChangeMail = async(req, res, next) => {
 
         if(OTP == adminOTP){
 
-            console.log('OTP Matched');
-
-            const userData = await User.findByIdAndUpdate(
+            await User.findByIdAndUpdate(
                 {_id:userId},
                 {
                     $set:{
                         email: newMail
                     }
                 }
-            )
-
-            console.log('User Data after Mail updation \n\n'+userData);
+            );
             res.redirect('/profile')
 
         }else{
@@ -526,19 +513,14 @@ const postChangePassword = async(req, res, next) => {
         const userId = req.session.userId;
         const { oldPassword, newPassword, confirmPassword } = req.body;
 
-        console.log('oldPassword'+oldPassword+'\n newPassord'+newPassword);
-
         if(newPassword !== confirmPassword){
-            console.log('newPassword and confirmPassword not matching :(' );
             return res.redirect('/profile/changePassword')
         }
 
         const userData = await User.findById({ _id: userId });
 
         const passwordMatch = await bcrypt.compare(oldPassword, userData.password);
-        console.log('passwordMatch : '+passwordMatch);
         if(passwordMatch){
-            console.log('old password matched');
             const sPassword = await securePassword(newPassword)
             await User.findByIdAndUpdate(
                 { _id: userId },
@@ -548,10 +530,8 @@ const postChangePassword = async(req, res, next) => {
                     }
                 }
             );
-            console.log('password updated');
             return res.redirect('/profile');
         }else{
-            console.log('incorrect password');
             return res.redirect('/profile/changePassword');
         }
     } catch (error) {
@@ -583,7 +563,6 @@ const verifyOTPforgotPass = async(req, res, next) => {
         const userOTP = req.body.OTP
         const adminOTP = req.session.OTP
         if(userOTP == adminOTP){
-            console.log('OTP matched :) ');
             res.render('resetPassword')
         }else{
             console.log('OTP not matching .... :(');
@@ -606,7 +585,6 @@ const postResetPassword = async(req, res, next) => {
     try {
         const { newPassword, confirmPassword} = req.body
         if(newPassword !== confirmPassword){
-            console.log('Entered Passwords are not matching');
             return res.redirect('/profile/resetPassword');
         }else{
             const userId = req.session.userId;
@@ -652,10 +630,8 @@ const addMoneyToWallet = async(req, res, next) => {
 
         instance.orders.create(options, (err, order) => {
             if(err){
-                console.log(err);
                 res.json({status: false})
             }else{
-                console.log('status sent true');
                 res.json({ status: true, payment:order })
             }
 
@@ -670,7 +646,6 @@ const verifyWalletPayment = async(req, res, next) => {
         
         const userId = req.session.userId;
         const details = req.body
-        console.log(details);
         const amount = parseInt(details['order[amount]'])/100
         let hmac = crypto.createHmac('sha256',process.env.KEY_SECRET)
         
@@ -713,7 +688,6 @@ const loadWishlist = async(req, res, next) => {
         const isLoggedIn = Boolean(req.session.userId)
         const userData = await User.findById({_id:userId}).populate('wishlist')
         const wishlist = userData.wishlist
-        console.log(wishlist);
         res.render('wishlist',{page:'Wishlist', parentPage:'Shop', isLoggedIn, wishlist})
     } catch (error) {
         next(error)
