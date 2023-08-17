@@ -34,9 +34,18 @@ user_route.post('/resendOTP',userCtrl.resendOTP)
 user_route.get('/shop',productCtrl.loadShop)
 user_route.get('/shop/productOverview/:id',productCtrl.loadProductOverview);
 user_route.get('/aboutUs',userCtrl.loadAboutUs);
+user_route.get('/allReviews/:productId',productCtrl.loadAllReviews)
+
 
 //to check isUserLoggedIn after this route
 user_route.use('/', isUserLoggedIn)
+
+
+user_route.get('/addReview/:productId',productCtrl.loadAddReview)
+user_route.post('/addReview/:productId',productCtrl.postAddReview)
+user_route.get('/editReview/:productId',productCtrl.loadEditReview)
+user_route.post('/editReview/:productId',productCtrl.postEditReview)
+
 
 user_route.get('/logout', userCtrl.logoutUser);
 

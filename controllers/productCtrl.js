@@ -2,10 +2,11 @@ const Products = require('../models/productModel')
 const Categories = require('../models/categoryModel');
 const Offers = require('../models/offerModel')
 const User = require('../models/userModel')
+const Orders =  require('../models/orderModel')
 const fs = require('fs')
 const path = require('path')
 
-const loadProduct = async(req,res) => {
+const loadProduct = async( req, res, next) => {
     try {
         const pdtsData = await Products.find().populate("category").populate('offer')
         // console.log(pdtsData);
@@ -15,11 +16,11 @@ const loadProduct = async(req,res) => {
         ]});
         res.render('products',{pdtsData, offerData, page:'Products'})
     } catch (error) {
-                next(error);
+        next(error);
     }
 }
 
-const loadAddProduct = async(req,res) => {
+const loadAddProduct = async( req, res, next) => {
     try {
         const categories = await Categories.find({})
         res.render('addProduct',{categories, page:'Products'})
@@ -28,7 +29,7 @@ const loadAddProduct = async(req,res) => {
     }
 }
 
-const addProductDetails = async(req,res) => {
+const addProductDetails = async( req, res, next ) => {
     try {
         const { 
             brand, productName, category,
@@ -64,7 +65,7 @@ const addProductDetails = async(req,res) => {
     }
 }
 
-const loadEditProduct = async(req,res) => {
+const loadEditProduct = async(req, res ,next) => {
     try {
         const id = req.params.id;
         const pdtData = await Products.findById({_id:id}).populate('category')
@@ -74,11 +75,11 @@ const loadEditProduct = async(req,res) => {
         res.render('editProduct',{pdtData, catData, page: 'Products'})
 
     } catch (error) {
-                next(error);
+        next(error);
     }
 }
 
-const postEditProduct = async(req,res) => {
+const postEditProduct = async(req, res, next) => {
     try {
         const { 
             id, productName, category,
@@ -125,7 +126,7 @@ const postEditProduct = async(req,res) => {
     }
 }
 
-const deleteProduct = async(req,res) => {
+const deleteProduct = async( req, res, next) => {
     try {
         const id = req.params.id;
         const prodData = await Products.findById({_id:id})
@@ -138,7 +139,7 @@ const deleteProduct = async(req,res) => {
     }
 }
 
-const deleteImage = async(req,res) => {
+const deleteImage = async(req,res, next) => {
     try {
         const id = req.params.id;
         const imageURL = req.query.imageURL;
@@ -169,7 +170,7 @@ const deleteImage = async(req,res) => {
     }
 }
 
-const loadShop = async(req,res) => {
+const loadShop = async(req,res, next) => {
     try {
 
         const isLoggedIn = Boolean(req.session.userId);
@@ -360,23 +361,160 @@ const loadShop = async(req,res) => {
     }
 }
 
-const loadProductOverview = async(req,res) => {
+const loadProductOverview = async(req,res, next) => {
     try {
         const id = req.params.id;
-        let userData;
-        let wishlist;
-        let cart;
-        if(req.session.userId){
-            userData = await User.findById({_id:req.session.userId})
-            wishlist = userData.wishlist;
-            cart = userData.cart.map(item => item.productId.toString())
+        const userId = req.session.userId
+        const isLoggedIn = Boolean(userId)
+        const pdtData = await Products.findById({_id:id}).populate('reviews.userId')
+
+        let isPdtExistInCart = false;
+        let isPdtAWish = false;
+        let isUserReviewed = false;
+        if(userId){
+            const userData = await User.findById({_id:userId})
+            const wishlist = userData.wishlist;
+            if(wishlist.find((productId) => productId == id ) > -1){
+                isPdtAWish = true;
+            }
+
+            userData.cart.forEach((pdt) => {
+                if(pdt.productId == id){
+                    isPdtExistInCart = true
+                }
+            })
+
+            pdtData.reviews.forEach((review) => {
+                if(review.userId._id == userId){
+                    isUserReviewed = true;
+                }
+            });
         }
-        // console.log(id);
-        const isLoggedIn = Boolean(req.session.userId)
-        const pdtData = await Products.findById({_id:id})
-        res.render('productOverview',{pdtData, parentPage : 'Shop', page: 'Product Overview',isLoggedIn, wishlist, cart})
+
+        res.render('productOverview',{pdtData, parentPage : 'Shop', page: 'Product Overview',isLoggedIn, isPdtAWish, isPdtExistInCart, isUserReviewed})
     } catch (error) {
                 next(error);
+    }
+}
+
+const loadAddReview = async(req, res, next) => {
+    try {
+        const { productId } = req.params
+        const { userId } = req.session
+        let isPdtPurchased = false
+        const isLoggedIn = Boolean(req.session.userId)
+        const orderData = await Orders.findOne({ userId, 'products.productId': productId })
+        if(orderData) isPdtPurchased = true
+
+        res.render('addReview',{page:'Reviews', parentPage:'Shop',isPdtPurchased, productId, userId, isLoggedIn})
+    } catch (error) {
+        next(error)
+    }
+}
+
+const postAddReview = async(req, res, next) => {
+    try {
+        const { productId } = req.params
+        const { userId } = req.session
+        const { rating, title, description } = req.body
+
+        await Products.updateOne(
+            {_id:productId},
+            {
+                $push:{
+                    reviews:{
+                        userId, title, rating, description, createdAt: new Date()
+                    }
+                }
+            }
+        );
+
+        const pdtData = await Products.findById({_id:productId})
+        const totalRating = pdtData.reviews.reduce((sum, review) => sum += review.rating, 0)
+        const avgRating = Math.floor(totalRating/pdtData.reviews.length)
+
+        await Products.updateOne(
+            {_id:productId},
+            {
+                $set:{
+                    totalRating: avgRating
+                }
+            }
+        );
+
+        res.redirect(`/shop/productOverview/${productId}`)
+    } catch (error) {
+        next(error)
+    }
+}
+
+const loadEditReview = async(req, res, next) => {
+    try {
+        const { productId } = req.params
+        const { userId } = req.session;
+        const isLoggedIn = Boolean(userId)
+        const pdtData = await Products.findOne(
+            {
+                _id:productId,
+                reviews:{
+                    $elemMatch: { userId }
+                }
+            }
+        ).populate('reviews.userId');
+
+        const reviewData = pdtData.reviews.find((review) => review.userId._id == userId)
+        res.render('editReview',{ reviewData, productId, isLoggedIn, page:'Edit Review', parentPage: 'Shop' })
+    } catch (error) {
+        next(error)
+    }
+}
+
+const postEditReview = async(req, res, next) => {
+    try {
+
+        const { productId } = req.params
+        const { reviewId }  = req.query
+        const { rating, title, description } = req.body
+
+        await Products.updateOne(
+            {_id:productId, 'reviews._id': reviewId },
+            {
+                $set:{
+                    'reviews.$.rating' : rating,
+                    'reviews.$.title' : title,
+                    'reviews.$.description' : description
+                }
+            }
+        );
+        
+        const pdtData = await Products.findById({_id:productId})
+        const totalRating = pdtData.reviews.reduce((sum, review) => sum += review.rating, 0)
+        const avgRating = Math.floor(totalRating/pdtData.reviews.length)
+
+        await Products.updateOne(
+            {_id:productId},
+            {
+                $set:{
+                    totalRating: avgRating
+                }
+            }
+        );
+        
+        res.redirect(`/shop/productOverview/${productId}`)
+    } catch (error) {
+        next(error)
+    }
+}
+
+const loadAllReviews = async(req, res, next) => {
+    try {
+        const { productId } = req.params
+        const { userId } = req.session
+        const isLoggedIn = Boolean(userId)
+        const pdtData = await Products.findById({_id: productId})
+        res.render('showReviews',{pdtData, userId, page:'Reviews', parentPage:'Shop', isLoggedIn})
+    } catch (error) {
+        next(error)
     }
 }
 
@@ -446,5 +584,10 @@ module.exports = {
     loadShop,
     loadProductOverview,
     applyProductOffer,
-    removeProductOffer
+    removeProductOffer,
+    loadAddReview,
+    loadEditReview,
+    postAddReview,
+    postEditReview,
+    loadAllReviews
 }

@@ -1,0 +1,134 @@
+<%- include('../partials/head.ejs') %>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css"
+        integrity="sha512-+4zCK9k+qNFUR5X+cKL9EIR+ZOhtIloNl9GIKS57V1MyNsYpYcUrUeQc9vNfzsWfV28IaLL3i96P9sdNyeRssA=="
+        crossorigin="anonymous" />
+
+<%- include('../partials/userHeader.ejs') %>
+<%- include('../partials/userBreadcrub.ejs') %>
+
+
+<section>
+    <div class="container mt-5">
+        <h2>All Reviews & Ratings</h2>
+        <div class="row mt-5">
+            <div class="col-md-4 mb-4">
+                <div class="card">
+                    <div class="image d-flex justify-content-center">
+                        <a href="/shop/productOverview/<%= pdtData._id  %>"><img src="/images/productImages/<%= pdtData.images[0]  %>" class="img-fluid" alt=""></a>
+                    </div>
+                    <div class="content p-3">
+                        <div class="d-lg-flex d-flex d-md-block justify-content-between">
+                            <div class="brand">
+                                <span>
+                                    <%= pdtData.brand %>
+                                </span>
+                            </div>
+                            <div class="rating">
+                                <% 
+                                if( pdtData.reviews && pdtData.reviews.length > 0 ){
+                                    for(let i=1; i<=5; i++){
+                                        if(i > pdtData.totalRating){
+                                            %> <i class="bi bi-star"></i> <%  
+                                        }else if(!Number.isInteger(pdtData.totalRating) 
+                                                && ((parseInt(pdtData.totalRating + 1)) == i )){
+                                            
+                                            %> <i class="fas fa-star-half-alt"></i> <%  
+                                        }else{
+                                            %> <i class="fas fa-star"></i> <%  
+                                        }
+                                    }
+                                    %>
+                                    <span id="rating-number"> <%= pdtData.totalRating %> </span>
+                                    <span>(<%= pdtData.reviews.length %>)</span>
+                                    <%  
+                                }
+                                %>
+                            </div>
+                        </div>
+                        <div class="prod-content">
+                            <h5 class=" my-1">
+                                <strong><%= pdtData.name %></strong>
+                            </h5>
+                            <div class="price ">
+                                <% 
+                                let currPrice = pdtData.price - pdtData.discountPrice
+                                if(pdtData.offerPrice){
+                                    currPrice = offerPrice
+                                }
+                                %>
+                                <span class="h4 my-1">₹<%= currPrice %>
+                                </span>
+                                <span class="h6 my-1 ml-2" style="text-decoration:line-through ; color: grey;">
+                                    ₹<%= pdtData.price %>
+                                </span>
+                                <strong class="h6 my-1 ml-2" style="color: rgb(1, 177, 1);">
+                                    <%= Math.floor(100 - ( (currPrice*100) / pdtData.price )) %>% Off
+                                </strong>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="col-md-8">
+                <% for(let i=0;i<pdtData.reviews.length;i++) {%>
+                    <div class="col-12 mb-3">
+                        <div class="p-3" style="border: 1px solid rgb(222, 222, 222);">
+                            <div class=" ">
+                                <div class="d-flex align-items-center">
+
+                                    <div <% if(pdtData.reviews[i].rating > 2) {%>
+                                            style="background-color: rgb(17, 201, 0);border-radius: 4px;padding: 2px 5px;"
+                                        <% } else if(pdtData.reviews[i].rating == 2){%>
+                                            style="background-color: rgb(255,150,13);border-radius:4px;padding: 2px 5px;"
+                                        <% } else if(pdtData.reviews[i].rating == 1){%>
+                                            style="background-color: rgb(237, 40, 33);border-radius:4px;padding: 2px 5px;"
+                                        <% } %>>
+                                        <span class="text-white">
+                                            <%= pdtData.reviews[i].rating %> 
+                                            <i class="bi bi-star-fill text-white"></i>
+                                        </span>
+                                    </div>
+
+                                    <strong class="ml-2" style="font-size: 1.2rem;">
+                                        <%= pdtData.reviews[i].title %>
+                                    </strong>
+
+                                </div>
+                                <div class="review-content mt-2">
+                                    <span class="">
+                                        <%= pdtData.reviews[i].description %>
+                                    </span><br>
+                                    <span class="text-secondary" style="font-size: .8rem;">
+                                        <strong class=" text-uppercase ">
+                                            <%= pdtData.reviews[i].userId.fname %>
+                                            <%= pdtData.reviews[i].userId.lname %>&nbsp;
+                                            <i class="bi bi-patch-check-fill  me-2"></i>
+                                        </strong>
+                                        Certified Buyer,
+                                        <% 
+                                        const dd=pdtData.reviews[i].createdAt.getDate(); 
+                                        const mm=pdtData.reviews[i].createdAt.getMonth() + 1; 
+                                        const yyyy=pdtData.reviews[i].createdAt.getFullYear(); 
+                                        const formattedDate=`${dd}-${mm}-${yyyy}`; 
+                                        %>
+                                        <span>
+                                            <%=formattedDate %>
+                                        </span>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <% } %>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<%- include('../partials/footer.ejs') %> 
+<%- include('../partials/script.ejs') %>

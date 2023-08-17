@@ -1,0 +1,150 @@
+<%- include('../partials/head.ejs') %>
+<style>
+    .rating {
+  display: flex;
+  flex-direction: row-reverse;
+  /* Reverse the order from right to left */
+  /* margin-right: 379px; */
+}
+
+.rating input {
+  display: none;
+}
+
+.rating label {
+  font-size: 30px;
+  color: #ccc;
+  cursor: pointer;
+}
+
+.rating label:before {
+  content: '★';
+}
+
+.rating input:checked~label {
+  color: gold;
+}
+
+.rating label:hover,
+.rating label:hover~label {
+  color: gold;
+}
+</style>
+<%- include('../partials/userHeader.ejs') %>
+<%- include('../partials/userBreadcrub.ejs') %>
+
+
+<section>
+    <div class="container">
+        <div class="heading row mt-4 card rounded-0">
+            <div class="p-3">
+                <h3>Ratings & Reviews</h3>
+            </div>
+        </div>
+        <div class="main mt-3">
+            <div class="row">
+                <div class="col-md-3 card p-3 rounded-0">
+                    <div class="section1">
+                        <h5>What makes a good review</h5>
+                    </div>
+                    <hr>
+                    <div>
+                        <span style="font-size: 1.2rem;">Why review a product?</span><br>
+                        <p class="mt-2">Your valuable feedback will help fellow shoppers decide!</p>
+                        <hr>
+                    </div>
+
+                    <div>
+                        <span style="font-size: 1.2rem;">How to review a product?</span><br>
+                        <p class="mt-2">Your review should include facts. An honest opinion is always
+                            appreciated.
+                            If you have an issue with the product or service please contact us from the help
+                            centre.
+                        </p>
+                    </div>
+
+                </div>
+                <div class="col-md-9 card rounded-0 p-2 mt-4 mt-md-0 ">
+                    <%// if(isPdtPurchased) {%>
+                        <form action="/editReview/<%= productId  %>?reviewId=<%= reviewData._id %>" id="ratingForm" method="post">
+                            <div class="p-3">
+                                <div>
+                                    <h4>Rate this product</h4>
+                                    
+                                    <div class="form-group">
+                                        <label for="rating">Rating:</label>
+                                        <div class="rating text-start justify-content-end">
+                                            <input type="radio" id="star5" name="rating" value="5" <%=reviewData.rating == 5?'checked':''  %>>
+                                            <label for="star5"></label>
+                                            <input type="radio" id="star4" name="rating" value="4" <%=reviewData.rating == 4?'checked':''  %>>
+                                            <label for="star4"></label>
+                                            <input type="radio" id="star3" name="rating" value="3" <%=reviewData.rating == 3?'checked':''  %>>
+                                            <label for="star3"></label>
+                                            <input type="radio" id="star2" name="rating" value="2" <%=reviewData.rating == 2?'checked':''  %>>
+                                            <label for="star2"></label>
+                                            <input type="radio" id="star1" name="rating" value="1" <%=reviewData.rating == 1?'checked':''  %>>
+                                            <label for="star1"></label>
+                                        </div>
+                                        <small id="rating-error" class="text-danger"></small>
+                                    </div>
+                                </div>
+                                <hr>
+                                <div>
+                                    <h4>Review this product</h4>
+
+                                    <div class="mt-4">
+                                        <input type="text" name="title" class="form-control form-control-lg" value="<%= reviewData.title %>" id="" placeholder="Review Title..." required>
+                                        <textarea name="description" id=""
+                                            class="w-100 mt-4 form-control-lg form-control" 
+                                            placeholder="Description..." required><%= reviewData.description %></textarea>
+                                    </div>
+                                </div>
+                                <div class="text-end">
+                                    <button type="submit" id="submitButton" onclick="check()"
+                                        class="btn btn-dark rounded-pill w-25 mt-3">Submit</button>
+                                </div>
+                            </div>
+                        </form>
+                        <%// } else{%>
+                            <!-- <div class="text-center  my-auto">
+                                <img src="/extras/reviewError.png" class="img-fluid" alt="">
+                                <div class="text-center">
+                                    <h1>Haven't purchased this product?</h1>
+                                    <p class="text-secondary">Sorry! You are not allowed to review this
+                                        product since you haven't bought it on Box To Box.</p>
+                                </div>
+                            </div> -->
+                            <%// } %>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<%- include('../partials/footer.ejs') %> 
+
+
+<script>
+    function check() {
+        
+        const radioButtons = document.querySelectorAll('input[type="radio"]');
+      
+            let isRadioButtonSelected = false;
+            radioButtons.forEach(function (radioButton) {
+                if (radioButton.checked) {
+                    isRadioButtonSelected = true;
+                }
+            });
+
+            if (!isRadioButtonSelected) {
+               
+                const errorMessage = document.getElementById('rating-error');
+                errorMessage.innerHTML = 'Please select rating'
+                return false
+            }
+            return true
+    };
+</script>
+
+<%- include('../partials/script.ejs') %>
