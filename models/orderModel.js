@@ -46,6 +46,13 @@ const orderSchema = mongoose.Schema({
         },    
         offerId:{
             type:String
+        },
+        status:{
+            type: String,
+            enum: ['Order Confirmed', 'Shipped', 
+                    'Out For Delivery', 'Delivered',
+                    'Cancelled', 'Cancelled By Admin',
+                    'Pending Return Approval', 'Returned']
         }
     }],
     paymentMethod:{

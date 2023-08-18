@@ -217,7 +217,46 @@
                                             <!-- <span class="card-text" style="color: rgb(99, 99, 99);">Size: M</span><br> -->
                                             <span class="card-text" style="color: rgb(99, 99, 99);">Quantity : <%= pdt.quantity %></span>
                                             <h5 class="card-title mt-2">₹ <%= pdt.productPrice %></h5>
-        
+                                            <!-- <div class="col-md-2 d-flex justify-content-center align-items-center"> -->
+                                                <h6
+                                                    <% 
+                                                    if(pdt.status == 'Order Confirmed' || pdt.status == 'Shipped' || pdt.status == 'Out For Delivery' ||  pdt.status == 'Delivered' ){
+                                                        %>
+                                                        style="color: green;"
+                                                        <%  
+                                                    }else if( pdt.status == 'Cancelled' || pdt.status == 'Cancelled By Admin' ){
+                                                        %>
+                                                        style="color: red;"
+                                                        <%  
+                                                    }else if(pdt.status == 'Pending Return Approval'||  pdt.status == 'Returned'){
+                                                        %>
+                                                        style="color: orange;"
+                                                        <%  
+                                                    }
+                                                    %>
+                                                 
+                                                 ><%= pdt.status %></h6>
+                                            <!-- </div> -->
+                                        </div>
+                                        <div class="col-md-4 d-flex mb-3 pt-2 justify-content-center align-items-center">
+                                            <% 
+                                            if(pdt.status == 'Order Confirmed' || pdt.status == 'Shipped' || pdt.status == 'Out For Delivery'){
+                                                %>
+                                                <a href="/cancelSinglePrdt/<%= orderData._id %>/<%= pdt._id %>?cancelledBy=user" class="btn btn-danger"> Cancel </a>
+                                                <%  
+                                            }else if(pdt.status == 'Pending Return Approval'){
+                                                %>
+                                                <a href="/returnSinglePrdt/<%= orderData._id %>/<%= pdt._id %>" class="btn btn-warning"> Return </a>
+                                                <%  
+                                            }
+                                            //else if( pdt.status == 'Cancelled' || pdt.status == 'Cancelled By Admin'){
+
+                                            //}else if( pdt.status == 'Pending Return Approval'){
+                                                
+                                            //}else if( pdt.status == 'Returned'){
+                                                
+                                            //}
+                                            %>
                                         </div>
                                     </div>
         

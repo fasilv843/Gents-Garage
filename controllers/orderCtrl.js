@@ -73,7 +73,8 @@ const placeOrder = async(req, res, next) => {
                 discountPrice,
                 quantity: pdt.quantity,
                 totalPrice: pdt.quantity*pdt.productId.price,
-                totalDiscount
+                totalDiscount,
+                status: 'Order Confirmed'
             }
             products.push(product)
         })
@@ -429,7 +430,7 @@ const loadOrderSuccess = async(req, res, next) => {
 
         res.render('orderSuccess',{isLoggedIn, result})
     } catch (error) {
-                next(error);
+        next(error);
     }
 }
 
@@ -477,12 +478,56 @@ const changeOrderStatus = async(req,res, next) => {
                     status
                 }
             }
-        )
+        );
+
+        updateEachPdtStatus(orderId, status, next)
 
         res.redirect('/admin/ordersList')
 
     } catch (error) {
         next(error);
+    }
+}
+
+const updateEachPdtStatus = async(orderId, status, next) => {
+    try {
+        const orderData = await Orders.findById({_id:orderId});
+        if( orderData.status !== 'Cancelled' && orderData.status !== 'Cancelled By Admin' && orderData.status !== 'Returned' ){
+
+            if(status == 'Cancelled'|| status == 'Cancelled By Admin'){
+                if(orderData.status !== 'Delivered' && orderData.status !== 'Pending Return Approval'){
+                    update()
+                }
+            }
+
+            if(status == 'Pending Return Approval'){
+                if(orderData.status == 'Delivered'){
+                    update()
+                }
+            }
+
+            if(status == 'Returned'){
+                if(orderData.status == 'Pending Return Approval'){
+                    update()
+                }
+            }
+
+            if( status == 'Shipped' || status == 'Out For Delivery' || status == 'Delivered' ){
+                if(orderData.status == 'Order Confirmed' || orderData.status == 'Shipped' || orderData.status == 'Out For Delivery'){
+                    update()
+                }
+            }
+
+            function update(orderData, status){
+                for (const pdt of orderData.products){
+                    pdt.status = status;
+                }
+            }
+
+        }
+
+    } catch (error) {
+        next(error)
     }
 }
 
@@ -506,6 +551,9 @@ const cancelOrder = async(req,res, next) => {
                 }
             );
 
+            updateEachPdtStatus(orderId, 'Cancelled', next)
+
+
         }else if(cancelledBy == 'admin'){
 
             await Orders.findByIdAndUpdate(
@@ -516,6 +564,9 @@ const cancelOrder = async(req,res, next) => {
                     }
                 }
             );
+
+            updateEachPdtStatus(orderId, 'Cancelled By Admin', next)
+
         }
 
         //Updating wallet if order not COD
@@ -539,7 +590,7 @@ const cancelOrder = async(req,res, next) => {
         }
 
         if(cancelledBy == 'user'){
-            res.redirect('/profile/myOrders')
+            res.redirect(`/viewOrderDetails/${orderId}`)
         }else if(cancelledBy == 'admin'){
             res.redirect('/admin/ordersList')
         }
@@ -549,10 +600,43 @@ const cancelOrder = async(req,res, next) => {
     }
 }
 
+const cancelSinglePdt = async(req, res, next) => {
+    try {
+        const { orderId, pdtId } = req.params
+        const { cancelledBy } = req.query
+        const orderData = await Orders.findById({_id: orderId})
+        
+        for( const pdt of orderData.products){
+
+            if(pdt._id == pdtId){
+
+                if(cancelledBy == 'admin'){
+                    pdt.status = 'Cancelled By Admin'
+                }else if(cancelledBy == 'user'){
+                    pdt.status = 'Cancelled'
+                }
+
+                break;
+            }
+        }
+
+        await orderData.save()
+
+        if(cancelledBy == 'admin'){
+            res.redirect(`/admin/ordersList`)
+        }else if(cancelledBy == 'user'){
+            res.redirect(`/viewOrderDetails/${orderId}`)
+
+        }
+
+    } catch (error) {
+        next(error)
+    }
+}
+
 const returnOrder = async(req, res, next) => {
     try {
 
-        const userId = req.session.userId;
         const orderId = req.params.orderId
 
         await Orders.findByIdAndUpdate(
@@ -563,11 +647,35 @@ const returnOrder = async(req, res, next) => {
                 }
             }
         );
+
+        updateEachPdtStatus(orderId, 'Pending Return Approval', next)
+
         
         res.redirect(`/viewOrderDetails/${orderId}`)
         
     } catch (error) {
                 next(error);
+    }
+}
+
+const returnSinglePdt = async(req, res, next) => {
+    try {
+        const { orderId, pdtId } = req.params
+        const orderData = await Orders.findById({_id: orderId})
+        
+        for( const pdt of orderData.products){
+            if(pdt._id == pdtId){
+                pdt.status = 'Pending Return Approval'
+                break;
+            }
+        }
+
+        await orderData.save()
+
+        res.redirect(`/viewOrderDetails/${orderId}`)
+
+    } catch (error) {
+        next(error)
     }
 }
 
@@ -584,6 +692,9 @@ const approveReturn = async(req,res,next) => {
                 }
             }
         );
+
+        updateEachPdtStatus(orderId, 'Returned', next)
+
 
         const userId = orderData.userId;
 
@@ -611,6 +722,29 @@ const approveReturn = async(req,res,next) => {
     }
 }
 
+
+const approveReturnForSinglePdt = async(req, res, next) => {
+    try {
+        const { orderId, pdtId } = req.params
+        const orderData = await Orders.findById({_id: orderId})
+        
+        for( const pdt of orderData.products){
+            if(pdt._id == pdtId){
+                pdt.status = 'Returned'
+                break;
+            }
+        }
+
+        await orderData.save()
+
+        res.redirect(`/admin/ordersList`)
+
+    } catch (error) {
+        next(error)
+    }
+}
+
+
 const loadInvoice = async(req,res, next) => {
     try {
         const { orderId } = req.params
@@ -637,8 +771,11 @@ module.exports = {
     loadOrdersList,
     changeOrderStatus,
     cancelOrder,
+    cancelSinglePdt,
     verifyPayment,
     returnOrder,
     approveReturn,
-    loadInvoice
+    loadInvoice,
+    returnSinglePdt,
+    approveReturnForSinglePdt
 }

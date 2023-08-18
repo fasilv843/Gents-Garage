@@ -73,13 +73,52 @@
                                         %>
                                         <div class="d-flex px-2 py-1">
                                             <div class="me-1">
-                                                <img style="width: 4rem;" src="/productImages/<%= pdt.productId.images[0]  %>" alt="">
+                                                <img style="width: 4rem;" src="/images/productImages/<%= pdt.productId.images[0]  %>" alt="Product Image">
                                             </div>
                                             <div class="d-flex flex-column justify-content-center">
                                                 <h6 class="mb-0 text-sm"><%= pdt.productName  %></h6>
                                                 <p class="text-xs text-secondary mb-0">Quantity : <%= pdt.quantity %></p>
                                                 <p class="text-xs text-secondary mb-0">Price : <%= pdt.productPrice - pdt.discountPrice %></p>
+                                                  <p class="text-xs text-secondary mb-0 text-bold
+                                                    <% 
+                                                    if(pdt.status == 'Order Confirmed' || pdt.status == 'Shipped' || pdt.status == 'Out For Delivery' ||  pdt.status == 'Delivered' ){
+                                                      %>
+                                                      text-success
+                                                      <%  
+                                                    }else if( pdt.status == 'Cancelled' || pdt.status == 'Cancelled By Admin' ){
+                                                      %>
+                                                      text-danger
+                                                      <%  
+                                                    }else if(pdt.status == 'Pending Return Approval'||  pdt.status == 'Returned'){
+                                                      %>
+                                                      text-warning
+                                                      <%  
+                                                    }
+                                                    %>
+                                                    ">
+                                                    Status : <%= pdt.status %>
+                                                  </p>
                                             </div>
+                                            <div class="col-md-4 d-flex justify-content-end align-items-center">
+                                              <% 
+                                              if(pdt.status == 'Order Confirmed' || pdt.status == 'Shipped' || pdt.status == 'Out For Delivery'){
+                                                  %>
+                                                  <a href="/admin/cancelSinglePrdt/<%= order._id %>/<%= pdt._id %>?cancelledBy=admin" class="btn btn-danger"> Cancel </a>
+                                                  <%  
+                                              }else if(pdt.status == 'Pending Return Approval'){
+                                                  %>
+                                                  <a href="/admin/approveReturnSinglePrdt/<%= order._id %>/<%= pdt._id %>" class="btn btn-warning"> Approve </a>
+                                                  <%  
+                                              }
+                                              //else if( pdt.status == 'Cancelled' || pdt.status == 'Cancelled By Admin'){
+  
+                                              //}else if( pdt.status == 'Pending Return Approval'){
+                                                  
+                                              //}else if( pdt.status == 'Returned'){
+                                                  
+                                              //}
+                                              %>
+                                          </div>
                                         </div>
                                         <%  
                                     }
