@@ -295,11 +295,12 @@
                       <tr>
                           <th scope="col">#</th>
                           <th scope="col">Date</th>
-                          <th scope="col">Name</th>
+                          <th scope="col">User</th>
                           <th scope="col">OrderId</th>
-                          <th scope="col">Quantity</th>
+                          <th scope="col">Products</th>
+                          <th scope="col">Price</th>
+                          <th scope="col">Total Price</th>
                           <th scope="col">Payment</th>
-                          <th scope="col">Total</th>
                       </tr>
                   </thead>
                   <tbody>
@@ -322,13 +323,28 @@
                                   </td>
 
                                   <td>
-                                      <%=order.products.length %>
+                                    <% 
+                                    order.products.forEach((pdt) => {
+                                      %>
+                                      <p> <%= pdt.productName %> x <%= pdt.quantity %> </p>
+                                      <%  
+                                    })
+                                    %>
+                                  </td>
+                                  <td>
+                                    <% 
+                                    order.products.forEach((pdt) => {
+                                      %>
+                                      <p> &#8377;<%= pdt.totalPrice %> </p>
+                                      <%  
+                                    })
+                                    %>
+                                  </td>
+                                  <td>
+                                      &#8377;<%=order.totalPrice %>
                                   </td>
                                   <td>
                                       <%=order.paymentMethod %>
-                                  </td>
-                                  <td>
-                                      <%=order.totalPrice %>
                                   </td>
                           </tr>
                           <% }) %>

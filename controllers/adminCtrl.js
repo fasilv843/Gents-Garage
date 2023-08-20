@@ -2,35 +2,8 @@ const bcrypt = require('bcrypt')
 const Admin = require('../models/adminModel')
 const User = require('../models/userModel');
 const Orders  = require('../models/orderModel');
-
-const findIncome = async(startDate = new Date('1990-01-01'), endDate = new Date()) => {
-    try {
-        console.log(startDate, endDate);
-        let income = await Orders.aggregate([
-            { 
-                $match: { 
-                    status: 'Delivered',
-                    createdAt:{
-                        $gte: startDate,
-                        $lt: endDate 
-                    }
-                } 
-            },
-            { 
-                $group: {
-                    _id: null,
-                    totalIncome : {$sum : '$totalPrice'}
-                }
-            }
-        ]);
-
-        return income.length ? income[0].totalIncome : 0;
-
-    } catch (error) {
-        next(error)
-    }
-}
-
+const { getMonthName } = require('../helpers/helpersFunctions')
+const { findIncome, countSales, formatNum } = require('../helpers/orderHelper')
 
 const loadDashboard = async(req,res, next) => {
     try {
@@ -46,13 +19,13 @@ const loadDashboard = async(req,res, next) => {
         const thisMonthIncome = await findIncome(firstDayOfMonth)
         const thisYearIncome = await findIncome(jan1OfTheYear)
 
-        const totalUsersCount = await User.find({}).count()
-        const usersOntheMonth = await User.find({ doj:{ $gte: firstDayOfMonth }}).count()
+        const totalUsersCount = formatNum(await User.find({}).count()) 
+        const usersOntheMonth = formatNum(await User.find({ createdAt:{ $gte: firstDayOfMonth }}).count()) 
 
-        const totalSalesCount = await Orders.find({ status: 'Delivered' }).count()
-        const salesOnTheYear = await Orders.find({ status: 'Delivered', createdAt:{ $gte: jan1OfTheYear } }).count()
-        const salesOnTheMonth = await Orders.find({ status: 'Delivered', createdAt:{ $gte: firstDayOfMonth } }).count()
-        const salesOnPrevMonth = await Orders.find({ status: 'Delivered', createdAt:{ $gte: firstDayOfPreviousMonth, $lt: firstDayOfMonth } }).count()
+        const totalSalesCount = formatNum(await countSales()) 
+        const salesOnTheYear = formatNum(await countSales(jan1OfTheYear)) 
+        const salesOnTheMonth = formatNum(await countSales(firstDayOfMonth)) 
+        const salesOnPrevMonth = formatNum(await countSales( firstDayOfPreviousMonth, firstDayOfPreviousMonth ))
         console.log(salesOnPrevMonth);
         
         let salesYear = 2023;
@@ -94,18 +67,6 @@ const loadDashboard = async(req,res, next) => {
 
         let months = []
         let sales = []
-
-        function getMonthName(monthNumber) {
-            if (monthNumber < 1 || monthNumber > 12) {
-                return "Invalid month number";
-            }
-
-            const monthNames = [
-                "January", "February", "March", "April", "May", "June",
-                "July", "August", "September", "October", "November", "December"
-            ];
-            return monthNames[monthNumber - 1];
-        }
 
         orderData.forEach((month) => {months.push(getMonthName(month._id.createdAt))})
         orderData.forEach((sale) => { sales.push(Math.round(sale.sales))})
@@ -154,9 +115,11 @@ const loadDashboard = async(req,res, next) => {
         })
 
         let paymentData = await Orders.aggregate([
-            { $match: { status: 'Delivered' }},
+            { $match: { status: 'Delivered', paymentMethod: { $exists: true } }},
             { $group: { _id: '$paymentMethod', count: { $sum: 1 }}}
         ]);
+
+        console.log(paymentData);
 
         let paymentMethods = []
         let paymentCount = []
