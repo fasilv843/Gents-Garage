@@ -605,8 +605,17 @@ const updateOrderStatus = async function (orderId, next) {
                 return
             }
     
+            console.log(cancelledByUserCount+' type : '+typeof cancelledByUserCount);
+            console.log(cancelledByAdminCount+' type : '+typeof cancelledByAdminCount);
 
-            const cancelledCount = cancelledByUserCount + cancelledByAdminCount;
+
+            let cancelledCount = 0;
+            if(cancelledByUserCount){
+                cancelledCount += cancelledByUserCount
+            }
+            if(cancelledByAdminCount){
+                cancelledCount += cancelledByAdminCount
+            }
 
             console.log('cancelled count : '+cancelledCount);
             if(cancelledByUserCount === orderData.products.length || cancelledCount === orderData.products.length){
@@ -658,6 +667,7 @@ const cancelOrder = async(req,res, next) => {
 
 
         // console.log(cancelledBy);
+        let refundAmount = 0;
         if(cancelledBy == 'user'){
 
             for (const pdt of orderData.products){
@@ -669,6 +679,7 @@ const cancelOrder = async(req,res, next) => {
                     pdt.status !== 'Returned'
                 ){
                     pdt.status = 'Cancelled'
+                    refundAmount = refundAmount + pdt.totalPrice
                     console.log('pdt.status set to Cancelled');
                 }
 
@@ -690,6 +701,7 @@ const cancelOrder = async(req,res, next) => {
                     pdt.status !== 'Returned'
                 ){
                     pdt.status = 'Cancelled By Admin'
+                    refundAmount = refundAmount + pdt.totalPrice
                     console.log('pdt.status set to Cancelled');
                 }
 
@@ -704,22 +716,7 @@ const cancelOrder = async(req,res, next) => {
 
         //Updating wallet if order not COD
         if(orderData.paymentMethod !== 'COD'){
-            const walletHistory = {
-                date: new Date(),
-                amount: orderData.totalPrice,
-                message: 'Refund of Order Cancellation'
-            }
-            await User.findByIdAndUpdate(
-                {_id: userId },
-                {
-                    $inc:{
-                        wallet: orderData.totalPrice
-                    },
-                    $push:{
-                        walletHistory
-                    }
-                }
-            )
+            await updateWallet(userId, refundAmount, 'Refund of Order Cancellation' )
         }
 
         if(cancelledBy == 'user'){
@@ -734,12 +731,35 @@ const cancelOrder = async(req,res, next) => {
     }
 }
 
+const updateWallet = async(userId, amount, message) => {
+
+    const walletHistory = {
+        date: new Date(),
+        amount,
+        message
+    }
+
+    await User.findByIdAndUpdate(
+        {_id: userId },
+        {
+            $inc:{
+                wallet: amount
+            },
+            $push:{
+                walletHistory
+            }
+        }
+    )
+}
+
 const cancelSinglePdt = async(req, res, next) => {
     try {
         const { orderId, pdtId } = req.params
         const { cancelledBy } = req.query
         const orderData = await Orders.findById({_id: orderId})
+        const userId = orderData.userId
         
+        let refundAmount;
         for( const pdt of orderData.products){
 
             if(pdt._id == pdtId){
@@ -749,6 +769,7 @@ const cancelSinglePdt = async(req, res, next) => {
                 }else if(cancelledBy == 'user'){
                     pdt.status = 'Cancelled'
                 }
+                refundAmount = pdt.totalPrice
 
                 break;
             }
@@ -756,6 +777,7 @@ const cancelSinglePdt = async(req, res, next) => {
 
         await orderData.save()
         await updateOrderStatus(orderId, next);
+        await updateWallet(userId, refundAmount, 'Refund of Order Cancellation')
 
         if(cancelledBy == 'admin'){
             res.redirect(`/admin/ordersList`)
@@ -821,10 +843,12 @@ const approveReturn = async(req,res,next) => {
 
         const orderData = await Orders.findById({ _id: orderId })
 
+        let refundAmount = 0;
         for (const pdt of orderData.products){
 
             if(pdt.status === 'Pending Return Approval' ){
                 pdt.status = 'Returned'
+                refundAmount = refundAmount + pdt.totalPrice
             }
         };
 
@@ -835,22 +859,23 @@ const approveReturn = async(req,res,next) => {
         const userId = orderData.userId;
 
         //Adding amount into users wallet
-        const walletHistory = {
-            date: new Date(),
-            amount: orderData.totalPrice,
-            message: 'Refund of Returned Order'
-        }
-        await User.findByIdAndUpdate(
-            {_id:userId},
-            {
-                $inc:{
-                    wallet: orderData.totalPrice
-                },
-                $push:{
-                    walletHistory
-                }
-            }
-        );
+        await updateWallet(userId, refundAmount, 'Refund of Returned Order')
+        // const walletHistory = {
+        //     date: new Date(),
+        //     amount: orderData.totalPrice,
+        //     message: 'Refund of Returned Order'
+        // }
+        // await User.findByIdAndUpdate(
+        //     {_id:userId},
+        //     {
+        //         $inc:{
+        //             wallet: orderData.totalPrice
+        //         },
+        //         $push:{
+        //             walletHistory
+        //         }
+        //     }
+        // );
 
         res.redirect('/admin/ordersList')
     } catch (error) {
@@ -863,16 +888,21 @@ const approveReturnForSinglePdt = async(req, res, next) => {
     try {
         const { orderId, pdtId } = req.params
         const orderData = await Orders.findById({_id: orderId})
-        
+        const userId = orderData.userId;
+
+        let refundAmount;
         for( const pdt of orderData.products){
             if(pdt._id == pdtId){
                 pdt.status = 'Returned'
+                refundAmount = pdt.totalPrice;
                 break;
             }
         }
 
         await orderData.save()
         await updateOrderStatus(orderId, next);
+        await updateWallet(userId, refundAmount, 'Refund of Retrned Product')
+
 
         res.redirect(`/admin/ordersList`)
 

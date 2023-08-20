@@ -95,95 +95,95 @@ const orderSchema = mongoose.Schema({
 })
 
 
-const updateOrderStatus = async function (next) {
-    try {
+// const updateOrderStatus = async function (next) {
+//     try {
         
-        // const isProductStatusModified = this.products.some((pdt, i) => {
-        //     return this.isModified(`products.${i}.status`)
-        // })
+//         // const isProductStatusModified = this.products.some((pdt, i) => {
+//         //     return this.isModified(`products.${i}.status`)
+//         // })
 
-        console.log('isProductStatusModified : '+this.isModified('products'));
+//         console.log('isProductStatusModified : '+this.isModified('products'));
 
-        if(this.isModified('products')){
-            const statusCounts = await this.model('Orders').aggregate([
-                { $match: { _id: this._id } },
-                { $unwind: '$products' },
-                {
-                    $group: {
-                        _id: '$products.status',
-                        count: { $sum: 1 },
-                    },
-                },
-            ]);
+//         if(this.isModified('products')){
+//             const statusCounts = await this.model('Orders').aggregate([
+//                 { $match: { _id: this._id } },
+//                 { $unwind: '$products' },
+//                 {
+//                     $group: {
+//                         _id: '$products.status',
+//                         count: { $sum: 1 },
+//                     },
+//                 },
+//             ]);
 
-            console.log(statusCounts);
+//             console.log(statusCounts);
 
-            const isOrderConfirmedExists = statusCounts.some(status => status._id === 'Order Confirmed');
-            console.log('isorderconfiremd : '+isOrderConfirmedExists);
-            if(isOrderConfirmedExists){
-                this.status = 'Order Confirmed'
-                return
-            }
+//             const isOrderConfirmedExists = statusCounts.some(status => status._id === 'Order Confirmed');
+//             console.log('isorderconfiremd : '+isOrderConfirmedExists);
+//             if(isOrderConfirmedExists){
+//                 this.status = 'Order Confirmed'
+//                 return
+//             }
             
-            const isShippedExists = statusCounts.some(status => status._id === 'Shipped');
-            console.log('isShippedExists : '+isShippedExists);
-            if(isShippedExists){
-                this.status = 'Shipped'
-                await userDara.save()
-                return
-            }
+//             const isShippedExists = statusCounts.some(status => status._id === 'Shipped');
+//             console.log('isShippedExists : '+isShippedExists);
+//             if(isShippedExists){
+//                 this.status = 'Shipped'
+//                 await userDara.save()
+//                 return
+//             }
     
-            const isOutForDeliveryExists = statusCounts.some(status => status._id === 'Out For Delivery');
-            console.log('isout for delivereyExists : '+isOutForDeliveryExists);
+//             const isOutForDeliveryExists = statusCounts.some(status => status._id === 'Out For Delivery');
+//             console.log('isout for delivereyExists : '+isOutForDeliveryExists);
     
-            if(isOutForDeliveryExists){
-                this.status = 'Out For Delivery'
-                return
-            }
+//             if(isOutForDeliveryExists){
+//                 this.status = 'Out For Delivery'
+//                 return
+//             }
     
-            const isDeliveredExists = statusCounts.some(status => status._id === 'Delivered');
+//             const isDeliveredExists = statusCounts.some(status => status._id === 'Delivered');
     
-            if(isDeliveredExists){
-                this.status = 'Delivered'
-                return
-            }
+//             if(isDeliveredExists){
+//                 this.status = 'Delivered'
+//                 return
+//             }
     
-            const cancelledByUserCount = statusCounts.find((item) => item._id === 'Cancelled')?.count || 0;
-            const cancelledByAdminCount = statusCounts.find((item) => item._id === 'Cancelled By Admin')?.count || 0;
-            const cancelledCount = cancelledByUserCount + cancelledByAdminCount;
-            console.log('cancelled count : '+cancelledCount);
-            if(cancelledByUserCount === this.products.length || cancelledCount === this.products.length){
-                this.status = 'Cancelled'
-                return;
-            }
+//             const cancelledByUserCount = statusCounts.find((item) => item._id === 'Cancelled')?.count || 0;
+//             const cancelledByAdminCount = statusCounts.find((item) => item._id === 'Cancelled By Admin')?.count || 0;
+//             const cancelledCount = cancelledByUserCount + cancelledByAdminCount;
+//             console.log('cancelled count : '+cancelledCount);
+//             if(cancelledByUserCount === this.products.length || cancelledCount === this.products.length){
+//                 this.status = 'Cancelled'
+//                 return;
+//             }
             
-            if(cancelledByAdminCount === this.products.length){
-                this.status = 'Cancelled By Admin'
-                return;
-            }
+//             if(cancelledByAdminCount === this.products.length){
+//                 this.status = 'Cancelled By Admin'
+//                 return;
+//             }
             
-            const returnApprovalCount = statusCounts.find((item) => item._id === 'Pending Return Approval')?.count || 0;
-            const returnedCount = statusCounts.find((item) => item._id === 'Retruned')?.count || 0;
+//             const returnApprovalCount = statusCounts.find((item) => item._id === 'Pending Return Approval')?.count || 0;
+//             const returnedCount = statusCounts.find((item) => item._id === 'Retruned')?.count || 0;
     
-            if( cancelledCount + returnApprovalCount + returnedCount === this.products.length){
-                this.status = 'Pending Return Approval'
-                return;
-            }
+//             if( cancelledCount + returnApprovalCount + returnedCount === this.products.length){
+//                 this.status = 'Pending Return Approval'
+//                 return;
+//             }
     
-            if( cancelledCount + returnedCount === this.products.length){
-                this.status = 'Returned'
-                return;
-            }
+//             if( cancelledCount + returnedCount === this.products.length){
+//                 this.status = 'Returned'
+//                 return;
+//             }
 
-            console.log('oops there is an error, function returned anywhere, from orderModel')
-        }
+//             console.log('oops there is an error, function returned anywhere, from orderModel')
+//         }
 
-    } catch (error) {
-        next(error)
-    }
-}
+//     } catch (error) {
+//         next(error)
+//     }
+// }
 
-// orderSchema.post('save', updateOrderStatus )
+// // orderSchema.post('save', updateOrderStatus )
 
 
 module.exports = mongoose.model('Orders',orderSchema);

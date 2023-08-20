@@ -611,7 +611,8 @@ const loadWalletHistory = async(req, res, next) => {
     try {
         const userId = req.session.userId;
         const userData = await User.findById({_id: userId})
-        res.render('walletHistory',{isLoggedIn:true, userData, page:'Profile'})
+        const walletHistory = userData.walletHistory.reverse()
+        res.render('walletHistory',{isLoggedIn:true, userData,walletHistory, page:'Profile'})
     } catch (error) {
         next(error)
     }
