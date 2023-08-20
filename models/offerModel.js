@@ -26,13 +26,4 @@ const offerSchema = mongoose.Schema({
     timestamps: true
 })
 
-// offerSchema.post ??
-// offerSchema.pre('save', function(next){
-//     const currentDate = new Date();
-//     if(this.expiryDate <= currentDate){
-//       this.status = 'Expired';
-//     }
-//     next();
-// });
-
 module.exports = mongoose.model('Offers',offerSchema)

@@ -34,41 +34,9 @@ admin_route.get('/users/block/:id',adminCtrl.blockUser)
 //Category Handling Routes
 admin_route.get('/categories',categoryCtrl.loadCategories)
 admin_route.post('/categories',categoryCtrl.addCategory);
-admin_route.post('/categories/edit',upload.single('categoryImage'),async(req, res) => {
-    try {
-        const { x, y, width, height } = req.body; // Cropping parameters from the front-end
-
-        console.log(req);
-        console.log('x : '+x);
-        console.log('parsed x : '+parseInt(x));
-
-        console.log(req.file);
-        const imagePath = req.file.path
-
-        console.log('imagePath : '+imagePath);
-        console.log(x, y, width, height);
-
-        await sharp(imagePath)
-            .extract({ 
-                left: parseInt(x), 
-                top: parseInt(y), 
-                width: parseInt(width), 
-                height: parseInt(height)
-            })
-            .toFile('/categoryImages');
-
-        res.send('Image cropped and saved.');
-    } catch (error) {
-        console.log(error);
-    }
-},categoryCtrl.editCategory)
+admin_route.post('/categories/edit',upload.single('categoryImage'),categoryCtrl.editCategory)
 admin_route.get('/categories/list/:id',categoryCtrl.listCategory)
 
-//Category Size Handling Routes
-// admin_route.get('/categories/size-chart/:id',categoryCtrl.loadSizeChart)
-// admin_route.post('/categories/size-chart/add-size',categoryCtrl.addSize)
-// admin_route.post('/categories/size/edit',categoryCtrl.editSize)
-// admin_route.get('/categories/size/delete/:id',categoryCtrl.deleteSize)
 
 //Product Handling Routes
 admin_route.get('/products',productCtrl.loadProduct)
@@ -112,3 +80,13 @@ admin_route.post('/applyOfferToProduct',productCtrl.applyProductOffer)
 admin_route.post('/removeProductOffer/:productId',productCtrl.removeProductOffer)
 
 module.exports = admin_route;
+
+
+
+
+
+//Category Size Handling Routes
+// admin_route.get('/categories/size-chart/:id',categoryCtrl.loadSizeChart)
+// admin_route.post('/categories/size-chart/add-size',categoryCtrl.addSize)
+// admin_route.post('/categories/size/edit',categoryCtrl.editSize)
+// admin_route.get('/categories/size/delete/:id',categoryCtrl.deleteSize)

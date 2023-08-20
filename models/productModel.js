@@ -75,23 +75,4 @@ const productsSchema = mongoose.Schema({
 })
 
 
-// Shared function to calculate and update totalRating
-// const updateTotalRating = async function () {
-//     const docToUpdate = await this.model.findOne(this.getQuery());
-
-//     if (docToUpdate) {
-//         const reviews = docToUpdate.reviews || [];
-//         const totalRating = reviews.reduce((sum, review) => sum + review.rating, 0) / reviews.length || 0;
-
-//         await this.updateOne({ totalRating });
-//     }
-// };
-
-// Use pre hooks for different update methods and call the shared function
-// productsSchema.pre('updateOne', updateTotalRating);
-// productsSchema.pre('findByIdAndUpdate', updateTotalRating);
-// productsSchema.pre('findOneAndUpdate', updateTotalRating);
-// Add more update methods if needed
-
-
 module.exports = mongoose.model('Products',productsSchema)

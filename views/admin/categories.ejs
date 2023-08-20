@@ -20,12 +20,13 @@
                 <input id="newCatName" class="" type="text" name="categoryName" placeholder="Category Name">
                 <button type="submit" class="btn bg-gradient-dark me-3" onclick="return validateCategory()">Add</button>
               </form>
+              
             </div>
           </div>
           <div class="card-body px-0 pb-2">
             <div class="table-responsive p-3">
 
-              <table class="table align-items-center table-striped table-bordered mb-0" id="sortTable">
+              <table class="table align-items-center  mb-0" id="sortTable">
 
                 <thead>
                   <tr>
@@ -67,7 +68,7 @@
                                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                             </div>
                                             <div class="modal-body">
-                                                <form  enctype="multipart/form-data" >
+                                                <form action="/admin/categories/edit" method="post"  enctype="multipart/form-data" >
                                                     <input id="catID" value="" type="hidden" name="categoryId">
                                                     <div>
                                                       <img height="300px" width="300px" src="" id="catImgPreview" alt="Category image preview">
@@ -233,66 +234,66 @@
     })
 </script>
 <script>
-    const imageInput = document.getElementById('categoryImage');
-    const imagePreview = document.getElementById('catImgPreview');
-    const cropButton = document.getElementById('editSubmitBTN');
-    let cropper;
+    // const imageInput = document.getElementById('categoryImage');
+    // const imagePreview = document.getElementById('catImgPreview');
+    // const cropButton = document.getElementById('editSubmitBTN');
+    // let cropper;
 
-    imageInput.addEventListener('change', (e) => {
-        const file = e.target.files[0];
-        const reader = new FileReader();
+    // imageInput.addEventListener('change', (e) => {
+    //     const file = e.target.files[0];
+    //     const reader = new FileReader();
 
-        reader.onload = (event) => {
-            imagePreview.src = event.target.result;
-            cropper = new Cropper(imagePreview, {
-                aspectRatio: 1, // Adjust the aspect ratio as needed
-                viewMode: 2,
-            });
-        };
+    //     reader.onload = (event) => {
+    //         imagePreview.src = event.target.result;
+    //         cropper = new Cropper(imagePreview, {
+    //             aspectRatio: 1, // Adjust the aspect ratio as needed
+    //             viewMode: 2,
+    //         });
+    //     };
 
-        reader.readAsDataURL(file);
-    });
+    //     reader.readAsDataURL(file);
+    // });
 
-    cropButton.addEventListener('click', () => {
+    // cropButton.addEventListener('click', () => {
 
-        const categoryId = document.getElementById('catID').value
-        const categoryName = document.getElementById('catName').value
-        const croppedData = cropper.getData();
+    //     const categoryId = document.getElementById('catID').value
+    //     const categoryName = document.getElementById('catName').value
+    //     const croppedData = cropper.getData();
 
-        const formData = new FormData();
-        formData.append('x', croppedData.x);
-        formData.append('y', croppedData.y);
-        formData.append('width', croppedData.width);
-        formData.append('height', croppedData.height);
-        formData.append('categoryId', categoryId);
-        formData.append('categoryName', categoryName);
+    //     const formData = new FormData();
+    //     formData.append('x', croppedData.x);
+    //     formData.append('y', croppedData.y);
+    //     formData.append('width', croppedData.width);
+    //     formData.append('height', croppedData.height);
+    //     formData.append('categoryId', categoryId);
+    //     formData.append('categoryName', categoryName);
 
-        console.log(croppedData);
-        console.log(croppedData.x);
-        console.log(croppedData.y);
+    //     console.log(croppedData);
+    //     console.log(croppedData.x);
+    //     console.log(croppedData.y);
 
-        $.ajax({
-          url: '/admin/categories/edit',
-          method: 'post',
-          data: formData,
-          processData: false, // Prevent jQuery from processing the data
-          contentType: false, // Let the browser set the content type
+    //     $.ajax({
+    //       url: '/admin/categories/edit',
+    //       method: 'post',
+    //       data: formData,
+    //       processData: false, // Prevent jQuery from processing the data
+    //       contentType: false, // Let the browser set the content type
 
-          // data:{
-          //   x: croppedData.x, 
-          //   y: croppedData.y, 
-          //   width: croppedData.width, 
-          //   height: croppedData.height, 
-          //   categoryId,
-          //   categoryName
-          // },
+    //       // data:{
+    //       //   x: croppedData.x, 
+    //       //   y: croppedData.y, 
+    //       //   width: croppedData.width, 
+    //       //   height: croppedData.height, 
+    //       //   categoryId,
+    //       //   categoryName
+    //       // },
 
-          success: (res) => {
-            console.log('on success of ajax');
-          }
+    //       success: (res) => {
+    //         console.log('on success of ajax');
+    //       }
           
-        })
-    });
+    //     })
+    // });
 
 </script>
 
