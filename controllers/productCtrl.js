@@ -22,7 +22,7 @@ const loadProduct = async( req, res, next) => {
 
 const loadAddProduct = async( req, res, next) => {
     try {
-        const categories = await Categories.find({})
+        const categories = await Categories.find({ isListed: true })
         res.render('addProduct',{categories, page:'Products'})
     } catch (error) {
                 next(error);
@@ -69,7 +69,7 @@ const loadEditProduct = async(req, res ,next) => {
     try {
         const id = req.params.id;
         const pdtData = await Products.findById({_id:id}).populate('category')
-        const catData = await Categories.find({})
+        const catData = await Categories.find({ isListed: true })
         // console.log(pdtData);
         // console.log(catData);
         res.render('editProduct',{pdtData, catData, page: 'Products'})
