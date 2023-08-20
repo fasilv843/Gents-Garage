@@ -6,6 +6,7 @@ const Coupons = require('../models/couponModel')
 require('dotenv').config()
 const Razorpay = require('razorpay')
 
+
 var instance = new Razorpay({
     key_id: process.env.KEY_ID,
     key_secret:  process.env.KEY_SECRET,
@@ -380,12 +381,12 @@ const loadMyOrders = async(req, res, next) => {
 
 const loadViewOrderDetails = async(req, res, next) => {
     try {
-        console.log('loaded view order details page');
+        // console.log('loaded view order details page');
         const orderId = req.params.orderId;
         const userId = req.session.userId;
 
         const orderData = await Orders.findById({_id:orderId}).populate('products.productId')
-        console.log(orderData);
+        // console.log(orderData);
 
         let status;
         switch(orderData.status){
@@ -425,7 +426,7 @@ const loadViewOrderDetails = async(req, res, next) => {
 const loadOrderSuccess = async(req, res, next) => {
     try {
         const result = req.query.result
-        console.log('loaded Order Success');
+        // console.log('loaded Order Success');
         const isLoggedIn = Boolean(req.session.userId)
 
         res.render('orderSuccess',{isLoggedIn, result})
@@ -442,14 +443,14 @@ const loadOrdersList = async(req, res, next) => {
             pageNum = parseInt(req.query.pageNum) 
         }
 
-        console.log(pageNum);
+        // console.log(pageNum);
 
         let limit = 10;
         if(req.query.limit){
             limit = parseInt(req.query.limit);
         }
 
-        console.log(limit);
+        // console.log(limit);
 
         const totalOrderCount = await Orders.find({}).count()
         let pageCount = Math.ceil( totalOrderCount / limit)
@@ -465,22 +466,26 @@ const loadOrdersList = async(req, res, next) => {
 
 const changeOrderStatus = async(req,res, next) => {
     try {
-        console.log('loaded change order status');
+        // console.log('loaded change order status');
         const orderId = req.body.orderId
         const status = req.body.status
+        const orderData = await Orders.findById({_id: orderId})
+        // console.log(status);
+        for (const pdt of orderData.products){
 
-        console.log(status);
-
-        await Orders.findByIdAndUpdate(
-            { _id: orderId },
-            {
-                $set:{
-                    status
-                }
+            if(pdt.status !== 'Delivered' && 
+                pdt.status !== 'Pending Return Approval' &&
+                pdt.status !== 'Cancelled' && 
+                pdt.status !== 'Cancelled By Admin' && 
+                pdt.status !== 'Returned'
+            ){
+                pdt.status = status
             }
-        );
 
-        updateEachPdtStatus(orderId, status, next)
+        };
+        console.log('orderData saving');
+        await orderData.save();
+        await updateOrderStatus(orderId, next);
 
         res.redirect('/admin/ordersList')
 
@@ -489,42 +494,154 @@ const changeOrderStatus = async(req,res, next) => {
     }
 }
 
-const updateEachPdtStatus = async(orderId, status, next) => {
+
+const updateOrderStatus = async function (orderId, next) {
     try {
-        const orderData = await Orders.findById({_id:orderId});
-        if( orderData.status !== 'Cancelled' && orderData.status !== 'Cancelled By Admin' && orderData.status !== 'Returned' ){
 
-            if(status == 'Cancelled'|| status == 'Cancelled By Admin'){
-                if(orderData.status !== 'Delivered' && orderData.status !== 'Pending Return Approval'){
-                    update()
+            let statusCounts = []
+            const orderData = await Orders.findById({ _id: orderId })
+            orderData.products.forEach((pdt) => {
+                let eachStatusCount = {
+                    status: pdt.status,
+                    count: 1,
+                };
+            
+                let existingStatusIndex = statusCounts.findIndex(
+                    (item) => item.status === pdt.status
+                );
+            
+                if (existingStatusIndex !== -1) {
+                    // Increment the count of an existing status
+                    statusCounts[existingStatusIndex].count += 1;
+                } else {
+                    statusCounts.push(eachStatusCount);
                 }
+            });
+
+            console.log(statusCounts);
+
+            if(statusCounts.length === 1){
+                console.log('only one status exist');
+                orderData.status = statusCounts[0].status
+                await orderData.save()
+                return
             }
 
-            if(status == 'Pending Return Approval'){
-                if(orderData.status == 'Delivered'){
-                    update()
+            let isOrderConfirmedExists = false;
+            let isShippedExists = false;
+            let isOutForDeliveryExists = false;
+            let isDeliveredExists = false;
+            let cancelledByUserCount; 
+            let cancelledByAdminCount;
+            let returnApprovalCount;
+            let returnedCount;
+            statusCounts.forEach((item) => {
+
+                if(item.status === 'Order Confimed'){
+                    isOrderConfirmedExists = true
                 }
+
+                if(item.status === 'Shipped'){
+                    isShippedExists = true
+                }
+
+                if(item.status === 'Out For Delivery'){
+                    isOutForDeliveryExists = true
+                }
+
+                if(item.status === 'Delivered'){
+                    isDeliveredExists = true
+                }
+
+                if(item.status === 'Cancelled'){
+                    cancelledByUserCount = item.count
+                }
+
+                if(item.status === 'Cancelled By Admin'){
+                    cancelledByAdminCount = item.count
+                }
+
+                if(item.status === 'Pending Return Approval'){
+                    returnApprovalCount = item.count
+                }
+
+                if(item.status === 'Returned'){
+                    returnedCount = item.count
+                }
+                
+            });
+
+            console.log('isorderconfiremd : '+isOrderConfirmedExists);
+
+            if(isOrderConfirmedExists){
+                orderData.status = 'Order Confirmed'
+                console.log('orderData status set to Order Confirmed');
+                await orderData.save()
+                return
+            }
+            
+            console.log('isShippedExists : '+isShippedExists);
+            if(isShippedExists){
+                orderData.status = 'Shipped'
+                console.log('orderData status set to shipped');
+                await orderData.save()
+                return
+            }
+    
+            console.log('isout for delivereyExists : '+isOutForDeliveryExists);
+    
+            if(isOutForDeliveryExists){
+                orderData.status = 'Out For Delivery'
+                console.log('orderData status set to Out for delivery');
+                await orderData.save()
+                return
+            }
+    
+    
+            if(isDeliveredExists){
+                orderData.status = 'Delivered'
+                console.log('orderData status set to Delivered');
+                await orderData.save()
+                return
+            }
+    
+
+            const cancelledCount = cancelledByUserCount + cancelledByAdminCount;
+
+            console.log('cancelled count : '+cancelledCount);
+            if(cancelledByUserCount === orderData.products.length || cancelledCount === orderData.products.length){
+                orderData.status = 'Cancelled'
+                console.log('orderData status set to Cancelled');
+                await orderData.save()
+                return;
+            }
+            
+            if(cancelledByAdminCount === orderData.products.length){
+                orderData.status = 'Cancelled By Admin'
+                console.log('orderData status set to Cancelled By Admin');
+                await orderData.save()
+                return;
             }
 
-            if(status == 'Returned'){
-                if(orderData.status == 'Pending Return Approval'){
-                    update()
-                }
+            console.log('returned count : '+returnedCount);
+            console.log('return approval count : '+returnApprovalCount);
+
+            if( cancelledCount + returnApprovalCount + returnedCount === orderData.products.length){
+                orderData.status = 'Pending Return Approval'
+                console.log('orderData status set to Pending Return Approval');
+                await orderData.save()
+                return;
+            }
+    
+            if( cancelledCount + returnedCount === orderData.products.length){
+                orderData.status = 'Returned'
+                console.log('orderData status set to Returned');
+                await orderData.save()
+                return;
             }
 
-            if( status == 'Shipped' || status == 'Out For Delivery' || status == 'Delivered' ){
-                if(orderData.status == 'Order Confirmed' || orderData.status == 'Shipped' || orderData.status == 'Out For Delivery'){
-                    update()
-                }
-            }
-
-            function update(orderData, status){
-                for (const pdt of orderData.products){
-                    pdt.status = status;
-                }
-            }
-
-        }
+            console.log('oops there is an error, function returned anywhere, from orderModel')
+        // }
 
     } catch (error) {
         next(error)
@@ -534,40 +651,56 @@ const updateEachPdtStatus = async(orderId, status, next) => {
 const cancelOrder = async(req,res, next) => {
     try {
         const orderId = req.params.orderId
+        console.log('typeof orderId : '+typeof orderId);
         const cancelledBy = req.query.cancelledBy
         const orderData = await Orders.findById({_id:orderId})
         const userId = orderData.userId
 
 
-        console.log(cancelledBy);
+        // console.log(cancelledBy);
         if(cancelledBy == 'user'){
 
-            await Orders.findByIdAndUpdate(
-                {_id: orderId},
-                {
-                    $set:{
-                        status: 'Cancelled'
-                    }
-                }
-            );
+            for (const pdt of orderData.products){
 
-            updateEachPdtStatus(orderId, 'Cancelled', next)
+                if(pdt.status !== 'Delivered' && 
+                    pdt.status !== 'Pending Return Approval' &&
+                    pdt.status !== 'Cancelled' && 
+                    pdt.status !== 'Cancelled By Admin' && 
+                    pdt.status !== 'Returned'
+                ){
+                    pdt.status = 'Cancelled'
+                    console.log('pdt.status set to Cancelled');
+                }
+
+            };
+            console.log('orderData saving');
+            await orderData.save();
+            await updateOrderStatus(orderId, next);
+            console.log('updateOrderStatus function executed');
 
 
         }else if(cancelledBy == 'admin'){
 
-            await Orders.findByIdAndUpdate(
-                {_id: orderId},
-                {
-                    $set:{
-                        status: 'Cancelled By Admin'
-                    }
-                }
-            );
+            for (const pdt of orderData.products){
 
-            updateEachPdtStatus(orderId, 'Cancelled By Admin', next)
+                if(pdt.status !== 'Delivered' && 
+                    pdt.status !== 'Pending Return Approval' &&
+                    pdt.status !== 'Cancelled' && 
+                    pdt.status !== 'Cancelled By Admin' && 
+                    pdt.status !== 'Returned'
+                ){
+                    pdt.status = 'Cancelled By Admin'
+                    console.log('pdt.status set to Cancelled');
+                }
+
+            };
 
         }
+
+        console.log('orderData saving');
+        await orderData.save();
+        await updateOrderStatus(orderId, next);
+        console.log('updateOrderStatus function executed');
 
         //Updating wallet if order not COD
         if(orderData.paymentMethod !== 'COD'){
@@ -590,6 +723,7 @@ const cancelOrder = async(req,res, next) => {
         }
 
         if(cancelledBy == 'user'){
+            console.log('redirecting to view order details');
             res.redirect(`/viewOrderDetails/${orderId}`)
         }else if(cancelledBy == 'admin'){
             res.redirect('/admin/ordersList')
@@ -621,6 +755,7 @@ const cancelSinglePdt = async(req, res, next) => {
         }
 
         await orderData.save()
+        await updateOrderStatus(orderId, next);
 
         if(cancelledBy == 'admin'){
             res.redirect(`/admin/ordersList`)
@@ -638,17 +773,17 @@ const returnOrder = async(req, res, next) => {
     try {
 
         const orderId = req.params.orderId
+        const orderData = await Orders.findById({ _id: orderId })
 
-        await Orders.findByIdAndUpdate(
-            {_id: orderId},
-            {
-                $set:{
-                    status: 'Pending Return Approval'
-                }
+        for (const pdt of orderData.products){
+
+            if(pdt.status === 'Delivered' ){
+                pdt.status = 'Pending Return Approval'
             }
-        );
+        };
 
-        updateEachPdtStatus(orderId, 'Pending Return Approval', next)
+        await orderData.save()
+        await updateOrderStatus(orderId, next);
 
         
         res.redirect(`/viewOrderDetails/${orderId}`)
@@ -671,6 +806,7 @@ const returnSinglePdt = async(req, res, next) => {
         }
 
         await orderData.save()
+        await updateOrderStatus(orderId, next);
 
         res.redirect(`/viewOrderDetails/${orderId}`)
 
@@ -683,17 +819,17 @@ const approveReturn = async(req,res,next) => {
     try {
         const orderId = req.params.orderId;
 
-        //Changing status into Returned
-        const orderData = await Orders.findByIdAndUpdate(
-            {_id:orderId},
-            {
-                $set:{
-                    status: 'Returned'
-                }
-            }
-        );
+        const orderData = await Orders.findById({ _id: orderId })
 
-        updateEachPdtStatus(orderId, 'Returned', next)
+        for (const pdt of orderData.products){
+
+            if(pdt.status === 'Pending Return Approval' ){
+                pdt.status = 'Returned'
+            }
+        };
+
+        await orderData.save()
+        await updateOrderStatus(orderId, next);
 
 
         const userId = orderData.userId;
@@ -736,6 +872,7 @@ const approveReturnForSinglePdt = async(req, res, next) => {
         }
 
         await orderData.save()
+        await updateOrderStatus(orderId, next);
 
         res.redirect(`/admin/ordersList`)
 

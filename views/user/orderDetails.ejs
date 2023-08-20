@@ -244,18 +244,11 @@
                                                 %>
                                                 <a href="/cancelSinglePrdt/<%= orderData._id %>/<%= pdt._id %>?cancelledBy=user" class="btn btn-danger"> Cancel </a>
                                                 <%  
-                                            }else if(pdt.status == 'Pending Return Approval'){
+                                            }else if(pdt.status == 'Delivered'){
                                                 %>
                                                 <a href="/returnSinglePrdt/<%= orderData._id %>/<%= pdt._id %>" class="btn btn-warning"> Return </a>
                                                 <%  
                                             }
-                                            //else if( pdt.status == 'Cancelled' || pdt.status == 'Cancelled By Admin'){
-
-                                            //}else if( pdt.status == 'Pending Return Approval'){
-                                                
-                                            //}else if( pdt.status == 'Returned'){
-                                                
-                                            //}
                                             %>
                                         </div>
                                     </div>
