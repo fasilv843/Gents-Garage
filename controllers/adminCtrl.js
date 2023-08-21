@@ -3,7 +3,7 @@ const Admin = require('../models/adminModel')
 const User = require('../models/userModel');
 const Orders  = require('../models/orderModel');
 const { getMonthName } = require('../helpers/helpersFunctions')
-const { findIncome, countSales, formatNum } = require('../helpers/orderHelper')
+const { findIncome, countSales, findSalesData, findSalesDataOfYear, findSalesDataOfMonth, formatNum } = require('../helpers/orderHelper')
 
 const loadDashboard = async(req,res, next) => {
     try {
@@ -33,6 +33,19 @@ const loadDashboard = async(req,res, next) => {
             salesYear = parseInt(req.query.salesYear)
         }
 
+        if(req.query.year){
+            salesYear = parseInt(req.query.year)
+            displayValue = req.query.year
+            xDisplayValue = 'Months'
+        }
+
+        let monthName = ''
+        if(req.query.month){
+            salesMonth = 'Weeks',
+            monthName = getMonthName(req.query.month)
+            displayValue = `${salesYear} - ${monthName}`
+        }
+
         const totalYears = await Orders.aggregate([
             { $group: { _id: { createdAt:{ $dateToString: {format: '%Y', date: '$createdAt'}}}}},
             { $sort: {'_id:createdAt': -1 }}
@@ -44,32 +57,62 @@ const loadDashboard = async(req,res, next) => {
             displayYears.push(year._id.createdAt)
         });
 
-        const orderData = await Orders.aggregate([
-            {
-                $match: {
-                    status: 'Delivered',
-                    createdAt: {
-                        $gte: new Date(`${salesYear}-01-01`),
-                        $lt: new Date(`${salesYear + 1}-01-01`)
-                    }
-                }
-            },
-            {
-                $group:{
-                    _id: { createdAt: { $dateToString: { format: '%m', date: '$createdAt'}}},
-                    sales: { $sum: '$totalPrice' }
-                }
-            },
-            {
-                $sort: { '_id.createdAt' : 1 }
-            }
-        ]);
+        let orderData;
+        if(req.query.year && req.query.month){
+            orderData = await findSalesDataOfMonth( salesYear, req.query.month )
+        }else if(req.query.year && !req.query.month){
+            orderData = await findSalesDataOfYear(salesYear)
+        }else{
+            orderData = await findSalesData()
+        }
+
+        console.log('orderData : \n\n');
+        console.log(orderData);
+
+        // const orderData = await Orders.aggregate([
+        //     {
+        //         $match: {
+        //             status: 'Delivered',
+        //             createdAt: {
+        //                 $gte: new Date(`${salesYear}-01-01`),
+        //                 $lt: new Date(`${salesYear + 1}-01-01`)
+        //             }
+        //         }
+        //     },
+            // {
+            //     $group:{
+            //         _id: { createdAt: { $dateToString: { format: '%m', date: '$createdAt'}}},
+            //         sales: { $sum: '$totalPrice' }
+            //     }
+            // },
+            // {
+            //     $sort: { '_id.createdAt' : 1 }
+            // }
+        // ]);
 
         let months = []
         let sales = []
 
-        orderData.forEach((month) => {months.push(getMonthName(month._id.createdAt))})
-        orderData.forEach((sale) => { sales.push(Math.round(sale.sales))})
+        if(req.query.year && req.query.month){
+
+            orderData.forEach((year) => { months.push(`Week ${year._id.createdAt}`) })
+            orderData.forEach((sale) => { sales.push(Math.round(sale.sales)) })
+
+        }else if(req.query.year && !req.query.month){
+
+            orderData.forEach((month) => {months.push(getMonthName(month._id.createdAt))})
+            orderData.forEach((sale) => { sales.push(Math.round(sale.sales))})
+
+        }else{
+
+            orderData.forEach((year) => { months.push(year._id.createdAt) })
+            orderData.forEach((sale) => { sales.push(Math.round(sale.sales)) })
+
+        }
+
+        console.log(months);
+        console.log(sales);
+
         let totalSales = sales.reduce((acc,curr) => acc += curr , 0)
 
         // category sales

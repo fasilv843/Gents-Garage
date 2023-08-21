@@ -1,5 +1,10 @@
 
 function getMonthName(monthNumber) {
+
+    if(typeof monthNumber === 'string'){
+        monthNumber = parseInt(monthNumber)
+    }
+
     if (monthNumber < 1 || monthNumber > 12) {
         return "Invalid month number";
     }
@@ -8,6 +13,7 @@ function getMonthName(monthNumber) {
         "January", "February", "March", "April", "May", "June",
         "July", "August", "September", "October", "November", "December"
     ];
+    
     return monthNames[monthNumber - 1];
 }
 

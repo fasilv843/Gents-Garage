@@ -59,6 +59,114 @@ const countSales = async(startDate = new Date('1990-01-01'), endDate = new Date(
     }
 }
 
+const findSalesData = async(startDate = new Date('1990-01-01'), endDate = new Date()) => {
+    try {
+        const pipeline = [
+            {
+                $match: {
+                    status: 'Delivered',
+                    date: {
+                        $gte: startDate,
+                        $lt: endDate
+                    }
+                }
+            },
+            {
+                $group:{
+                    _id: { createdAt: { $dateToString: { format: '%Y', date: '$createdAt'}}},
+                    sales: { $sum: '$totalPrice' }
+                }
+            },
+            {
+                $sort: { '_id.createdAt' : 1 }
+            }
+        ]
+
+        const orderData = await Orders.aggregate(pipeline)
+        return orderData
+
+    } catch (error) {
+        throw error
+    }
+}
+
+const findSalesDataOfYear = async(year) => {
+    try {
+        
+        const pipeline = [
+            {
+                $match: {
+                    status: 'Delivered',
+                    date: {
+                        $gte: new Date(`${year}-01-01`),
+                        $lt: new Date(`${year + 1}-01-01`)
+                    }
+                }
+            },
+            {
+                $group:{
+                    _id: { createdAt: { $dateToString: { format: '%m', date: '$createdAt'}}},
+                    sales: { $sum: '$totalPrice' }
+                }
+            },
+            {
+                $sort: { '_id.createdAt' : 1 }
+            }
+        ]
+
+        const orderData = await Orders.aggregate(pipeline)
+        return orderData
+
+    } catch (error) {
+        throw error
+    }
+}
+
+const findSalesDataOfMonth = async(year, month) => {
+    try {
+
+        const firstDayOfMonth = new Date(year, month - 1, 1);
+        const lastDayOfMonth = new Date(year, month, 0);
+
+        const pipeline = [
+            {
+                $match: {
+                    status: 'Delivered',
+                    date: {
+                        $gte: firstDayOfMonth,
+                        $lt: lastDayOfMonth
+                    }
+                }
+            },
+            {
+                $addFields: {
+                    weekNumber: {
+                        $ceil: {
+                            $divide: [
+                                { $subtract: ["$createdAt", firstDayOfMonth] },
+                                604800000 // milliseconds in a week (7 days)
+                            ]
+                        }
+                    }
+                }
+            },
+            {
+                $group: {
+                    _id: { createdAt: "$weekNumber" }, // Group by week number
+                    sales: { $sum: '$totalPrice' }
+                }
+            },
+            { $sort: { '_id.createdAt': 1 } }
+        ]
+
+        const orderData = await Orders.aggregate(pipeline)
+        return orderData
+
+    } catch (error) {
+        throw error
+    }
+}
+
 const  formatNum = (num) => {
     if (num >= 10000000) {
         return (num / 10000000).toFixed(2) + ' Cr';
@@ -74,5 +182,8 @@ const  formatNum = (num) => {
 module.exports = {
     formatNum,
     findIncome,
-    countSales
+    countSales,
+    findSalesData,
+    findSalesDataOfYear,
+    findSalesDataOfMonth
 }

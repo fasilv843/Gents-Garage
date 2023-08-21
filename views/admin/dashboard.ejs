@@ -86,12 +86,13 @@
       <div class="row mt-4">
         <div class="monthlySales  col-12 col-lg-6">
             <div class="p-3 card h-100">
-                <span class="h4 text-center">Total Sales of <%= salesYear %> - ₹ <%=  totalSales %>
-                </span>
+                <!-- <span class="h4 text-center"> Total Sales of <%=// salesYear %> - ₹ <%=//  totalSales %> </span> -->
+                <span class="h4 text-center"> Total Sales</span>
 
                 <div class="filerByYear mt-2">
                     <form action="" method="get">
                         <div class="d-flex justify-content-between align-items-center">
+                            <span>Year: </span>
                             <select name="year" id="" class="form-control border border-2 mx-2 px-3">
                               <% 
                               displayYears.forEach( year => {
@@ -99,11 +100,37 @@
                                 %>
                                 <option class="" value="<%= year %>" <% if(salesYear == year ){ %> selected <%}%>> <%= year %> </option>
                                 <%
-                                } 
+                                }
                               })
                               %>
                             </select>
-                            <button class="btn btn-success text-nowrap mt-3" type="submit">Submit</button>
+
+                        </div>
+                        <div class="d-flex">
+                            <span>Month: </span> 
+                            <select name="month" id="monthofSale" class="form-control my-2 mt-2">
+                                <option value="">---Choose---</option>
+                                <option value="01">January</option>
+                                <option value="02">February</option>
+                                <option value="03">March</option>
+                                <option value="04">April</option>
+                                <option value="05">May</option>
+                                <option value="06">June</option>
+                                <option value="07">July</option>
+                                <option value="08">August</option>
+                                <option value="09">September</option>
+                                <option value="10">October</option>
+                                <option value="11">November</option>
+                                <option value="12">December</option>
+                            </select>
+                        </div>
+                        <div class="d-flex text-center justify-content-center">
+                            <div>
+                                <button class="btn btn-success text-nowrap mx-2" type="submit">Submit</button>
+                            </div>
+                            <div>
+                                <a href="/admin" class="btn btn-danger">Reset</a>
+                            </div>
                         </div>
                     </form>
                 </div>
