@@ -5,6 +5,7 @@ const Banners = require('../models/bannerModal')
 const bcrypt = require('bcrypt')
 const { sendVerifyMail } = require('../services/nodemailer')
 const { getOTP, getReferralCode, securePassword } = require('../helpers/generator')
+const { updateWallet } = require('../helpers/helpersFunctions')
 require('dotenv').config()
 const crypto = require('crypto')
 const Razorpay = require('razorpay')
@@ -132,20 +133,20 @@ const validateOTP = async(req,res, next) => {
                 if(isReferrerExist){
                     let referrerId = isReferrerExist._id;
 
+                    const walletHistory = {
+                        date: new Date(),
+                        amount: 100,
+                        message: 'Joining Bonus'
+                    }
+
                     newUserData = await new User({
                         fname, lname, email, mobile,
                         password:sPassword, referralCode,
-                        referredBy: referral, wallet: 100
+                        referredBy: referral, wallet: 100,
+                        walletHistory
                     }).save();
     
-                    await User.findByIdAndUpdate(
-                        {_id: referrerId},
-                        {
-                            $inc:{
-                                wallet : 100
-                            }
-                        }
-                    )
+                    updateWallet(referrerId, 100, 'Refferal Reward')
                 }
 
             }else{

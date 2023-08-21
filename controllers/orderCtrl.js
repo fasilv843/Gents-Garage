@@ -5,6 +5,7 @@ const Orders = require('../models/orderModel');
 const Coupons = require('../models/couponModel')
 require('dotenv').config()
 const Razorpay = require('razorpay')
+const { updateWallet } = require('../helpers/helpersFunctions')
 
 
 var instance = new Razorpay({
@@ -729,27 +730,6 @@ const cancelOrder = async(req,res, next) => {
     } catch (error) {
                 next(error);
     }
-}
-
-const updateWallet = async(userId, amount, message) => {
-
-    const walletHistory = {
-        date: new Date(),
-        amount,
-        message
-    }
-
-    await User.findByIdAndUpdate(
-        {_id: userId },
-        {
-            $inc:{
-                wallet: amount
-            },
-            $push:{
-                walletHistory
-            }
-        }
-    )
 }
 
 const cancelSinglePdt = async(req, res, next) => {

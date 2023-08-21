@@ -1,3 +1,4 @@
+const User = require('../models/userModel')
 
 function getMonthName(monthNumber) {
 
@@ -17,4 +18,28 @@ function getMonthName(monthNumber) {
     return monthNames[monthNumber - 1];
 }
 
-module.exports = { getMonthName }
+const updateWallet = async(userId, amount, message) => {
+
+    const walletHistory = {
+        date: new Date(),
+        amount,
+        message
+    }
+
+    await User.findByIdAndUpdate(
+        {_id: userId },
+        {
+            $inc:{
+                wallet: amount
+            },
+            $push:{
+                walletHistory
+            }
+        }
+    )
+}
+
+module.exports = { 
+    getMonthName,
+    updateWallet
+}
