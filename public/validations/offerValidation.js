@@ -50,5 +50,5 @@ function validateExpiryDate(){
 }
 
 function validateOffer(){
-    return validateName() && validateDiscound() && validateStartingDate() && validateExpiryDate() && false
+    return validateName() && validateDiscound() && validateStartingDate() && validateExpiryDate()
 }

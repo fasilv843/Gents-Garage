@@ -81,7 +81,7 @@
                                          %>
                                            <a href="#cancelOfferModal" class="btn btn-danger modalBTN"  data-bs-toggle="modal" data-id="<%= offers[i]._id %>">Cancel</a>
                                          <%
-                                      }else{
+                                      }else if(offers[i].expiryDate > new Date() )  {
                                           %>
                                           <a href="#cancelOfferModal" class="btn btn-success modalBTN"  data-bs-toggle="modal" data-id="<%= offers[i]._id %>">Add</a>
                                           <%

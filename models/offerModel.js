@@ -19,6 +19,7 @@ const offerSchema = mongoose.Schema({
     },
     status: {
         type: String,
+        enum: ['Available','Starting Soon','Cancelled','Expired'],
         required: true
     }
 },
