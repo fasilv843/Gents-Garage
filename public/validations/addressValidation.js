@@ -9,7 +9,7 @@ const countryError = document.getElementById("countryErr")
 const pincodeError = document.getElementById("zipErr")
 const addressError = document.getElementById("addressErr")
 
-const nameRegex = /^[a-zA-Z]+(([',. -][a-zA-Z ])?[a-zA-Z])$/;
+const nameRegex = /^[a-zA-Z]+([',. -][a-zA-Z, ]*[a-zA-Z])?$/
 const emailRegex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/
 const mobileRegex = /^(\+\d{1,3}[- ]?)?\d{10}$/
 const pincodeRegex = /^[1-9][0-9]{5}$/
@@ -131,10 +131,7 @@ function validateAddress() {
         addressError.innerHTML = "address required!";
         return false;
     }
-    if (!address.match(nameRegex)) {
-        addressError.innerHTML = "No numbers allowed";
-        return false;
-    }
+
     addressError.innerHTML = "";
     return true;
 }
