@@ -1,10 +1,13 @@
 const codeError = document.getElementById('codeErr')
-const discountError = document.getElementById("discountErr")
+const discountAmountError = document.getElementById("discountAmountErr")
 const minPurchaseError = document.getElementById("minPurchaseErr")
+const maxDiscountAmountError = document.getElementById('maxDiscountAmountErr')
 const expiryDateError = document.getElementById("expiryDateErr")
 const descriptionError = document.getElementById("descriptionErr")
+const couponCountError = document.getElementById('couponCountErr')
 
-const codeRegex = /^[A-Z0-9]{5,15}$/
+
+const codeRegex = /^[A-Za-z0-9]{5,15}$/
 
 function validateCode(){
     const code = document.getElementById('code').value.trim()
@@ -22,20 +25,31 @@ function validateCode(){
 
 
 function validateDiscount(){
-    const discount = document.getElementById('discount').value
-    // if(discount === 0){
-    //     discountError.innerHTML = 'Discount percentage required'
-    //     return false
-    // }
+    const discount = document.getElementById('discountAmount').value
 
     if(discount <= 0){
-        discountError.innerHTML = 'Discount cannot be a negative number or zero'
+        discountAmountError.innerHTML = 'Discount cannot be a negative number or zero'
         return false
     }else if(discount > 90){
-        discountError.innerHTML = 'Upto 90% discount is possible'
+        discountAmountError.innerHTML = 'Upto 90% discount is possible'
         return false
     }
-    discountError.innerHTML = ''
+    discountAmountError.innerHTML = ''
+    return true
+}
+
+function validateMaxDiscount(){
+    const maxDiscount = document.getElementById('maxDiscountAmount').value
+
+    if(maxDiscount < 1000 ){
+        maxDiscountAmountError.innerHTML = 'Max Discount must be greater than 1000'
+        return false
+    }
+    if(maxDiscount >= 10000 ){
+        maxDiscountAmountError.innerHTML = 'Max Discount must be less than 10000'
+        return false
+    }
+    maxDiscountAmountError.innerHTML = ''
     return true
 }
 
@@ -79,10 +93,18 @@ function validateDescription(){
     return true
 }
 
-function validateCoupon(){
-    return validateCode() && validateDiscount() && validateMinPurchase() && validateExpiryDate() && validateDescription()
+function validateCouponCount(){
+    const couponCount = document.getElementById('couponCount').value
+
+    if(couponCount < 0 ){
+        couponCountError.innerHTML = 'Coupon Count cannot be a negative number'
+        return false
+    }
+
+    couponCountError.innerHTML = ''
+    return true
 }
 
-// function validateCoupon(){
-//     return false
-// }
+function validateCoupon(){
+    return validateCode() && validateDiscount() && validateMaxDiscount() && validateMinPurchase() && validateExpiryDate() && validateDescription() && validateCouponCount()
+}
