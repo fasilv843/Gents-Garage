@@ -192,7 +192,7 @@
                                         <div class="product__item__text">
                                             <h6><%= pdtsData[i].name %></h6>
                                             <% 
-                                            console.log(cart)
+                                            //console.log(cart)
                                             if(cart && cart.length && cart.includes(pdtsData[i]._id.toString())){
                                                 %>
                                                 <a href="/shoppingCart"  class="add-cart">Go to Cart</a>
@@ -205,6 +205,7 @@
 
 
                                             let currPrice;
+                                            //console.log(pdtsData[i].offer)
                                             if(pdtsData[i].offer && pdtsData[i].offer.status == 'Available'){
                                                 currPrice = pdtsData[i].offerPrice
                                             }else{

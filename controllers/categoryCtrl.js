@@ -119,6 +119,7 @@ const applyCategoryOffer = async(req, res, next) => {
                     {
                         $set:{
                             offerPrice,
+                            offerType: 'Offers',
                             offer: offerId,
                             offerAppliedBy: 'Category'
                         }
@@ -133,6 +134,7 @@ const applyCategoryOffer = async(req, res, next) => {
                     {
                         $set:{
                             offerPrice,
+                            offerType: 'Offers',
                             offer: offerId,
                             offerAppliedBy: 'Category'
                         }
@@ -172,6 +174,7 @@ const removeCategoryOffer = async(req, res, next) => {
             {
                 $unset:{
                     offer:'',
+                    offerType: '',
                     offerPrice:'',
                     offerAppliedBy:''
                 }
@@ -196,13 +199,6 @@ module.exports = {
     applyCategoryOffer,
     removeCategoryOffer
 }
-
-
-
-
-
-
-
 
 
 //This code i wrote when i included size for a specific category, 

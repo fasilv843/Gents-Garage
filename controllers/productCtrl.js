@@ -312,6 +312,9 @@ const loadShop = async(req,res, next) => {
 
         const categoryNames = await Categories.find({})
 
+        // console.log('Products \n\n');/////////////////////
+        // console.log(pdtsData);
+
         // console.log('categoryNames : \n\n'+categoryNames);
         const brands = await Products.aggregate([{
                 $group: {
@@ -537,6 +540,7 @@ const applyProductOffer = async(req, res, next) => {
             {
                 $set:{
                     offerPrice,
+                    offerType: 'Offers',
                     offer: offerId,
                     offerAppliedBy: 'Product'
                 }
@@ -558,6 +562,7 @@ const removeProductOffer = async(req, res, next) => {
             {
                 $unset:{
                     offer:'',
+                    offerType: '',
                     offerPrice:'',
                     offerAppliedBy:''
                 }

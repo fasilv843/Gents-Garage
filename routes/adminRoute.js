@@ -7,6 +7,7 @@ const orderCtrl = require('../controllers/orderCtrl')
 const couponCtrl = require('../controllers/couponCtrl')
 const bannerCtrl = require('../controllers/bannerCtrl')
 const offerCtrl = require('../controllers/offerCtrl')
+const brandOfferCtrl = require('../controllers/brandOfferCtrl')
 const upload = require('../config/multer');
 const { isAdminLoggedIn, isAdminLoggedOut } = require('../middleware/auth')
 
@@ -78,6 +79,13 @@ admin_route.post('/applyOfferToCategory',categoryCtrl.applyCategoryOffer)
 admin_route.post('/removeCategoryOffer/:catId',categoryCtrl.removeCategoryOffer)
 admin_route.post('/applyOfferToProduct',productCtrl.applyProductOffer)
 admin_route.post('/removeProductOffer/:productId',productCtrl.removeProductOffer)
+
+admin_route.get('/brandOffers',brandOfferCtrl.loadBrandOffersList)
+admin_route.get('/brandOffers/addBrandOffer',brandOfferCtrl.loadAddBrandOffer)
+admin_route.post('/brandOffers/addBrandOffer',brandOfferCtrl.postAddBrandOffer)
+admin_route.get('/brandOffers/editBrandOffer/:brandOfferId',brandOfferCtrl.loadEditBrandOffer)
+admin_route.post('/brandOffers/editBrandOffer/:brandOfferId',brandOfferCtrl.postEditBrandOffer)
+
 
 module.exports = admin_route;
 
