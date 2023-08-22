@@ -25,6 +25,8 @@
                 <thead>
                   <tr>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Offer Name</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Brand</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Category</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Discount %</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Expiry Date</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Status</th>
@@ -43,7 +45,14 @@
 
                                 <td class="align-middle text-center text-sm">
                                     <p class="text-xs font-weight-bold mb-0"><%= brandOffers[i].name %></p>
-                                    <p class="text-xs font-weight-bold mb-0"><%= brandOffers[i].brand %></p>
+                                </td>
+
+                                <td class="align-middle text-center text-sm">
+                                  <p class="text-xs font-weight-bold mb-0"><%= brandOffers[i].brand %></p>
+                                </td>
+
+                                <td class="align-middle text-center text-sm">
+                                  <p class="text-xs font-weight-bold mb-0"><%= brandOffers[i].categoryId.name %></p>
                                 </td>
 
                                 <td class="align-middle text-center text-sm">
@@ -52,19 +61,12 @@
 
                                 <td class="align-middle text-center text-sm">
                                     <% 
-                                    //const dds = brandOffers[i].startingDate.getDate();
-                                    //const mms = brandOffers[i].startingDate.getMonth() + 1;
-                                    //const yyyys = brandOffers[i].startingDate.getFullYear();
-                                    
-                                    //const startingDate = `${dds}-${mms}-${yyyys}`; 
-
                                     const dd = brandOffers[i].expiryDate.getDate();
                                     const mm = brandOffers[i].expiryDate.getMonth() + 1;
                                     const yyyy = brandOffers[i].expiryDate.getFullYear();
                                     
                                     const expiryDate = `${dd}-${mm}-${yyyy}`; 
                                     %>
-                                    <!-- <p class="text-xs font-weight-bold mb-0"><%=// startingDate %> to </p> -->
                                     <p class="text-xs font-weight-bold mb-0"><%= expiryDate %></p>
                                 </td>
 
@@ -80,11 +82,11 @@
                                     <% 
                                       if(brandOffers[i].status === 'Available' || brandOffers[i].status === 'Starting Soon'){
                                          %>
-                                           <a href="#cancelOfferModal" class="btn btn-danger modalBTN"  data-bs-toggle="modal" data-id="<%= brandOffers[i]._id %>">Cancel</a>
+                                           <a href="#cancelOfferModal" class="btn btn-danger modalBTN"  data-bs-toggle="modal" data-id="<%= brandOffers[i]._id %>">Cancel Offer</a>
                                          <%
                                       }else if(brandOffers[i].expiryDate > new Date() )  {
                                           %>
-                                          <a href="#cancelOfferModal" class="btn btn-success modalBTN"  data-bs-toggle="modal" data-id="<%= brandOffers[i]._id %>">Add</a>
+                                          <a href="#cancelOfferModal" class="btn btn-success modalBTN"  data-bs-toggle="modal" data-id="<%= brandOffers[i]._id %>">Apply Offer</a>
                                           <%
                                       }
                                     %>
@@ -141,7 +143,7 @@
 <script>
       $('.modalBTN').click( function () {
         var id = $(this).data('id');
-        var routeURL = '/admin/offers/cancelOffer/'+id
+        var routeURL = '/admin/brandOffers/cancelBrandOffer/'+id
         $(".modal-footer #confirmBTN").attr('href', routeURL);
     });
 </script>

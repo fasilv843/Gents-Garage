@@ -65,7 +65,7 @@
                                     if(categories && categories.length > 0){
                                         categories.forEach((cat) => {
                                             %>
-                                            <option value="<%= cat._id %>" <% if(cat._id == brandOffer.categoryId ){ %> selected <% } %>><%= cat.name %></option>
+                                            <option value="<%= cat._id %>" <% if(cat.name == brandOffer.categoryId.name ){ %> selected <% } %>><%= cat.name %></option>
                                             <% 
                                         })
                                     }else{

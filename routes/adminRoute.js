@@ -85,6 +85,7 @@ admin_route.get('/brandOffers/addBrandOffer',brandOfferCtrl.loadAddBrandOffer)
 admin_route.post('/brandOffers/addBrandOffer',brandOfferCtrl.postAddBrandOffer)
 admin_route.get('/brandOffers/editBrandOffer/:brandOfferId',brandOfferCtrl.loadEditBrandOffer)
 admin_route.post('/brandOffers/editBrandOffer/:brandOfferId',brandOfferCtrl.postEditBrandOffer)
+admin_route.get('/brandOffers/cancelBrandOffer/:brandOfferId',brandOfferCtrl.cancelBrandOffer)
 
 
 module.exports = admin_route;

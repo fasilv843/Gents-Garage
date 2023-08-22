@@ -4,7 +4,7 @@ const Categories = require('../models/categoryModel')
 
 const loadBrandOffersList = async(req, res, next) => {
     try {
-        const brandOffers = await BrandOffers.find()
+        const brandOffers = await BrandOffers.find().populate('categoryId')
         res.render('brandOffers',{ page: 'Brand Offers', brandOffers })
     } catch (error) {
         next(error)
@@ -95,7 +95,7 @@ const loadEditBrandOffer = async(req, res, next) => {
 
         brands = brands.map((brand) => brand._id)
 
-        const brandOffer = await BrandOffers.findById({ _id: brandOfferId });
+        const brandOffer = await BrandOffers.findById({ _id: brandOfferId }).populate('categoryId');
 
         res.render('editBrandOffer',{ page: 'Brand Offers', brandOffer, categories, brands })
     } catch (error) {
@@ -150,9 +150,61 @@ const postEditBrandOffer = async(req, res, next) => {
     }
 }
 
-const removeBrandOffer = async( req, res, next ) => {
+const cancelBrandOffer = async( req, res, next ) => {
     try {
         const { brandOfferId } = req.params
+        const brandOfferData = await BrandOffers.findById({_id:brandOfferId})
+
+        const products = await Products.find({ 
+            brand: brandOfferData.brand,
+            category: brandOfferData.categoryId
+        })
+
+        if(brandOfferData.status === 'Available'){
+            brandOfferData.status = 'Cancelled'
+
+            for (const pdt of products) {
+                await Products.updateOne(
+                    { _id: pdt._id },
+                    {
+                        $unset: {
+                            offer: '',
+                            offerType: '',
+                            offerPrice: '',
+                            offerAppliedBy: ''
+                        }
+                    }
+                );
+            }
+
+        }else if(brandOfferData.status === 'Cancelled'){
+
+            brandOfferData.status = 'Available';
+            
+            for (const pdt of products) {
+
+                const actualPrice = pdt.price - pdt.discountPrice;
+                const offerPrice = Math.round(actualPrice - ((actualPrice * brandOfferData.discount) / 100));
+
+                await Products.updateOne(
+                    { _id: pdt._id }, // Update criteria
+                    {
+                        $set: {
+                            offer: brandOfferId,
+                            offerType: 'BrandOffers',
+                            offerPrice,
+                            offerAppliedBy: 'Brand Offer'
+                        }
+                    }
+                );
+
+            }
+        }
+
+        await brandOfferData.save()
+
+        res.redirect('/admin/brandOffers')
+
     } catch (error) {
         next(error)
     }
@@ -163,5 +215,6 @@ module.exports = {
     loadAddBrandOffer,
     loadEditBrandOffer,
     postAddBrandOffer,
-    postEditBrandOffer
+    postEditBrandOffer,
+    cancelBrandOffer
 }
