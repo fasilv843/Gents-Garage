@@ -48,26 +48,29 @@ const postAddBrandOffer = async(req, res, next) => {
             status: 'Available'
         }).save()
 
-        const products = await Products.find(
-            {
-                brand, category
-            }
-        );
-
+        const products = await Products.find({ brand, category });
+        
         console.log(products);
+        console.log('brand offer id : ' + brandOfferData._id);
 
-        for(const pdt of products){
+        for (const pdt of products) {
 
             const actualPrice = pdt.price - pdt.discountPrice;
-            const offerPrice = Math.round( actualPrice - ( (actualPrice*discount)/100 ))
-
-            pdt.offer = brandOfferData._id;
-            pdt.offerType = 'BrandOffers';
-            pdt.offerPrice = offerPrice;
-            pdt.offerAppliedBy = 'Brand Offer';
-
+            const offerPrice = Math.round(actualPrice - ((actualPrice * discount) / 100));
+        
+            await Products.updateOne(
+                { _id: pdt._id }, // Update criteria
+                {
+                    $set: {
+                        offer: brandOfferData._id,
+                        offerType: 'BrandOffers',
+                        offerPrice,
+                        offerAppliedBy: 'Brand Offer'
+                    }
+                }
+            );
         }
-
+        
         res.redirect('/admin/brandOffers');
 
     } catch (error) {
@@ -118,24 +121,26 @@ const postEditBrandOffer = async(req, res, next) => {
             }
         );
 
-        const products = await Products.find(
-            {
-                brand, category
-            }
-        );
+        const products = await Products.find({ brand, category });
 
         console.log(products);
 
-        for(const pdt of products){
+        for (const pdt of products) {
 
             const actualPrice = pdt.price - pdt.discountPrice;
-            const offerPrice = Math.round( actualPrice - ( (actualPrice*discount)/100 ))
-
-            pdt.offer = brandOfferId;
-            pdt.offerType = 'BrandOffers';
-            pdt.offerPrice = offerPrice;
-            pdt.offerAppliedBy = 'Brand Offer';
-
+            const offerPrice = Math.round(actualPrice - ((actualPrice * discount) / 100));
+        
+            await Products.updateOne(
+                { _id: pdt._id }, // Update criteria
+                {
+                    $set: {
+                        offer: brandOfferId,
+                        offerType: 'BrandOffers',
+                        offerPrice,
+                        offerAppliedBy: 'Brand Offer'
+                    }
+                }
+            );
         }
 
         res.redirect('/admin/brandOffers')
