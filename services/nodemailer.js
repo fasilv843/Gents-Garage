@@ -39,7 +39,7 @@ const sendContactMail = async(name, userMail, subject, message) => {
             from: userMail,
             to: process.env.GMAIL,
             subject: subject,
-            html: `<h4>Hi I'm ${name}</h4> <br><br><p>${message}</p>`
+            html: `<h4>Hi I'm ${name}</h4><br><p>${message}</p>`
         }
 
         transporter.sendMail(mailOptions)

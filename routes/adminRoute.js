@@ -23,7 +23,7 @@ admin_route.post('/login', isAdminLoggedOut, adminCtrl.verifyAdminLogin);
 admin_route.post('/logout' ,adminCtrl.logoutAdmin)
 
 
-// admin_route.use('/', isAdminLoggedIn)
+admin_route.use('/', isAdminLoggedIn)
 
 //Admin Dashboard
 admin_route.get('/',adminCtrl.loadDashboard)
