@@ -681,6 +681,17 @@ const cancelOrder = async(req,res, next) => {
                 ){
                     pdt.status = 'Cancelled'
                     refundAmount = refundAmount + pdt.totalPrice
+
+                    //Incrementing Product Stock
+                    await Products.findByIdAndUpdate(
+                        {_id: pdt.productId},
+                        {
+                            $inc:{
+                                quantity: pdt.quantity
+                            }
+                        }
+                    );
+
                     console.log('pdt.status set to Cancelled');
                 }
 
@@ -703,6 +714,17 @@ const cancelOrder = async(req,res, next) => {
                 ){
                     pdt.status = 'Cancelled By Admin'
                     refundAmount = refundAmount + pdt.totalPrice
+
+                    //Incrementing Product Stock
+                    await Products.findByIdAndUpdate(
+                        {_id: pdt.productId},
+                        {
+                            $inc:{
+                                quantity: pdt.quantity
+                            }
+                        }
+                    );
+
                     console.log('pdt.status set to Cancelled');
                 }
 
@@ -749,7 +771,18 @@ const cancelSinglePdt = async(req, res, next) => {
                 }else if(cancelledBy == 'user'){
                     pdt.status = 'Cancelled'
                 }
+                
                 refundAmount = pdt.totalPrice
+
+                //Incrementing Product Stock
+                await Products.findByIdAndUpdate(
+                    {_id: pdt.productId},
+                    {
+                        $inc:{
+                            quantity: pdt.quantity
+                        }
+                    }
+                );
 
                 break;
             }
@@ -828,7 +861,19 @@ const approveReturn = async(req,res,next) => {
 
             if(pdt.status === 'Pending Return Approval' ){
                 pdt.status = 'Returned'
+
                 refundAmount = refundAmount + pdt.totalPrice
+
+                //Incrementing Product Stock
+                await Products.findByIdAndUpdate(
+                    {_id: pdt.productId},
+                    {
+                        $inc:{
+                            quantity: pdt.quantity
+                        }
+                    }
+                );
+
             }
         };
 
@@ -840,22 +885,6 @@ const approveReturn = async(req,res,next) => {
 
         //Adding amount into users wallet
         await updateWallet(userId, refundAmount, 'Refund of Returned Order')
-        // const walletHistory = {
-        //     date: new Date(),
-        //     amount: orderData.totalPrice,
-        //     message: 'Refund of Returned Order'
-        // }
-        // await User.findByIdAndUpdate(
-        //     {_id:userId},
-        //     {
-        //         $inc:{
-        //             wallet: orderData.totalPrice
-        //         },
-        //         $push:{
-        //             walletHistory
-        //         }
-        //     }
-        // );
 
         res.redirect('/admin/ordersList')
     } catch (error) {
@@ -873,8 +902,21 @@ const approveReturnForSinglePdt = async(req, res, next) => {
         let refundAmount;
         for( const pdt of orderData.products){
             if(pdt._id == pdtId){
+
                 pdt.status = 'Returned'
+
                 refundAmount = pdt.totalPrice;
+
+                //Incrementing Product Stock
+                await Products.findByIdAndUpdate(
+                    {_id: pdt.productId},
+                    {
+                        $inc:{
+                            quantity: pdt.quantity
+                        }
+                    }
+                );
+
                 break;
             }
         }
