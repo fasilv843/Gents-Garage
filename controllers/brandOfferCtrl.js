@@ -13,7 +13,7 @@ const loadBrandOffersList = async(req, res, next) => {
 
 const loadAddBrandOffer = async(req, res, next) => {
     try {
-        console.log('load add brand offer');
+
         const categories = await Categories.find({ isListed: true })
         let brands = await Products.aggregate([
             {
@@ -34,12 +34,12 @@ const loadAddBrandOffer = async(req, res, next) => {
 
 const postAddBrandOffer = async(req, res, next) => {
     try {
-        console.log('post add brand offer');
+
         const { discount, expiryDate} = req.body
         const name = req.body.name.toUpperCase()
         const brand = req.body.brand.toUpperCase()
         const category = req.body.category
-        console.log(category);
+
 
         const brandOfferData = await new BrandOffers({
             name, brand,
@@ -49,9 +49,7 @@ const postAddBrandOffer = async(req, res, next) => {
         }).save()
 
         const products = await Products.find({ brand, category });
-        
-        console.log(products);
-        console.log('brand offer id : ' + brandOfferData._id);
+
 
         for (const pdt of products) {
 
@@ -81,7 +79,7 @@ const postAddBrandOffer = async(req, res, next) => {
 
 const loadEditBrandOffer = async(req, res, next) => {
     try {
-        console.log('load edit brand offer');
+
         const { brandOfferId } = req.params
 
         const categories = await Categories.find({ isListed: true })
@@ -105,7 +103,7 @@ const loadEditBrandOffer = async(req, res, next) => {
 
 const postEditBrandOffer = async(req, res, next) => {
     try {
-        console.log('post edit brand offer');
+
         const { brandOfferId } = req.params
         const { discount, expiryDate} = req.body
         const name = req.body.name.toUpperCase()
@@ -122,8 +120,6 @@ const postEditBrandOffer = async(req, res, next) => {
         );
 
         const products = await Products.find({ brand, category });
-
-        console.log(products);
 
         for (const pdt of products) {
 

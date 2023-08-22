@@ -9,7 +9,7 @@ const path = require('path')
 const loadProduct = async( req, res, next) => {
     try {
         const pdtsData = await Products.find().populate("category").populate('offer')
-        // console.log(pdtsData);
+
         const offerData = await Offers.find({ $or: [
             {status : 'Starting Soon'},
             {status : 'Available' }
@@ -36,7 +36,7 @@ const addProductDetails = async( req, res, next ) => {
             check1, check2, check3, check4, check5, check6,
             quantity, price, dprice, description,
         } = req.body
-        // console.log(req)
+
         console.log(req.files);
 
         let images = []
@@ -70,8 +70,7 @@ const loadEditProduct = async(req, res ,next) => {
         const id = req.params.id;
         const pdtData = await Products.findById({_id:id}).populate('category')
         const catData = await Categories.find({ isListed: true })
-        // console.log(pdtData);
-        // console.log(catData);
+
         res.render('editProduct',{pdtData, catData, page: 'Products'})
 
     } catch (error) {
@@ -150,7 +149,6 @@ const deleteImage = async(req,res, next) => {
         console.log('imageURL :  '+imageURL+'type :'+typeof imageURL);
 
         const imgFolder = path.join(__dirname,'../public/images/productImages')
-        // console.log(imgFolder);
 
         const files = fs.readdirSync(imgFolder);
 
@@ -174,14 +172,6 @@ const loadShop = async(req,res, next) => {
     try {
 
         const isLoggedIn = Boolean(req.session.userId);
-
-        // console.log('req.query.page : '+req.query.page);
-        // console.log('req.query.brand : '+req.query.brand);
-        // console.log('req.query.sortValue : '+req.query.sortValue);
-        // console.log('req.query.minPrice : '+req.query.minPrice);
-        // console.log('req.query.maxPrice : '+req.query.maxPrice);
-        // console.log('req.query.category : '+req.query.category);
-        // console.log('req.query.page : '+req.query.page);
 
         let page = 1;
         if(req.query.page){
@@ -248,7 +238,6 @@ const loadShop = async(req,res, next) => {
 
         if(req.query.search){
             search = req.query.search;
-            // console.log('req.query.search : '+req.query.search);
             query.$or.push({
                 'category' : {
                     $in: await getCategoryIds(search)
@@ -265,9 +254,7 @@ const loadShop = async(req,res, next) => {
         if(req.query.brand){
             query.brand = req.query.brand
         };
-        // console.log('req.query.brand : '+req.query.brand);
 
-        // console.log(query);
         let sortValue = 1;
         if(req.query.sortValue){
             sortValue = req.query.sortValue;
@@ -311,11 +298,6 @@ const loadShop = async(req,res, next) => {
         }
 
         const categoryNames = await Categories.find({})
-
-        // console.log('Products \n\n');/////////////////////
-        // console.log(pdtsData);
-
-        // console.log('categoryNames : \n\n'+categoryNames);
         const brands = await Products.aggregate([{
                 $group: {
                     _id: '$brand'
@@ -524,7 +506,7 @@ const loadAllReviews = async(req, res, next) => {
 const applyProductOffer = async(req, res, next) => {
     try {
         const { offerId, productId } = req.body
-        // console.log('offerid '+offerId+'  \nproductId : '+productId);
+
         const product = await Products.findById({_id:productId})
         const offerData = await Offers.findById({_id:offerId})
         const actualPrice = product.price - product.discountPrice;
@@ -533,7 +515,6 @@ const applyProductOffer = async(req, res, next) => {
         if(offerData.status == 'Available'){
             offerPrice = Math.round( actualPrice - ( (actualPrice*offerData.discount)/100 ))
         }
-        // const offerPrice = Math.round( actualPrice - ( (actualPrice*offerData.discount)/100 ))
 
         await Products.findByIdAndUpdate(
             {_id:productId},

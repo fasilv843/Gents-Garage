@@ -444,14 +444,10 @@ const loadOrdersList = async(req, res, next) => {
             pageNum = parseInt(req.query.pageNum) 
         }
 
-        // console.log(pageNum);
-
         let limit = 10;
         if(req.query.limit){
             limit = parseInt(req.query.limit);
         }
-
-        // console.log(limit);
 
         const totalOrderCount = await Orders.find({}).count()
         let pageCount = Math.ceil( totalOrderCount / limit)
@@ -467,11 +463,9 @@ const loadOrdersList = async(req, res, next) => {
 
 const changeOrderStatus = async(req,res, next) => {
     try {
-        // console.log('loaded change order status');
         const orderId = req.body.orderId
         const status = req.body.status
         const orderData = await Orders.findById({_id: orderId})
-        // console.log(status);
         for (const pdt of orderData.products){
 
             if(pdt.status !== 'Delivered' && 
@@ -519,10 +513,7 @@ const updateOrderStatus = async function (orderId, next) {
                 }
             });
 
-            console.log(statusCounts);
-
             if(statusCounts.length === 1){
-                console.log('only one status exist');
                 orderData.status = statusCounts[0].status
                 await orderData.save()
                 return
@@ -572,28 +563,21 @@ const updateOrderStatus = async function (orderId, next) {
                 
             });
 
-            console.log('isorderconfiremd : '+isOrderConfirmedExists);
 
             if(isOrderConfirmedExists){
                 orderData.status = 'Order Confirmed'
-                console.log('orderData status set to Order Confirmed');
                 await orderData.save()
                 return
             }
             
-            console.log('isShippedExists : '+isShippedExists);
             if(isShippedExists){
                 orderData.status = 'Shipped'
-                console.log('orderData status set to shipped');
                 await orderData.save()
                 return
             }
     
-            console.log('isout for delivereyExists : '+isOutForDeliveryExists);
-    
             if(isOutForDeliveryExists){
                 orderData.status = 'Out For Delivery'
-                console.log('orderData status set to Out for delivery');
                 await orderData.save()
                 return
             }
@@ -601,14 +585,9 @@ const updateOrderStatus = async function (orderId, next) {
     
             if(isDeliveredExists){
                 orderData.status = 'Delivered'
-                console.log('orderData status set to Delivered');
                 await orderData.save()
                 return
             }
-    
-            console.log(cancelledByUserCount+' type : '+typeof cancelledByUserCount);
-            console.log(cancelledByAdminCount+' type : '+typeof cancelledByAdminCount);
-
 
             let cancelledCount = 0;
             if(cancelledByUserCount){
@@ -618,40 +597,29 @@ const updateOrderStatus = async function (orderId, next) {
                 cancelledCount += cancelledByAdminCount
             }
 
-            console.log('cancelled count : '+cancelledCount);
             if(cancelledByUserCount === orderData.products.length || cancelledCount === orderData.products.length){
                 orderData.status = 'Cancelled'
-                console.log('orderData status set to Cancelled');
                 await orderData.save()
                 return;
             }
             
             if(cancelledByAdminCount === orderData.products.length){
                 orderData.status = 'Cancelled By Admin'
-                console.log('orderData status set to Cancelled By Admin');
                 await orderData.save()
                 return;
             }
 
-            console.log('returned count : '+returnedCount);
-            console.log('return approval count : '+returnApprovalCount);
-
             if( cancelledCount + returnApprovalCount + returnedCount === orderData.products.length){
                 orderData.status = 'Pending Return Approval'
-                console.log('orderData status set to Pending Return Approval');
                 await orderData.save()
                 return;
             }
     
             if( cancelledCount + returnedCount === orderData.products.length){
                 orderData.status = 'Returned'
-                console.log('orderData status set to Returned');
                 await orderData.save()
                 return;
             }
-
-            console.log('oops there is an error, function returned anywhere, from orderModel')
-        // }
 
     } catch (error) {
         next(error)
@@ -661,7 +629,6 @@ const updateOrderStatus = async function (orderId, next) {
 const cancelOrder = async(req,res, next) => {
     try {
         const orderId = req.params.orderId
-        console.log('typeof orderId : '+typeof orderId);
         const cancelledBy = req.query.cancelledBy
         const orderData = await Orders.findById({_id:orderId})
         const userId = orderData.userId
@@ -696,10 +663,9 @@ const cancelOrder = async(req,res, next) => {
                 }
 
             };
-            console.log('orderData saving');
+
             await orderData.save();
             await updateOrderStatus(orderId, next);
-            console.log('updateOrderStatus function executed');
 
 
         }else if(cancelledBy == 'admin'){
@@ -725,17 +691,14 @@ const cancelOrder = async(req,res, next) => {
                         }
                     );
 
-                    console.log('pdt.status set to Cancelled');
                 }
 
             };
 
         }
 
-        console.log('orderData saving');
         await orderData.save();
         await updateOrderStatus(orderId, next);
-        console.log('updateOrderStatus function executed');
 
         //Updating wallet if order not COD
         if(orderData.paymentMethod !== 'COD'){
@@ -743,7 +706,6 @@ const cancelOrder = async(req,res, next) => {
         }
 
         if(cancelledBy == 'user'){
-            console.log('redirecting to view order details');
             res.redirect(`/viewOrderDetails/${orderId}`)
         }else if(cancelledBy == 'admin'){
             res.redirect('/admin/ordersList')

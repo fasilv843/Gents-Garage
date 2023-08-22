@@ -48,9 +48,6 @@ const editCategory = async(req, res, next) => {
         const newName = req.body.categoryName.toUpperCase()
 
         const isCategoryExist = await Categories.findOne({name:newName})
-        console.log(newName);
-        console.log(isCategoryExist);
-        console.log(req.file);
 
         if(req.file){
             const image = req.file.filename

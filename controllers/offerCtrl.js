@@ -52,7 +52,6 @@ const postAddOffer = async(req, res, next) => {
 
 const loadEditOffer = async(req, res, next) => {
     try {
-        console.log('loading edit offer');
 
         const offerId = req.params.offerId;
         const offerData = await Offers.findById({ _id: offerId })
@@ -74,12 +73,10 @@ const postEditOffer = async(req, res, next) => {
         const isOfferExists = await Offers.findOne({name})
 
         if(isOfferExists && isOfferExists._id != offerId){
-            console.log('Offer Already Exist');
             return res.redirect(`/admin/editOffer/${offerId}`)
         }
 
         if(new Date(startingDate) >= new Date(expiryDate) || new Date(expiryDate) < new Date() ){
-            console.log('starting cannot be equal or greater than expiry date');
             return res.redirect(`/admin/editOffer/${offerId}`)
         }
 

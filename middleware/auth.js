@@ -56,11 +56,11 @@ const isAdminLoggedIn = (req, res, next) => {
         if(!req.session.adminId){
             return res.redirect('/admin/login')
         }
-        console.log('admin logged in calling next()');
+
         next();
 
     } catch (error) {
-        console.log('Error occured on isAdminloggedIn middleware');
+
         console.log(error);
     }
 }

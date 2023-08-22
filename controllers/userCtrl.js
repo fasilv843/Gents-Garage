@@ -2,6 +2,7 @@ const User = require('../models/userModel');
 const Products = require('../models/productModel')
 const Addresses = require('../models/addressModel')
 const Banners = require('../models/bannerModal')
+const Categories = require('../models/categoryModel')
 const bcrypt = require('bcrypt')
 const { sendVerifyMail } = require('../services/nodemailer')
 const { getOTP, getReferralCode, securePassword } = require('../helpers/generator')
@@ -194,8 +195,12 @@ const loadAboutUs = async(req,res, next) => {
     try {
         
         const isLoggedIn = Boolean(req.session.userId)
+        const usersCount = await User.find().count()
+        const activeUsers = await User.find({isBlocked:false}).count()
+        const happyCustomers = Math.floor( (activeUsers*100)/usersCount )
+        const categoriesCount = await Categories.find({isListed:true}).count()
 
-        res.render('aboutUs',{page : 'About Us',isLoggedIn})
+        res.render('aboutUs',{page : 'About Us',isLoggedIn, usersCount, happyCustomers, categoriesCount})
     } catch (error) {
         next(error);
     }

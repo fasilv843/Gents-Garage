@@ -113,11 +113,8 @@ const cancelCoupon = async(req, res, next) => {
 
 const applyCoupon = async(req, res, next) => {
     try {
-        console.log('On apply coupon controller');
         const userId = req.session.userId;
         const code = req.body.code.toUpperCase()
-        console.log('from body : '+code);
-        console.log('from query : '+req.query.code);
 
         const couponData = await Coupons.findOne({code})
         let userData = await User.findById({_id:userId}).populate('cart.productId')

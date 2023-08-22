@@ -97,7 +97,7 @@ const postEditAddress = async(req, res, next) => {
             }
 
         )
-            console.log(returnPage);
+        
         if(returnPage == 'profile'){
             res.redirect('/profile');
         }else if(returnPage == 'checkout'){

@@ -12,8 +12,6 @@ const loadDashboard = async(req,res, next) => {
         const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
         const firstDayOfPreviousMonth = new Date(today.getFullYear(), today.getMonth() - 1, 1);
         const jan1OfTheYear =  new Date(today.getFullYear(), 0, 1);
-        console.log(firstDayOfMonth);
-        console.log(firstDayOfPreviousMonth);
         
         const totalIncome = await findIncome()
         const thisMonthIncome = await findIncome(firstDayOfMonth)
@@ -26,7 +24,6 @@ const loadDashboard = async(req,res, next) => {
         const salesOnTheYear = formatNum(await countSales(jan1OfTheYear)) 
         const salesOnTheMonth = formatNum(await countSales(firstDayOfMonth)) 
         const salesOnPrevMonth = formatNum(await countSales( firstDayOfPreviousMonth, firstDayOfPreviousMonth ))
-        console.log(salesOnPrevMonth);
         
         let salesYear = 2023;
         if(req.query.salesYear){
@@ -66,30 +63,6 @@ const loadDashboard = async(req,res, next) => {
             orderData = await findSalesData()
         }
 
-        console.log('orderData : \n\n');
-        console.log(orderData);
-
-        // const orderData = await Orders.aggregate([
-        //     {
-        //         $match: {
-        //             status: 'Delivered',
-        //             createdAt: {
-        //                 $gte: new Date(`${salesYear}-01-01`),
-        //                 $lt: new Date(`${salesYear + 1}-01-01`)
-        //             }
-        //         }
-        //     },
-            // {
-            //     $group:{
-            //         _id: { createdAt: { $dateToString: { format: '%m', date: '$createdAt'}}},
-            //         sales: { $sum: '$totalPrice' }
-            //     }
-            // },
-            // {
-            //     $sort: { '_id.createdAt' : 1 }
-            // }
-        // ]);
-
         let months = []
         let sales = []
 
@@ -109,9 +82,6 @@ const loadDashboard = async(req,res, next) => {
             orderData.forEach((sale) => { sales.push(Math.round(sale.sales)) })
 
         }
-
-        console.log(months);
-        console.log(sales);
 
         let totalSales = sales.reduce((acc,curr) => acc += curr , 0)
 
@@ -240,8 +210,6 @@ const verifyAdminLogin = async(req,res, next) => {
 const logoutAdmin = async(req,res, next) => {
     try {
         req.session.adminId = null
-        // req.logout()
-        // res.clearCookie('adminId')
         res.redirect('/admin')
     } catch (error) {
         next(error)

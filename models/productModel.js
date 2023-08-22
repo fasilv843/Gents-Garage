@@ -61,10 +61,6 @@ const productsSchema = mongoose.Schema({
         type: Number,
         default: 0
     },
-    // offer:{
-    //     type: mongoose.Schema.Types.ObjectId,
-    //     ref: 'Offers'
-    // },
     offerType: {
         type: String,
         enum: ['Offers', 'BrandOffers'],
