@@ -22,23 +22,35 @@ const sendVerifyMail = async(userEmail, OTP) => {
             from: process.env.GMAIL,
             to: userEmail,
             subject:'Email Verification',
-            html:'<p>Hello please  Enter this otp to verify '+OTP+' your mail.</p>'
+            html:'<p>Hello please  Enter this otp to verify '+OTP+' your mail. OTP valid for 10 mins</p>'
         }
 
-        transporter.sendMail(mailOptions, function(error,info){
-            if(error){
-                console.log(error);
-            }else{
-                console.log('Email has been sent :- ',info.response);
-            }
-        })
+        transporter.sendMail(mailOptions)
 
     } catch (error) {
-        console.log(error);
+        throw error
+    }
+}
+
+const sendContactMail = async(name, userMail, subject, message) => {
+    try {
+        
+        const mailOptions = {
+            from: userMail,
+            to: process.env.GMAIL,
+            subject: subject,
+            html: `<h4>Hi I'm ${name}</h4> <br><br><p>${message}</p>`
+        }
+
+        transporter.sendMail(mailOptions)
+
+    } catch (error) {
+        throw error
     }
 }
 
 module.exports = {
-    sendVerifyMail
+    sendVerifyMail,
+    sendContactMail
 }
 

@@ -37,6 +37,8 @@ user_route.get('/shop/productOverview/:id',productCtrl.loadProductOverview);
 user_route.get('/aboutUs',userCtrl.loadAboutUs);
 user_route.get('/allReviews/:productId',productCtrl.loadAllReviews)
 
+user_route.post('/contactForm',userCtrl.contactUs)
+
 
 //to check isUserLoggedIn after this route
 user_route.use('/', isUserLoggedIn)

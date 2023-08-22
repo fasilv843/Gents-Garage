@@ -4,7 +4,7 @@ const Addresses = require('../models/addressModel')
 const Banners = require('../models/bannerModal')
 const Categories = require('../models/categoryModel')
 const bcrypt = require('bcrypt')
-const { sendVerifyMail } = require('../services/nodemailer')
+const { sendVerifyMail, sendContactMail } = require('../services/nodemailer')
 const { getOTP, getReferralCode, securePassword } = require('../helpers/generator')
 const { updateWallet } = require('../helpers/helpersFunctions')
 require('dotenv').config()
@@ -749,6 +749,17 @@ const removeWishlistItem = async(req, res, next) => {
     }
 }
 
+const contactUs = async(req, res, next) => {
+    try {
+        console.log('sending mail');
+        const { fullname, email, subject, message } = req.body
+        await sendContactMail(fullname, email, subject, message)
+        res.json({ status: true })
+    } catch (error) {
+       res.json({ status: false })
+    }
+}
+
 
 module.exports = {
     loadHome,
@@ -783,6 +794,7 @@ module.exports = {
     verifyWalletPayment,
     loadWishlist,
     addToWishlist,
-    removeWishlistItem
+    removeWishlistItem,
+    contactUs
 
 }
