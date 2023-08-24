@@ -11,7 +11,7 @@ const isUserLoggedIn = (req, res, next) => {
         next();
 
     } catch (error) {
-        console.log(error);
+        next(error)
     }
 }
 
@@ -21,11 +21,10 @@ const isUserLoggedOut = async(req, res, next) => {
         if(req.session.userId){
             return res.redirect('/')
         }
-
         next();
 
     } catch (error) {
-        console.log(error);
+        next(error)
     }
 }
 
@@ -45,7 +44,7 @@ const isUserBlocked = async(req, res, next) => {
         next();
 
     } catch (error) {
-        console.log(error);
+        next(error)
     }
 }
 
@@ -56,12 +55,10 @@ const isAdminLoggedIn = (req, res, next) => {
         if(!req.session.adminId){
             return res.redirect('/admin/login')
         }
-
         next();
 
     } catch (error) {
-
-        console.log(error);
+        next(error)
     }
 }
 
@@ -74,7 +71,7 @@ const isAdminLoggedOut = async(req, res, next) => {
         next();
 
     } catch (error) {
-        console.log(error);
+        next(error)
     }
 }
 

@@ -1,7 +1,7 @@
 
 <%- include('../partials/adminAside.ejs') %>
 <!-- Cropper Link  -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.11/cropper.min.css">
+<!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.11/cropper.min.css"> -->
 
 <main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg ">
 
@@ -17,7 +17,7 @@
               <h6 class="text-white text-capitalize ps-3">Categories</h6>
               
               <form class="fixed-end d-flex align-content-center" action="/admin/categories" method="POST">
-                <input id="newCatName" class="" type="text" name="categoryName" placeholder="Category Name">
+                <input id="newCatName" class="" type="text" name="categoryName" placeholder="Category Name" style="margin-right: 9px; margin-bottom: 17px;">
                 <button type="submit" class="btn bg-gradient-dark me-3" onclick="return validateCategory()">Add</button>
               </form>
               

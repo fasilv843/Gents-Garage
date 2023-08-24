@@ -1,5 +1,5 @@
 const express = require('express');
-const sharp = require('sharp')
+// const sharp = require('sharp')
 const adminCtrl = require('../controllers/adminCtrl');
 const categoryCtrl = require('../controllers/categoryCtrl');
 const productCtrl = require('../controllers/productCtrl');
