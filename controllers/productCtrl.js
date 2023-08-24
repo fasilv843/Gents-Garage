@@ -359,9 +359,11 @@ const loadProductOverview = async(req,res, next) => {
         if(userId){
             const userData = await User.findById({_id:userId})
             const wishlist = userData.wishlist;
-            if(wishlist.find((productId) => productId == id ) > -1){
+            if(wishlist.find((productId) => productId == id )){
                 isPdtAWish = true;
             }
+            console.log((wishlist.find((productId) => productId == id )));
+            console.log('isPdtAWish : '+isPdtAWish);
 
             userData.cart.forEach((pdt) => {
                 if(pdt.productId == id){

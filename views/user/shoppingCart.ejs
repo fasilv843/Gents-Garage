@@ -34,9 +34,11 @@
                                         %>
                                         <tr>
                                             <td class="product__cart__item">
-                                                <div class="product__cart__item__pic">
-                                                    <img width="100px" src="/images/productImages/<%= cartItems[i].productId.images[0] %>" alt="Product image">
-                                                </div>
+                                                <a href="/shop/productOverview/<%= cartItems[i].productId._id %>">
+                                                    <div class="product__cart__item__pic">
+                                                        <img width="100px" src="/images/productImages/<%= cartItems[i].productId.images[0] %>" alt="Product image">
+                                                    </div>
+                                                </a>
                                                 <div class="product__cart__item__text">
                                                     <h6><%= cartItems[i].productId.name %></h6>
                                                     <h6><%= cartItems[i].productId.brand %></h6>

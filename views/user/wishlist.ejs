@@ -27,24 +27,26 @@
                                         %>
                                         <tr>
                                             <td class="product__cart__item">
-                                                <div class="product__cart__item__pic">
-                                                    <img width="100px" src="/images/productImages/<%= pdt.images[0] %>" alt="Product image">
-                                                </div>
-                                                <div class="product__cart__item__text">
-                                                    <h6><%= pdt.name %></h6>
-                                                    <h6><%= pdt.brand %></h6>
-                                                    <% 
-                                                    let currPrice;
-                                                    if(pdt.offerPrice){
-                                                       // console.log('product has offer'+hello)
-                                                        currPrice = pdt.offerPrice
-                                                    }else{
-                                                        currPrice = pdt.price - pdt.discountPrice
-                                                    }
-                                                    let discountPercentage = Math.floor(100 - ( (currPrice*100)/pdt.price ));
-                                                    %>
-                                                    <h5>&#8377;<%= currPrice %></h5>
-                                                </div>
+                                                <a href="/shop/productOverview/<%= pdt._id %>">
+                                                    <div class="product__cart__item__pic">
+                                                        <img width="100px" src="/images/productImages/<%= pdt.images[0] %>" alt="Product image">
+                                                    </div>
+                                                    <div class="product__cart__item__text">
+                                                        <h6><%= pdt.name %></h6>
+                                                        <h6><%= pdt.brand %></h6>
+                                                        <% 
+                                                        let currPrice;
+                                                        if(pdt.offerPrice){
+                                                           // console.log('product has offer'+hello)
+                                                            currPrice = pdt.offerPrice
+                                                        }else{
+                                                            currPrice = pdt.price - pdt.discountPrice
+                                                        }
+                                                        let discountPercentage = Math.floor(100 - ( (currPrice*100)/pdt.price ));
+                                                        %>
+                                                        <h5>&#8377;<%= currPrice %></h5>
+                                                    </div>
+                                                </a>
                                             </td>
                                             <td>
                                                 <a class="btn btn-danger" href="/removeWishlistItem/<%= pdt._id %>?returnPage=wishlist">Remove</a>
