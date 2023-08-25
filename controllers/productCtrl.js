@@ -362,8 +362,6 @@ const loadProductOverview = async(req,res, next) => {
             if(wishlist.find((productId) => productId == id )){
                 isPdtAWish = true;
             }
-            console.log((wishlist.find((productId) => productId == id )));
-            console.log('isPdtAWish : '+isPdtAWish);
 
             userData.cart.forEach((pdt) => {
                 if(pdt.productId == id){
@@ -378,7 +376,23 @@ const loadProductOverview = async(req,res, next) => {
             });
         }
 
-        res.render('productOverview',{pdtData, parentPage : 'Shop', page: 'Product Overview',isLoggedIn, isPdtAWish, isPdtExistInCart, isUserReviewed})
+        let currPrice = 0;
+        if(pdtData.offer){
+            currPrice = pdtData.offerPrice
+        }else{
+            currPrice = pdtData.price - pdtData.discountPrice
+        }
+
+        const discountPercentage = Math.floor( 100 - ( (currPrice*100) / pdtData.price ) )
+
+        res.render('productOverview',{
+            pdtData, parentPage : 'Shop', 
+            page: 'Product Overview',isLoggedIn, 
+            isPdtAWish, isPdtExistInCart, 
+            isUserReviewed, currPrice, discountPercentage
+        });
+
+
     } catch (error) {
                 next(error);
     }

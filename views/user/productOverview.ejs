@@ -1,4 +1,7 @@
 <%- include('../partials/head.ejs') %>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css"
+integrity="sha512-+4zCK9k+qNFUR5X+cKL9EIR+ZOhtIloNl9GIKS57V1MyNsYpYcUrUeQc9vNfzsWfV28IaLL3i96P9sdNyeRssA=="
+crossorigin="anonymous" />
 <%- include('../partials/userHeader.ejs') %>
 <%- include('../partials/userBreadcrub.ejs') %>
 
@@ -51,51 +54,41 @@
                     <div class="col-lg-8">
                         <div class="product__details__text">
                             <h4><%= pdtData.name %></h4>
+                            <div class="d-flex justify-content-center align-items-center" >
+                                <h3>&#8377;<%= currPrice  %> <br><span>&#8377;<%= pdtData.price %></span></h3>
+                                <h4 class="mx-3 text-success"><%= discountPercentage %>% Off </h4 >
+                            </div>
 
-                            <h3>&#8377;<%= pdtData.price  %> <span>&#8377;<%= pdtData.discountPrice %></span></h3>
                             <p><%= pdtData.description %></p>
-                            <!-- Sizes and Color  -->
-                            <!-- <div class="product__details__option">
-                                <div class="product__details__option__size">
-                                    <span>Size:</span>
-                                    <label for="xxl">xxl
-                                        <input type="radio" id="xxl">
-                                    </label>
-                                    <label class="active" for="xl">xl
-                                        <input type="radio" id="xl">
-                                    </label>
-                                    <label for="l">l
-                                        <input type="radio" id="l">
-                                    </label>
-                                    <label for="sm">s
-                                        <input type="radio" id="sm">
-                                    </label>
-                                </div>
-                                <div class="product__details__option__color">
-                                    <span>Color:</span>
-                                    <label class="c-1" for="sp-1">
-                                        <input type="radio" id="sp-1">
-                                    </label>
-                                    <label class="c-2" for="sp-2">
-                                        <input type="radio" id="sp-2">
-                                    </label>
-                                    <label class="c-3" for="sp-3">
-                                        <input type="radio" id="sp-3">
-                                    </label>
-                                    <label class="c-4" for="sp-4">
-                                        <input type="radio" id="sp-4">
-                                    </label>
-                                    <label class="c-9" for="sp-9">
-                                        <input type="radio" id="sp-9">
-                                    </label>
-                                </div>
-                            </div> -->
+
+                            <div class="my-2">
+                                <% 
+                                if(pdtData.reviews && pdtData.reviews.length > 0 ){
+                                    for(let i=1; i<=5; i++){
+                                        if(i > pdtData.totalRating){
+                                            %>
+                                            <i class="bi bi-star"></i>
+                                            <%  
+                                        }else if(!Number.isInteger(pdtData.totalRating) && parseInt(pdtData.totalRating+1) == i){
+                                            %>
+                                            <i class="fas fa-star-half-alt"></i>
+                                            <%                               
+                                        }else{
+                                            %>
+                                            <i class="fas fa-star"></i>
+                                            <%                                        
+                                        }
+                                    }
+                                    %>
+                                    <span id="totalRating"> <%= pdtData.totalRating %> </span>
+                                    <span id="ratingCount">(<%= pdtData.reviews.length %>)</span>
+                                    <%  
+                                }
+                                %>
+                            </div>
+
                             <div class="product__details__cart__option">
-                                <!-- <div class="quantity">
-                                    <div class="pro-qty">
-                                        <input type="text" value="1">
-                                    </div>
-                                </div> -->
+
                                 <% 
                                 if(isPdtExistInCart){
                                     %>
