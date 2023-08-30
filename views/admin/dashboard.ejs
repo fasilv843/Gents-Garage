@@ -198,11 +198,14 @@
                   <form action="" method="get">
                       <label for="fromDate" class="form-label"> From: </label>
                       <input type="date" name="fromDate" id="fromDate" class="form-control mb-3" required>
+                      <small id="fromDateErr" class="error"></small><br>
+
                       <label for="toDate" class="form-label"> To: </label>
                       <input type="date" name="toDate" id="toDate" class="form-control mb-3" required>
+                      <small id="toDateErr" class="error"></small><br>
 
                       <div class="text-center mt-3">
-                          <button class="btn btn-success w-50" type="submit">Get Report</button>
+                          <button class="btn btn-success w-50" type="submit" onclick="return validateSalesDate()">Get Report</button>
                       </div>
                   </form>
                   <div class="text-center mt-2">
@@ -349,6 +352,7 @@
 
     </div>
   </main>
+  <script src="/validations/dashboardValidation.js"></script>
 
   <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
@@ -360,7 +364,6 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.16.8/xlsx.full.min.js"></script>
 
 
-  
 
   <!-- Sales Chart  -->
   <script>
