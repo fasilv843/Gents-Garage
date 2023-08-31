@@ -425,6 +425,16 @@ const loadViewOrderDetails = async(req, res, next) => {
     }
 }
 
+const loadAdminOrderDetails = async(req, res, next) => {
+    try {
+        const { orderId } = req.params;
+        const orderData = await Orders.findById({ _id : orderId }).populate('products.productId');
+        res.render('orderDetails',{orderData, page:'Orders List'})
+    } catch (error) {
+        next(error)
+    }
+}
+
 const loadOrderSuccess = async(req, res, next) => {
     try {
         const result = req.query.result
@@ -920,6 +930,7 @@ module.exports = {
     loadOrderSuccess,
     loadMyOrders,
     loadViewOrderDetails,
+    loadAdminOrderDetails,
     loadOrdersList,
     changeOrderStatus,
     cancelOrder,

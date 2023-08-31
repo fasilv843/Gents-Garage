@@ -50,6 +50,7 @@ admin_route.get('/products/deleteProduct/:id',productCtrl.deleteProduct)
 admin_route.get('/products/imageDelete/:id',productCtrl.deleteImage)
 
 admin_route.get('/ordersList',orderCtrl.loadOrdersList)
+admin_route.get('/orderDetails/:orderId',orderCtrl.loadAdminOrderDetails)
 admin_route.post('/changeOrderStatus',orderCtrl.changeOrderStatus)
 admin_route.get('/cancelOrder/:orderId',orderCtrl.cancelOrder)
 admin_route.get('/cancelSinglePrdt/:orderId/:pdtId',orderCtrl.cancelSinglePdt)

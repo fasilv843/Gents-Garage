@@ -1,0 +1,264 @@
+
+<%- include('../partials/adminAside.ejs') %>
+
+<main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg ">
+<%- include('../partials/adminNavbar.ejs') %>
+
+
+
+<div class="container-fluid py-4">
+    <div class="row">
+      <div class="col-12">
+        <div class="card my-4">
+          <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+            <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3 d-flex justify-content-between">
+              <h6 class="text-white text-capitalize ps-3">Order Details</h6>
+            </div>
+          </div>
+          <div class="card-body px-0 pb-2">
+            <div class="table-responsive p-0">
+                
+
+                <section>
+                    <div class="container">
+                        <div class="mt-5">
+                            <div class="card mb-4">
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <h4 class="card-title">Delivery Address</h4>
+                                            <h6 class="card-text" style="font-size: 1.2rem;"><strong><%= orderData.deliveryAddress.userName %></strong></h6>
+                                            <span class="card-text">
+                                                <%= orderData.deliveryAddress.address %>
+                                            </span><br>
+                                            <% 
+                                            let location = orderData.deliveryAddress.town+' '+orderData.deliveryAddress.state+' '+orderData.deliveryAddress.zip
+                                            %>
+                                            <span><%= location %></span>
+                                            <div class="mt-2">
+                                                <h6><strong>Phone number</strong></h6>
+                                                <span><%= orderData.deliveryAddress.mobile %></span>
+                                            </div>
+                                        </div>
+
+                                        <%
+                                        if(orderData.status === 'Order Confirmed' || orderData.status === 'Shipped' || orderData.status === 'Out For Delivery' || orderData.status === 'Delivered'){
+                                            %>
+                                            <div class="col-md-2 d-flex justify-content-center align-items-center">
+                                                <h4 class="my-2" style="color: green;"><%= orderData.status %></h4>
+                                                <% 
+                                                if(orderData.status !== 'Delivered'){
+                                                    %>
+                                                    <button style="border: none;" data-bs-toggle="modal" data-bs-target="#exampleModal"
+                                                    class="popupBTN" data-id="<%= orderData._id  %>"><i class="bi bi-pencil-square"
+                                                    style="color: blue;"></i>
+                                                    </button>
+                                                    <%  
+                                                }
+                                                %>
+                                            </div>
+                                            <%  
+                                        }else if(orderData.status === 'Pending Return Approval'){
+                                            %>
+                                            <div class="col-md-2 d-flex justify-content-center align-items-center">
+                                                <h4 class="my-2" style="color: orange;"><%= orderData.status %></h4>
+                                            </div>
+                                            <% 
+                                        }
+
+                                         
+                
+                                        if(orderData.status === 'Order Confirmed' || orderData.status === 'Shipped' || orderData.status === 'Out For Delivery'  ){
+                                            %>
+                                            <div class="col-md-2 d-flex justify-content-center align-items-center">
+                                                <!-- <button type="button" class="btn btn-danger confirmCancelBTN" id="cancelOrderBTN" data-toggle="modal"  data-id="<%= orderData._id %>" data-target="#cancelOrderPopup">
+                                                    Cancel Order
+                                                </button> -->
+                                                <a class="btn btn-danger confirmCancelBTN" id="cancelOrderBTN" data-bs-toggle="modal"  data-id="<%= orderData._id %>" href="#cancelOrderModal">
+                                                    Cancel Order
+                                                </a>
+                                            </div>
+                                            <%  
+                                        }else if(orderData.status === 'Pending Return Approval'){
+                                            %>
+                                            <div class="col-md-2 d-flex justify-content-center align-items-center">
+                                                <a href="/admin/approveReturn/<%= orderData._id %>" class="btn btn-warning">Approve</a>
+                                            </div>
+                                            <% 
+                                        }else if(orderData.status === 'Cancelled'){
+                                            %>
+                                            <div class="col-md-2 d-flex justify-content-center align-items-center">
+                                                <h4 style="color: red;">Order Cancelled by User</h4>
+                                            </div>
+                                            <% 
+                                        }else if(orderData.status === 'Cancelled By Admin'){
+                                            %>
+                                            <div class="col-md-2 d-flex justify-content-center align-items-center">
+                                                <h4 style="color: red;">Order Cancelled By Admin</h4>
+                                            </div>
+                                            <% 
+                                        }else if(orderData.status === 'Returned'){
+                                            %>
+                                            <div class="col-md-2 d-flex justify-content-center align-items-center">
+                                                <h4 style="color: orange;"><%= orderData.status %></h4>
+                                            </div>
+                                            <% 
+                                        }
+                                        %>
+                                    </div>
+                                </div>
+                            </div>
+                
+                            <!-- prods -->
+                            <div class="row mt-4">
+                                <% 
+                                for(const pdt of orderData.products){
+                                    %>
+                                        <div class="col-sm-6 mb-3">
+                                            <div class="card">
+                                                <div class="card-body">
+                                                    <div class="d-flex">
+                                                        <a href="/shop/productOverview/<%= pdt.productId._id %>">
+                                                            <div class="mx-3">
+                                                                <img src="/images/productImages/<%= pdt.productId.images[0] %>"
+                                                                    class="img-fluid" alt="" width="120rem">
+                                                            </div>
+                                                        </a>
+                                                        <div>
+                                                            <h4 class="card-title"><%= pdt.productName %></h4>
+                                                            <!-- <span class="card-text" style="color: rgb(99, 99, 99);">Size: M</span><br> -->
+                                                            <span class="card-text" style="color: rgb(99, 99, 99);">Quantity : <%= pdt.quantity %></span>
+                                                            <h5 class="card-title mt-2">₹ <%= pdt.totalPrice - pdt.totalDiscount %></h5>
+                                                            <!-- <div class="col-md-2 d-flex justify-content-center align-items-center"> -->
+                                                                <h6
+                                                                    <% 
+                                                                    if(pdt.status == 'Order Confirmed' || pdt.status == 'Shipped' || pdt.status == 'Out For Delivery' ||  pdt.status == 'Delivered' ){
+                                                                        %>
+                                                                        style="color: green;"
+                                                                        <%  
+                                                                    }else if( pdt.status == 'Cancelled' || pdt.status == 'Cancelled By Admin' ){
+                                                                        %>
+                                                                        style="color: red;"
+                                                                        <%  
+                                                                    }else if(pdt.status == 'Pending Return Approval'||  pdt.status == 'Returned'){
+                                                                        %>
+                                                                        style="color: orange;"
+                                                                        <%  
+                                                                    }
+                                                                    %>
+                                                                 
+                                                                 ><%= pdt.status %></h6>
+                                                            <!-- </div> -->
+                                                        </div>
+                                                        <div class="col-md-4 d-flex mb-3 pt-2 justify-content-center align-items-center">
+                                                            <% 
+                                                            if(pdt.status == 'Order Confirmed' || pdt.status == 'Shipped' || pdt.status == 'Out For Delivery'){
+                                                                %>
+                                                                <a href="/admin/cancelSinglePrdt/<%= orderData._id %>/<%= pdt._id %>?cancelledBy=admin" class="btn btn-danger"> Cancel </a>
+                                                                <%  
+                                                            }else if(pdt.status == 'Pending Return Approval'){
+                                                                %>
+                                                                <a href="/admin/approveReturnSinglePrdt/<%= orderData._id %>/<%= pdt._id %>" class="btn btn-warning"> Approve </a>
+                                                                <%  
+                                                            }
+                                                            %>
+                                                        </div>
+                                                    </div>
+                        
+                                                </div>
+                                            </div>
+                                        </div>
+                                    <%  
+                                }
+                                %>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
+
+
+                        <!-- Modal Start -->
+                        <div class="modal fade " id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h1 class="modal-title fs-5" id="exampleModalLabel">Change Status</h1>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                            aria-label="Close"></button>
+                                    </div>
+                                    <form action="/admin/changeOrderStatus" method="post">
+                                        <div class="modal-body">
+                                            <input type="hidden" name="orderId" id="orderId" value="">
+                                            <label for="status">Select delivery status</label><br><br>
+                                            <select name="status" class="form-control" id="status">
+                                                <option value="Shipped">Shipped</option>
+                                                <option value="Out For Delivery">Out For Delivery</option>
+                                                <option value="Delivered">Delivered</option>
+                                            </select>
+
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary"
+                                                data-bs-dismiss="modal">Close</button>
+                                            <button type="submit" class="btn btn-primary">Change Status</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Modal End  -->
+
+
+
+                                                                                          <!-- Order Cancel Confirmation Modal Start  -->
+                                                                                          <div class="modal fade" id="cancelOrderModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                                                                            <div class="modal-dialog">
+                                                                                              <div class="modal-content">
+                                                                                                  <div class="modal-header">
+                                                                                                  <h1 class="modal-title fs-5" id="exampleModalLabel">Are You Sure?</h1>
+                                                                                                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                                                                  </div>
+                                                                                                  <div class="modal-body">
+                                                                                                          <strong> Do you want to Cancel this Order ?</strong>
+                                                                                                          <div class="modal-footer mt-2">
+                                                                                                              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                                                                              <a id="confirmCancelBTN" class="btn btn-primary">Confirm</a>
+                                                                                                          </div>
+                                                                                                  </div>
+                                                                                              </div>
+                                                                                            </div>
+                                                                                        </div> 
+                                                                                        <!-- Order Cancel Confirmation Modal End  -->
+
+    
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>
+<script>
+    $(document).on("click", ".popupBTN", function () {
+        var cId = $(this).data('id');
+        $(".modal-body #orderId").val(cId);  
+    });
+
+    $('.confirmCancelBTN').click( function () {
+        var orderId = $(this).data('id');
+        var routeURL = `/admin/cancelOrder/${orderId}?cancelledBy=admin`
+        $(".modal-footer #confirmCancelBTN").attr('href', routeURL);
+    });
+</script>
+
+
+
+
+<%- include('../partials/adminFooter.ejs') %>      
+</main>
+<%- include('../partials/adminScript.ejs') %>

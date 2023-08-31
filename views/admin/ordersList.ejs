@@ -30,9 +30,8 @@
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Products</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Address</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Price</th>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Status</th>
-                    <!-- <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Payment Method</th> -->
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Action</th>
+                    <!-- <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Status</th> -->
+                    <!-- <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Action</th> -->
                   </tr>
                 </thead>
 
@@ -43,7 +42,8 @@
                       //console.log(ordersData)
                       for(const [index, order] of ordersData.entries()){
                          %>
-                            <tr>
+                            <tr class="my-1">
+                            
 
                               <td class="align-middle text-center text-sm">
                                 <p class="text-xs font-weight-bold mb-0"><%= ((pageNum - 1)*limit) +index + 1 %></p>
@@ -63,22 +63,23 @@
 
                                 <td class="align-middle text-center text-sm">
                                     <h6 class="mb-0 text-sm"><%= order.userId.fname+' '+order.userId.lname %></h6>
-                                    <p class="text-xs font-weight-bold mb-0"><%= order.userId.email %></p>
-                                    <p class="text-xs font-weight-bold mb-0"><%= order.userId.mobile %></p>
+                                    <!-- <p class="text-xs font-weight-bold mb-0"><%=// order.userId.email %></p>
+                                    <p class="text-xs font-weight-bold mb-0"><%=// order.userId.mobile %></p> -->
                                 </td>
 
                                 <td>
                                     <% 
                                     for(const pdt of order.products){
                                         %>
-                                        <div class="d-flex px-2 py-1">
+                                        <a href="/admin/orderDetails/<%= order._id %>"  class="d-flex px-2 py-1">
+                                        <!-- <div class="d-flex px-2 py-1"> -->
                                             <div class="me-1">
                                                 <img style="width: 4rem;" src="/images/productImages/<%= pdt.productId.images[0]  %>" alt="Product Image">
                                             </div>
                                             <div class="d-flex flex-column justify-content-center">
                                                 <h6 class="mb-0 text-sm"><%= pdt.productName  %></h6>
                                                 <p class="text-xs text-secondary mb-0">Quantity : <%= pdt.quantity %></p>
-                                                <p class="text-xs text-secondary mb-0">Price : <%= pdt.productPrice - pdt.discountPrice %></p>
+                                                <!-- <p class="text-xs text-secondary mb-0">Price : <%=// pdt.productPrice - pdt.discountPrice %></p> -->
                                                   <p class="text-xs text-secondary mb-0 text-bold
                                                     <% 
                                                     if(pdt.status == 'Order Confirmed' || pdt.status == 'Shipped' || pdt.status == 'Out For Delivery' ||  pdt.status == 'Delivered' ){
@@ -99,27 +100,22 @@
                                                     Status : <%= pdt.status %>
                                                   </p>
                                             </div>
-                                            <div class="col-md-4 d-flex justify-content-end align-items-center">
+                                            <!-- <div class="col-md-4 d-flex justify-content-end align-items-center">
                                               <% 
-                                              if(pdt.status == 'Order Confirmed' || pdt.status == 'Shipped' || pdt.status == 'Out For Delivery'){
+                                              //if(pdt.status == 'Order Confirmed' || pdt.status == 'Shipped' || pdt.status == 'Out For Delivery'){
                                                   %>
-                                                  <a href="/admin/cancelSinglePrdt/<%= order._id %>/<%= pdt._id %>?cancelledBy=admin" class="btn btn-danger"> Cancel </a>
+                                                  <a href="/admin/cancelSinglePrdt/<%=// order._id %>/<%=// pdt._id %>?cancelledBy=admin" class="btn btn-danger"> Cancel </a>
                                                   <%  
-                                              }else if(pdt.status == 'Pending Return Approval'){
+                                              //}else if(pdt.status == 'Pending Return Approval'){
                                                   %>
-                                                  <a href="/admin/approveReturnSinglePrdt/<%= order._id %>/<%= pdt._id %>" class="btn btn-warning"> Approve </a>
+                                                  <a href="/admin/approveReturnSinglePrdt/<%=// order._id %>/<%=/// pdt._id %>" class="btn btn-warning"> Approve </a>
                                                   <%  
-                                              }
-                                              //else if( pdt.status == 'Cancelled' || pdt.status == 'Cancelled By Admin'){
-  
-                                              //}else if( pdt.status == 'Pending Return Approval'){
-                                                  
-                                              //}else if( pdt.status == 'Returned'){
-                                                  
                                               //}
+
                                               %>
-                                          </div>
-                                        </div>
+                                          </div> -->
+                                        <!-- </div> -->
+                                      </a>
                                         <%  
                                     }
                                     %>
@@ -147,42 +143,42 @@
                                     <span class="text-secondary text-xs font-weight-bold"></span>
                                 </td>
 
-                                <td class="align-middle text-center text-sm">
-                                    <span class="text-secondary text-xs font-weight-bold"><%= order.status %>
+                                <!-- <td class="align-middle text-center text-sm">
+                                    <span class="text-secondary text-xs font-weight-bold"><%=// order.status %> -->
                                         <% 
-                                        if(order.status == 'Order Confirmed' || order.status == 'Shipped'|| order.status == 'Out For Delivery'){
+                                        //if(order.status == 'Order Confirmed' || order.status == 'Shipped'|| order.status == 'Out For Delivery'){
                                             %>
-                                            <button style="border: none;" data-bs-toggle="modal" data-bs-target="#exampleModal"
-                                            class="popupBTN" data-id="<%= order._id  %>"><i class="bi bi-pencil-square"
+                                            <!-- <button style="border: none;" data-bs-toggle="modal" data-bs-target="#exampleModal"
+                                            class="popupBTN" data-id="<%=// order._id  %>"><i class="bi bi-pencil-square"
                                             style="color: blue;"></i>
-                                            </button>
+                                            </button> -->
                                             <%  
-                                        }
+                                        //}
                                         %>
-
+<!-- 
                                     </span>
-                                </td>
+                                </td> -->
 
-                                <% 
-                                if(order.status == 'Order Confirmed' || order.status == 'Shipped'){
+                                <!-- <% 
+                                //if(order.status == 'Order Confirmed' || order.status == 'Shipped'){
                                     %>
                                     <td class="align-middle text-center">
                                         <a href="#cancelOrderModal"  class="btn btn-danger confirmCancelBTN"  data-bs-toggle="modal" data-id="<%= order._id %>">Cancel</a>
                                     </td>
                                     <%  
-                                }else if(order.status === 'Pending Return Approval'){
+                                //}else if(order.status === 'Pending Return Approval'){
                                   %>
                                   <td class="align-middle text-center">
-                                      <a href="/admin/approveReturn/<%= order._id %>" class="btn btn-warning">Approve</a>
+                                      <a href="/admin/approveReturn/<%=// order._id %>" class="btn btn-warning">Approve</a>
                                   </td>
                                   <%  
-                                }
-                                %>
+                                //}
+                                %> -->
                                 
 
 
                         <!-- Modal Start -->
-                        <div class="modal fade " id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <!-- <div class="modal fade " id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                             <div class="modal-dialog">
                                 <div class="modal-content">
                                     <div class="modal-header">
@@ -209,7 +205,7 @@
                                     </form>
                                 </div>
                             </div>
-                        </div>
+                        </div> -->
                         <!-- Modal End  -->
 
 
@@ -232,7 +228,7 @@
                                                                                             </div>
                                                                                         </div> 
                                                                                         <!-- Order Cancel Confirmation Modal End  -->
-                              
+                            
                             </tr>
                          <% 
                       }
@@ -335,13 +331,13 @@
     });
 </script>
 
-<script src="https://cdn.datatables.net/1.10.22/js/jquery.dataTables.min.js"></script>
-<script src="https://cdn.datatables.net/1.10.22/js/dataTables.bootstrap4.min.js"></script>
+<!-- <script src="https://cdn.datatables.net/1.10.22/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.22/js/dataTables.bootstrap4.min.js"></script> -->
 
-<script>
+<!-- <script>
   $('#sortTable').DataTable({
       responsive: true
   });
-</script>
+</script> -->
 
 <%- include('../partials/adminScript.ejs') %>
