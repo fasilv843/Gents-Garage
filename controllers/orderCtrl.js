@@ -53,7 +53,6 @@ const placeOrder = async(req, res, next) => {
         const userData = await User.findById({_id:userId}).populate('cart.productId')
         const cart = userData.cart
         const walletAmount = req.session.walletAmount = parseInt(userData.wallet)
-        console.log(walletAmount);
         req.session.cart = cart;
 
         let products = []
@@ -90,6 +89,7 @@ const placeOrder = async(req, res, next) => {
             for(let i=0; i<products.length; i++){
                 totalPrice += (products[i].totalPrice - products[i].totalDiscount)
             }
+            console.log(totalPrice);
             
             let couponCode = '';
             let couponDiscount = 0;
@@ -120,6 +120,7 @@ const placeOrder = async(req, res, next) => {
 
             req.session.isWalletSelected = isWalletSelected;
             req.session.totalPrice = totalPrice;
+            console.log(totalPrice);
             
             if(paymentMethod === 'COD'){
                 console.log('Payment method is COD');
@@ -647,7 +648,7 @@ const cancelOrder = async(req,res, next) => {
                     pdt.status !== 'Returned'
                 ){
                     pdt.status = 'Cancelled'
-                    refundAmount = refundAmount + pdt.totalPrice
+                    refundAmount = refundAmount + (pdt.totalPrice - pdt.totalDiscount)
 
                     //Incrementing Product Stock
                     await Products.findByIdAndUpdate(
@@ -679,7 +680,7 @@ const cancelOrder = async(req,res, next) => {
                     pdt.status !== 'Returned'
                 ){
                     pdt.status = 'Cancelled By Admin'
-                    refundAmount = refundAmount + pdt.totalPrice
+                    refundAmount = refundAmount + (pdt.totalPrice - pdt.totalDiscount)
 
                     //Incrementing Product Stock
                     await Products.findByIdAndUpdate(
@@ -734,7 +735,7 @@ const cancelSinglePdt = async(req, res, next) => {
                     pdt.status = 'Cancelled'
                 }
                 
-                refundAmount = pdt.totalPrice
+                refundAmount = pdt.totalPrice - pdt.totalDiscount;
 
                 //Incrementing Product Stock
                 await Products.findByIdAndUpdate(
@@ -824,7 +825,7 @@ const approveReturn = async(req,res,next) => {
             if(pdt.status === 'Pending Return Approval' ){
                 pdt.status = 'Returned'
 
-                refundAmount = refundAmount + pdt.totalPrice
+                refundAmount = refundAmount + (pdt.totalPrice - pdt.totalDiscount)
 
                 //Incrementing Product Stock
                 await Products.findByIdAndUpdate(
@@ -867,7 +868,7 @@ const approveReturnForSinglePdt = async(req, res, next) => {
 
                 pdt.status = 'Returned'
 
-                refundAmount = pdt.totalPrice;
+                refundAmount = pdt.totalPrice - pdt.totalDiscount;
 
                 //Incrementing Product Stock
                 await Products.findByIdAndUpdate(
