@@ -90,7 +90,7 @@ function validatePassword() {
     }
 
     if (!password.match(passwordRegex)) {
-        passwordError.innerHTML = 'Invalid password'
+        passwordError.innerHTML = 'Password must contain a Upper case, Lower case and Number'
         return false
     }
     passwordError.innerHTML = ''
